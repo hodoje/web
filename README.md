@@ -119,9 +119,11 @@ Data about all entities are stored in text files that can be in arbitrary format
 Data can be persisted in a database, but only if a student is using Git system for version control when working on the project, assistents are not in an obligation to solve problems with working with a database or Git.
 
 **Extra assignment**
-While choosing the location, use OpenLayers maps (http://openlayers.org/) or some alternative (Google maps is not free).
-Admins (Dispatchers) have right to block customers/drivers, this prevents them from further activity. Also they can stop to blockade.
-While choosing the driver, dispatcher has in offer only the 5 closest drivers depending on the location of the customer. Drivers have a possibility of sorting rides by distance from their current location.
-For counting the distance use absolute distance between to points in coordinate plain.
+- While choosing the location, use OpenLayers maps (http://openlayers.org/) or some alternative (Google maps is not free).
+- Admins (Dispatchers) have right to block customers/drivers, this prevents them from further activity. Also they can stop to   
+  blockade.
+- While choosing the driver, dispatcher has in offer only the 5 closest drivers depending on the location of the customer.
+- Drivers have a possibility of sorting rides by distance from their current location.
+- For counting the distance use absolute distance between to points in coordinate plain.
 
 **NOTE**: the rest is not of interest for the assignment.
