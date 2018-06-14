@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.WebApp", "Backend\Backend.WebApp.csproj", "{0DB42A2A-845B-4209-8B26-0359D8B72887}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.WebApp", "Backend.WebApp\Backend.WebApp.csproj", "{0DB42A2A-845B-4209-8B26-0359D8B72887}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.DomainEntities", "DomainEntities\Backend.DomainEntities.csproj", "{EED41166-3CE8-496A-A7C3-A33612B69A59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.DomainEntities", "Backend.DomainEntities\Backend.DomainEntities.csproj", "{EED41166-3CE8-496A-A7C3-A33612B69A59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
