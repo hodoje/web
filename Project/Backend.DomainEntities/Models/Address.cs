@@ -11,9 +11,13 @@ namespace DomainEntities.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string StreetName { get; set; }
+        [Required]
         public string StreetNumber { get; set; }
+        [Required]
         public string City { get; set; }
+        [Required]
         public string PostalCode { get; set; }
         public override string ToString()
         {

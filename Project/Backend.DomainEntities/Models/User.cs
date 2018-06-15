@@ -13,16 +13,25 @@ namespace DomainEntities.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Username { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Lastname { get; set; }
+        [Required]
         public virtual string GenderId { get; set; }
         [ForeignKey("GenderId")]
         public Gender Gender { get; set; }
+        [Required]
         public string NationalIdentificationNumber { get; set; }
+        [Required]
         public string PhoneNumber { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public virtual string RoleId { get; set; }
         [ForeignKey("RoleId")]
         public Role Role { get; set; }

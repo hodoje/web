@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DomainEntities
 {
-    public class Repository<V,T> : IRepository<T,V> where T : class
+    public class Repository<T,V> : IRepository<T,V> where T : class
     {
         protected readonly DbContext _context;
         private DbSet<T> _entities;

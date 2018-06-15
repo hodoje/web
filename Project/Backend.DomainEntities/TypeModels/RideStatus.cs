@@ -4,18 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DomainEntities.Models;
 
 namespace DomainEntities.EnumDatabaseModels
 {
-    public class Role
+    public class RideStatus
     {
         [Key]
-        public virtual int Id
-        {
-            get { return (int)Type; }
-            set { Type = (RoleEnum) value; }
-        }
-
-        public RoleEnum Type { get; set; }
+        public int Id { get; set; }
+        [Required]
+        public string StatusName { get; set; }
+        public virtual ICollection<Ride> Rides { get; set; }
     }
 }
