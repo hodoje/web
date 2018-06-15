@@ -41,7 +41,7 @@ It's necessary to realize a Web application for a system that supports a taxi se
   - Driver (a driver that accepted the ride or to whom the ride was assigned by a dispatcher)
   - Price
   - Comment (optional, except if a ride was cancelled)
-  - Status (created - on wait, formed, processed, accepted, cancelled, failed, succeed)
+  - Status (created - on wait, formed, processed, accepted, cancelled, failed, successful)
 - Car
   - Driver
   - Year of manufacturing
@@ -62,7 +62,7 @@ It's necessary to realize a Web application for a system that supports a taxi se
   - Accepted (ride that was in *Created - on wait* status and the driver self initiatively took it)
   - Failed (ride that was in *Formed*, *Processed* or *Accepted* status, driver for it didn't successfully transported the 
     customer (for example: during the ride the car broke, for some reason the customer didn't enter the car...)
-  - Succeed (ride that was in *Formed*, *Processed* or *Accepted* status, driver for it successfully transported a customer
+  - Successful (ride that was in *Formed*, *Processed* or *Accepted* status, driver for it successfully transported a customer
 
 Implement the following functionality:
 - Registration - unregistered user registers himself on the application by filling out the field that are meant for that and 
@@ -88,11 +88,11 @@ Implement the following functionality:
     - A customer is not defined
   - If a customer is the one that initiated the ride and if some from the drivers didn't took the ride, dispatcher can assign a 
     ride to some of free drivers. Dispatcher that initiated the ride is set to the dispatcher that processed the last ride.
-- Driver has a possibility to change the status of the ride, for which he is assigned to, to *Failed* or *Succeed* status.
+- Driver has a possibility to change the status of the ride, for which he is assigned to, to *Failed* or *Successful* status.
   - If the driver changes the ride status to *Failed*, data for *Destination* and *Price* are not entered. When ride status is
     changed to *Failed*, the driver has to post a comment. Basic data about the ride can't be altered after that ride comes in
     this status.
-  -If the driver changes the status of the ride to *Succeed*, data about the *Destination* and *Price* of the ride are entered.
+  -If the driver changes the status of the ride to *Successful*, data about the *Destination* and *Price* of the ride are entered.
    If for a ride there is a defined customer, when the ride ends customer can post a comment about the ride. Basic data about 
    the ride can't be altered after that ride comes in this status.
 - While displaying the ride, next to the allowed that, a comment is also displayed on which you can see te username, comment 
