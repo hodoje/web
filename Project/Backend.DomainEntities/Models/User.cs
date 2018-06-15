@@ -9,7 +9,7 @@ using DomainEntities.EnumDatabaseModels;
 
 namespace DomainEntities.Models
 {
-    public class User
+    public abstract class User
     {
         [Key]
         public int Id { get; set; }
