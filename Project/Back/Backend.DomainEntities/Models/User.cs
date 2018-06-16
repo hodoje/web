@@ -21,6 +21,7 @@ namespace DomainEntities.Models
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
+        [Required]
         public int GenderId { get; set; }
         [ForeignKey("GenderId")]
         public virtual Gender Gender { get; set; }
@@ -32,6 +33,7 @@ namespace DomainEntities.Models
         public string Email { get; set; }
         [Required]
         public bool IsBanned { get; set; }
+        [Required]
         public int RoleId { get; set; }
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }

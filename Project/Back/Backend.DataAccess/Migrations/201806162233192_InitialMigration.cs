@@ -30,7 +30,7 @@ namespace Backend.DataAccess.Migrations
                         CarTypeId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: true)                              // Don't delete a car type if a car is deleted
+                .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
                 .ForeignKey("dbo.Users", t => t.Id)
                 .Index(t => t.Id)
                 .Index(t => t.CarTypeId);
@@ -61,13 +61,13 @@ namespace Backend.DataAccess.Migrations
                         RideStatusId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)                             // Don't delete a car type if a ride is deleted
-                .ForeignKey("dbo.Users", t => t.CustomerId, cascadeDelete: false)                               // Don't delete a customer if a ride is deleted
-                .ForeignKey("dbo.Users", t => t.DispatcherId, cascadeDelete: false)                             // Don't delete a dispatcher if a ride is deleted
-                .ForeignKey("dbo.Users", t => t.DriverId, cascadeDelete: false)                                 // Don't delete a driver if a ride is deleted
-                .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)                // Don't delete a location if a ride is deleted
-                .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)                      // Don't delete a location if a ride is deleted
-                .ForeignKey("dbo.RideStatus", t => t.RideStatusId, cascadeDelete: false)                        // Don't delete a ride status if a ride is deleted
+                .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
+                .ForeignKey("dbo.Users", t => t.CustomerId, cascadeDelete: false)
+                .ForeignKey("dbo.Users", t => t.DispatcherId, cascadeDelete: false)
+                .ForeignKey("dbo.Users", t => t.DriverId, cascadeDelete: false)
+                .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)
+                .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)
+                .ForeignKey("dbo.RideStatus", t => t.RideStatusId, cascadeDelete: false)
                 .Index(t => t.StartLocationId)
                 .Index(t => t.CarTypeId)
                 .Index(t => t.CustomerId)
@@ -88,7 +88,7 @@ namespace Backend.DataAccess.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Rides", t => t.Id)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: false)                                  // Don't delete a user if a comment is deleted
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: false)
                 .Index(t => t.Id)
                 .Index(t => t.UserId);
             
@@ -112,9 +112,9 @@ namespace Backend.DataAccess.Migrations
                         Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Genders", t => t.GenderId, cascadeDelete: false)                             // Don't delete a gender if a user is deleted
-                .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: false)                                 // Don't delete a role if a user is deleted
-                .ForeignKey("dbo.Locations", t => t.DriverLocationId, cascadeDelete: false)                   // Don't delete a location if a user is deleted
+                .ForeignKey("dbo.Genders", t => t.GenderId, cascadeDelete: false)
+                .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: false)
+                .ForeignKey("dbo.Locations", t => t.DriverLocationId, cascadeDelete: false)
                 .Index(t => t.GenderId)
                 .Index(t => t.RoleId)
                 .Index(t => t.DriverLocationId);

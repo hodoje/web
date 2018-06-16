@@ -10,9 +10,11 @@ namespace DomainEntities.Models
 {
     public class Driver : User
     {
+        [Required]
         public int DriverLocationId { get; set; }
         [ForeignKey("DriverLocationId")]
         public virtual Location DriverLocation { get; set; }
+        [Required]
         public int CarId { get; set; }
         [ForeignKey("CarId")]
         public virtual Car Car { get; set; }

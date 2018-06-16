@@ -16,14 +16,15 @@ namespace DomainEntities.Models
         public double CoordinateX { get; set; }
         [Required]
         public double CoordinateY { get; set; }
+        [Required]
         public int AddressId { get; set; }
         [ForeignKey("AddressId")]
         public virtual Address Address { get; set; }
         [InverseProperty("DriverLocation")]
-        public virtual ICollection<Driver> DriverLocations { get; set; }
+        public virtual ICollection<Driver> Drivers { get; set; }
         [InverseProperty("StartLocation")]
-        public virtual ICollection<Ride> RideStart { get; set; }
+        public virtual ICollection<Ride> RideStarts { get; set; }
         [InverseProperty("DestinationLocation")]
-        public virtual ICollection<Ride> RideDestination { get; set; }
+        public virtual ICollection<Ride> RideDestinations { get; set; }
     }
 }

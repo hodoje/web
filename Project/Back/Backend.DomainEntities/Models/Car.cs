@@ -20,6 +20,7 @@ namespace DomainEntities.Models
         public string RegistrationNumber { get; set; }
         [Required]
         public string TaxiNumber { get; set; }
+        [Required]
         public int CarTypeId { get; set; }
         [ForeignKey("CarTypeId")]
         public virtual CarType CarType { get; set; }

@@ -82,9 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseContext.cs" />
-    <Compile Include="Migrations\201806161725421_InitialMigration.cs" />
-    <Compile Include="Migrations\201806161725421_InitialMigration.Designer.cs">
-      <DependentUpon>201806161725421_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201806162233192_InitialMigration.cs" />
+    <Compile Include="Migrations\201806162233192_InitialMigration.Designer.cs">
+      <DependentUpon>201806162233192_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelRepositories\AddressRepository.cs" />
@@ -122,8 +122,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806161725421_InitialMigration.resx">
-      <DependentUpon>201806161725421_InitialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806162233192_InitialMigration.resx">
+      <DependentUpon>201806162233192_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
