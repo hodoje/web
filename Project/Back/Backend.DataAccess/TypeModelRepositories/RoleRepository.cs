@@ -12,7 +12,7 @@ namespace Backend.DataAccess.TypeModelRepositories
 {
     public class RoleRepository : Repository<Role, int>, IRoleRepository
     {
-        public DatabaseContext DatabaseContext
+        protected DatabaseContext DatabaseContext
         {
             get { return _context as DatabaseContext; }
         }

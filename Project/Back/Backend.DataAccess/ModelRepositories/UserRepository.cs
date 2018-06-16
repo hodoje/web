@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace Backend.DataAccess.ModelRepositories
 {
     public class UserRepository : Repository<User, int>, IUserRepository
     {
-        public DatabaseContext DatabaseContext
+        protected DatabaseContext DatabaseContext
         {
             get { return _context as DatabaseContext; }
         }
 
-        public UserRepository(DatabaseContext context) : base(context) { }
+        public UserRepository(DbContext context) : base(context) { }
     }
 }

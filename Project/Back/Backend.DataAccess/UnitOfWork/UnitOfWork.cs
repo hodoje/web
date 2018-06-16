@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.DataAccess.ModelRepositories;
@@ -12,26 +14,13 @@ namespace Backend.DataAccess.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DatabaseContext _context;
+        private readonly DbContext _context;
 
         public UnitOfWork() { }
 
-        public UnitOfWork(DatabaseContext context)
+        public UnitOfWork(DbContext context)
         {
             _context = context;
-
-            AddressRepository = new AddressRepository(_context);
-            CarRepository = new CarRepository(_context);
-            CommentRepository = new CommentRepository(_context);
-            LocationRepository = new LocationRepository(_context);
-            RideRepository = new RideRepository(_context);
-            UserRepository = new UserRepository(_context);
-
-            CarTypeRepository = new CarTypeRepository(_context);
-            GenderRepository = new GenderRepository(_context);
-            RideStatusRepository = new RideStatusRepository(_context);
-            RoleRepository = new RoleRepository(_context);
-
         }
 
         // Model repositories

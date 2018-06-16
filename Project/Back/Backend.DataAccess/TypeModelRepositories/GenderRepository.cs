@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace Backend.DataAccess.TypeModelRepositories
 {
     public class GenderRepository : Repository<Gender, int>, IGenderRepository
     {
-        public DatabaseContext DatabaseContext
+        protected DatabaseContext DatabaseContext
         {
             get { return _context as DatabaseContext; }
         }
 
-        public GenderRepository(DatabaseContext context) : base(context) { }
+        public GenderRepository(DbContext context) : base(context) { }
     }
 }
