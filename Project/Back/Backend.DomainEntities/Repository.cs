@@ -23,19 +23,8 @@ namespace DomainEntities
         {
             T tEntity = null;
             if (id != null)
-            {
-                try
-                {
-                    tEntity = _entities.Find(id);
-                }
-                catch (InvalidOperationException)
-                {
-                    throw;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            {                
+                tEntity = _entities.Find(id);
             }
             return tEntity;
         }
@@ -58,12 +47,9 @@ namespace DomainEntities
         public T Add(T entity)
         {
             if (entity != null)
-            {
-                if (_entities.FirstOrDefault(x => x.Equals(entity)) == null)
-                {
-                    _entities.Add(entity);
-                    return entity;
-                }
+            {                
+                 _entities.Add(entity);
+                 return entity;
             }
             return entity;
         }

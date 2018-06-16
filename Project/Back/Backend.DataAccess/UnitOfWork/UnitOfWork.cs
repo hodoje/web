@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.DataAccess.ModelRepositories;
 using Backend.DataAccess.ModelRepositoryInterfaces;
 using Backend.DataAccess.TypeModelRepositories;
 using Backend.DataAccess.TypeModelRepositoryInterface;
+using Unity.Attributes;
 
 namespace Backend.DataAccess.UnitOfWork
 {
@@ -24,18 +24,28 @@ namespace Backend.DataAccess.UnitOfWork
         }
 
         // Model repositories
-        public virtual IAddressRepository AddressRepository { get; private set; }
-        public virtual ICarRepository CarRepository { get; private set; }
-        public virtual ICommentRepository CommentRepository { get; private set; }
-        public virtual ILocationRepository LocationRepository { get; private set; }
-        public virtual IRideRepository RideRepository { get; private set; }
-        public virtual IUserRepository UserRepository { get; private set; }
+        [Dependency]
+        public virtual IAddressRepository AddressRepository { get; set; }
+        [Dependency]
+        public virtual ICarRepository CarRepository { get; set; }
+        [Dependency]
+        public virtual ICommentRepository CommentRepository { get; set; }
+        [Dependency]
+        public virtual ILocationRepository LocationRepository { get; set; }
+        [Dependency]
+        public virtual IRideRepository RideRepository { get; set; }
+        [Dependency]
+        public virtual IUserRepository UserRepository { get; set; }
 
         // TypeModel repositories
-        public virtual ICarTypeRepository CarTypeRepository { get; private set; }
-        public virtual IGenderRepository GenderRepository { get; private set; }
-        public virtual IRideStatusRepository RideStatusRepository { get; private set; }
-        public virtual IRoleRepository RoleRepository { get; private set; }
+        [Dependency]
+        public virtual ICarTypeRepository CarTypeRepository { get; set; }
+        [Dependency]
+        public virtual IGenderRepository GenderRepository { get; set; }
+        [Dependency]
+        public virtual IRideStatusRepository RideStatusRepository { get; set; }
+        [Dependency]
+        public virtual IRoleRepository RoleRepository { get; set; }
 
         public virtual int Complete()
         {
