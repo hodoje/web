@@ -11,21 +11,17 @@ namespace DomainEntities.Models
 {
     public class Car
     {
-        [Key]
+        [Key, ForeignKey("Driver")]
         public int Id { get; set; }
-        [Required]
-        public int DriverId { get; set; }
-        [ForeignKey("DriverId")]
-        public Driver Driver { get; set; }
+        public virtual Driver Driver { get; set; }
         [Required]
         public int YearOfManufactoring { get; set; }
         [Required]
         public string RegistrationNumber { get; set; }
         [Required]
         public string TaxiNumber { get; set; }
-        [Required]
         public int CarTypeId { get; set; }
         [ForeignKey("CarTypeId")]
-        public CarType CarType { get; set; }
+        public virtual CarType CarType { get; set; }
     }
 }

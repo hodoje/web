@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DomainEntities.Models
 {
-    public abstract class Location
+    public class Location
     {
         [Key]
         public int Id { get; set; }
@@ -16,9 +16,14 @@ namespace DomainEntities.Models
         public double CoordinateX { get; set; }
         [Required]
         public double CoordinateY { get; set; }
-        [Required]
         public int AddressId { get; set; }
         [ForeignKey("AddressId")]
-        public Address Address { get; set; }
+        public virtual Address Address { get; set; }
+        [InverseProperty("DriverLocation")]
+        public virtual ICollection<Driver> DriverLocations { get; set; }
+        [InverseProperty("StartLocation")]
+        public virtual ICollection<Ride> RideStart { get; set; }
+        [InverseProperty("DestinationLocation")]
+        public virtual ICollection<Ride> RideDestination { get; set; }
     }
 }

@@ -10,21 +10,19 @@ namespace DomainEntities.Models
 {
     public class Comment
     {
-        [Key]
+        [Key, ForeignKey("Ride")]
         public int Id { get; set; }
         [Required]
         public string Description { get; set; }
         [Column(TypeName = "datetime2")]
         [Required]
         public DateTime Timestamp { get; set; }
-        [Required]
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public User User { get; set; }
-        [Required]
-        public int RideId { get; set; }
-        [ForeignKey("RideId")]
-        public Ride Ride { get; set; }
+        public virtual User User { get; set; }
+        //public int RideId { get; set; }
+        //[ForeignKey("RideId")]
+        public virtual Ride Ride { get; set; }
         [Range(0, 5)]
         [Required]
         public int Rating { get; set; }

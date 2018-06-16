@@ -21,10 +21,9 @@ namespace DomainEntities.Models
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
-        [Required]
-        public virtual string GenderId { get; set; }
+        public int GenderId { get; set; }
         [ForeignKey("GenderId")]
-        public Gender Gender { get; set; }
+        public virtual Gender Gender { get; set; }
         [Required]
         public string NationalIdentificationNumber { get; set; }
         [Required]
@@ -32,9 +31,16 @@ namespace DomainEntities.Models
         [Required]
         public string Email { get; set; }
         [Required]
-        public virtual string RoleId { get; set; }
+        public bool IsBanned { get; set; }
+        public int RoleId { get; set; }
         [ForeignKey("RoleId")]
-        public Role Role { get; set; }
-        public virtual ICollection<Ride> Rides { get; set; }
+        public virtual Role Role { get; set; }
+        [InverseProperty("Customer")]
+        public virtual ICollection<Ride> CustomerRides { get; set; }
+        [InverseProperty("Dispatcher")]
+        public virtual ICollection<Ride> DispatcherRides { get; set; }
+        [InverseProperty("Driver")]
+        public virtual ICollection<Ride> DriverRides { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

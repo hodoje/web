@@ -13,7 +13,7 @@ namespace Backend.DataAccess
     {
         public DatabaseContext()
         {
-            
+            Configuration.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<User> Users { get; set; }
