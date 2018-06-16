@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.DomainEntities", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.DataAccess", "Backend.DataAccess\Backend.DataAccess.csproj", "{5CCB76DC-D510-455E-944B-D7EA3FA502D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.FileReader", "Backend.FileReader\Backend.FileReader.csproj", "{6CC81A07-5F1C-4B23-8541-B05275960ECF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5CCB76DC-D510-455E-944B-D7EA3FA502D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CCB76DC-D510-455E-944B-D7EA3FA502D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CCB76DC-D510-455E-944B-D7EA3FA502D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CC81A07-5F1C-4B23-8541-B05275960ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC81A07-5F1C-4B23-8541-B05275960ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC81A07-5F1C-4B23-8541-B05275960ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC81A07-5F1C-4B23-8541-B05275960ECF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
