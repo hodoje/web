@@ -11,7 +11,7 @@ namespace DomainEntities
     public class Repository<T,V> : IRepository<T,V> where T : class
     {
         protected readonly DbContext _context;
-        private DbSet<T> _entities;
+        protected DbSet<T> _entities;
 
         public Repository(DbContext context)
         {
