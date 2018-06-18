@@ -8,7 +8,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DomainEntities.EnumDatabaseModels;
 
 namespace DomainEntities.Models
 {
@@ -24,10 +23,8 @@ namespace DomainEntities.Models
         [ForeignKey("StartLocationId")]        
         public virtual Location StartLocation { get; set; }
         [Required]
-        public int CarTypeId { get; set; }
-        [ForeignKey("CarTypeId")]
-        [DefaultValue("Putnicki")]
-        public virtual CarType CarType { get; set; }
+        [DefaultValue(1)]
+        public int CarType { get; set; }
         [Required]
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
@@ -48,8 +45,6 @@ namespace DomainEntities.Models
         [ForeignKey("CommentId")]
         public virtual Comment Comment { get; set; }
         [Required]
-        public int RideStatusId { get; set; }
-        [ForeignKey("RideStatusId")]
-        public virtual RideStatus RideStatus { get; set; }
+        public int RideStatus { get; set; }
     }
 }

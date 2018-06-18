@@ -82,9 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseContext.cs" />
-    <Compile Include="Migrations\201806162233192_InitialMigration.cs" />
-    <Compile Include="Migrations\201806162233192_InitialMigration.Designer.cs">
-      <DependentUpon>201806162233192_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201806182118169_InitialMigration.cs" />
+    <Compile Include="Migrations\201806182118169_InitialMigration.Designer.cs">
+      <DependentUpon>201806182118169_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelRepositories\AddressRepository.cs" />
@@ -100,14 +100,6 @@
     <Compile Include="ModelRepositoryInterfaces\IRideRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\IUserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeModelRepositories\CarTypeRepository.cs" />
-    <Compile Include="TypeModelRepositories\GenderRepository.cs" />
-    <Compile Include="TypeModelRepositories\RideStatusRepository.cs" />
-    <Compile Include="TypeModelRepositories\RoleRepository.cs" />
-    <Compile Include="TypeModelRepositoryInterfaces\ICarTypeRepository.cs" />
-    <Compile Include="TypeModelRepositoryInterfaces\IGenderRepository.cs" />
-    <Compile Include="TypeModelRepositoryInterfaces\IRideStatusRepository.cs" />
-    <Compile Include="TypeModelRepositoryInterfaces\IRoleRepository.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="UnitOfWork\UnitOfWork.cs" />
   </ItemGroup>
@@ -122,8 +114,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806162233192_InitialMigration.resx">
-      <DependentUpon>201806162233192_InitialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806182118169_InitialMigration.resx">
+      <DependentUpon>201806182118169_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

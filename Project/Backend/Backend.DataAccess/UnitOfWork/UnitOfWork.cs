@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Backend.DataAccess.ModelRepositories;
 using Backend.DataAccess.ModelRepositoryInterfaces;
-using Backend.DataAccess.TypeModelRepositories;
-using Backend.DataAccess.TypeModelRepositoryInterface;
 using Unity.Attributes;
 
 namespace Backend.DataAccess.UnitOfWork
@@ -36,16 +34,6 @@ namespace Backend.DataAccess.UnitOfWork
         public virtual IRideRepository RideRepository { get; set; }
         [Dependency]
         public virtual IUserRepository UserRepository { get; set; }
-
-        // TypeModel repositories
-        [Dependency]
-        public virtual ICarTypeRepository CarTypeRepository { get; set; }
-        [Dependency]
-        public virtual IGenderRepository GenderRepository { get; set; }
-        [Dependency]
-        public virtual IRideStatusRepository RideStatusRepository { get; set; }
-        [Dependency]
-        public virtual IRoleRepository RoleRepository { get; set; }
 
         public virtual int Complete()
         {

@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DomainEntities.EnumDatabaseModels;
 
 namespace DomainEntities.Models
 {
@@ -21,8 +20,6 @@ namespace DomainEntities.Models
         [Required]
         public string TaxiNumber { get; set; }
         [Required]
-        public int CarTypeId { get; set; }
-        [ForeignKey("CarTypeId")]
-        public virtual CarType CarType { get; set; }
+        public int CarType { get; set; }
     }
 }

@@ -47,10 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TypeModels\CarType.cs" />
-    <Compile Include="TypeModels\Gender.cs" />
-    <Compile Include="TypeModels\Role.cs" />
-    <Compile Include="TypeModels\RideStatus.cs" />
+    <Compile Include="Enums\CarType.cs" />
+    <Compile Include="Enums\Gender.cs" />
+    <Compile Include="Enums\RideStatus.cs" />
+    <Compile Include="Enums\Role.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Car.cs" />

@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DomainEntities.EnumDatabaseModels;
 using DomainEntities.Models;
 
 namespace Backend.DataAccess
@@ -22,9 +21,5 @@ namespace Backend.DataAccess
         public virtual DbSet<Car> Cars { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Ride> Rides { get; set; }
-        public virtual DbSet<CarType> CarTypes { get; set; }
-        public virtual DbSet<Gender> Genders { get; set; }
-        public virtual DbSet<RideStatus> RideStatuses { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
     }
 }

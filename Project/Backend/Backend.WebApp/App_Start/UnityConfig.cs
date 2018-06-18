@@ -3,8 +3,6 @@ using System.Web.Http;
 using Backend.DataAccess;
 using Backend.DataAccess.ModelRepositories;
 using Backend.DataAccess.ModelRepositoryInterfaces;
-using Backend.DataAccess.TypeModelRepositories;
-using Backend.DataAccess.TypeModelRepositoryInterface;
 using Backend.DataAccess.UnitOfWork;
 using Unity;
 using Unity.Lifetime;
@@ -31,11 +29,6 @@ namespace Backend
             container.RegisterType<ILocationRepository, LocationRepository>();
             container.RegisterType<IRideRepository, RideRepository>();
             container.RegisterType<IUserRepository, UserRepository>();
-
-            container.RegisterType<ICarTypeRepository, CarTypeRepository>();
-            container.RegisterType<IGenderRepository, GenderRepository>();
-            container.RegisterType<IRideStatusRepository, RideStatusRepository>();
-            container.RegisterType<IRoleRepository, RoleRepository>();
 
             container.RegisterType<IUnitOfWork, UnitOfWork>();
 

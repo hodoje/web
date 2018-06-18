@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.DataAccess.ModelRepositoryInterfaces;
-using Backend.DataAccess.TypeModelRepositoryInterface;
 
 namespace Backend.DataAccess.UnitOfWork
 {
@@ -18,11 +17,6 @@ namespace Backend.DataAccess.UnitOfWork
         IRideRepository RideRepository { get; }        
         IUserRepository UserRepository { get; }
 
-        // TypeModel repositories        
-        ICarTypeRepository CarTypeRepository { get; }        
-        IGenderRepository GenderRepository { get; }        
-        IRideStatusRepository RideStatusRepository { get; }
-        IRoleRepository RoleRepository { get; }
         int Complete();
     }
 }

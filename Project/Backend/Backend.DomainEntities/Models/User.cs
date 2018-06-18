@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DomainEntities.EnumDatabaseModels;
 
 namespace DomainEntities.Models
 {
@@ -30,21 +29,17 @@ namespace DomainEntities.Models
         [Required]
         public string Lastname { get; set; }
         [Required]
-        public int GenderId { get; set; }
-        [ForeignKey("GenderId")]
-        public virtual Gender Gender { get; set; }
-        [Required]
+        public int Gender { get; set; }
+        //[Required]
         public string NationalIdentificationNumber { get; set; }
-        [Required]
+        //[Required]
         public string PhoneNumber { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
         public bool IsBanned { get; set; }
         [Required]
-        public int RoleId { get; set; }
-        [ForeignKey("RoleId")]
-        public virtual Role Role { get; set; }
+        public int Role { get; set; }
         [InverseProperty("Customer")]
         public virtual ICollection<Ride> CustomerRides { get; set; }
         [InverseProperty("Dispatcher")]
