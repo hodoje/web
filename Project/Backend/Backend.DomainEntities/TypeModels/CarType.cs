@@ -19,7 +19,7 @@ namespace DomainEntities.EnumDatabaseModels
         [Key]
         public int Id { get; set; }
         [Required]
-        public string TypeName { get; set; }
+        public string Name { get; set; }
         public virtual ICollection<Car> Cars { get; set; }
         public virtual ICollection<Ride> Rides { get; set; }
     }
