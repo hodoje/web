@@ -11,6 +11,14 @@ namespace DomainEntities.Models
 {
     public abstract class User
     {
+        public User()
+        {
+            CustomerRides = new HashSet<Ride>();
+            DispatcherRides = new HashSet<Ride>();
+            DriverRides = new List<Ride>();
+            Comments = new HashSet<Comment>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]

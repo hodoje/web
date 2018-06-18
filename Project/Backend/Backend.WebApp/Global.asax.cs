@@ -13,6 +13,13 @@ namespace Backend
         {
             UnityConfig.RegisterComponents();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            // Disable circular references for json formatter
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings
+                .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            // Remove xml formatter
+            GlobalConfiguration.Configuration.Formatters
+                .Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
         }
     }
 }

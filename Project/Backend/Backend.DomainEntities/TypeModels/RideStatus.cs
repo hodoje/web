@@ -10,6 +10,11 @@ namespace DomainEntities.EnumDatabaseModels
 {
     public class RideStatus
     {
+        public RideStatus()
+        {
+            Rides = new HashSet<Ride>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]

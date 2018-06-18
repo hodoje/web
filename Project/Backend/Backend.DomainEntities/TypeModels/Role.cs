@@ -10,6 +10,11 @@ namespace DomainEntities.EnumDatabaseModels
 {
     public class Role
     {
+        public Role()
+        {
+            Users = new HashSet<User>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]

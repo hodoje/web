@@ -10,6 +10,13 @@ namespace DomainEntities.Models
 {
     public class Location
     {
+        public Location()
+        {
+            Drivers = new HashSet<Driver>();
+            RideStarts = new HashSet<Ride>();
+            RideDestinations = new HashSet<Ride>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]

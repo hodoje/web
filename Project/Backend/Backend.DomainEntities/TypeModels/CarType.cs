@@ -10,6 +10,12 @@ namespace DomainEntities.EnumDatabaseModels
 {
     public class CarType
     {
+        public CarType()
+        {
+            Cars = new HashSet<Car>();
+            Rides = new HashSet<Ride>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]

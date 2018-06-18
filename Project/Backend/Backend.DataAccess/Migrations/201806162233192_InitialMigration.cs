@@ -7,59 +7,210 @@ namespace Backend.DataAccess.Migrations
     {
         public override void Up()
         {
+            //CreateTable(
+            //    "dbo.Addresses",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            StreetName = c.String(nullable: false),
+            //            StreetNumber = c.String(nullable: false),
+            //            City = c.String(nullable: false),
+            //            PostalCode = c.String(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id);
+
+            //CreateTable(
+            //    "dbo.Cars",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false),
+            //            YearOfManufactoring = c.Int(nullable: false),
+            //            RegistrationNumber = c.String(nullable: false),
+            //            TaxiNumber = c.String(nullable: false),
+            //            CarTypeId = c.Int(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id)
+            //    .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Users", t => t.Id)
+            //    .Index(t => t.Id)
+            //    .Index(t => t.CarTypeId);
+
+            //CreateTable(
+            //    "dbo.CarTypes",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            TypeName = c.String(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id);
+
+            //CreateTable(
+            //    "dbo.Rides",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+            //            StartLocationId = c.Int(nullable: false),
+            //            CarTypeId = c.Int(nullable: false),
+            //            CustomerId = c.Int(nullable: false),
+            //            DestinationLocationId = c.Int(nullable: false),
+            //            DispatcherId = c.Int(nullable: false),
+            //            DriverId = c.Int(nullable: false),
+            //            Price = c.Double(nullable: false),
+            //            CommentId = c.Int(nullable: false),
+            //            RideStatusId = c.Int(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id)
+            //    .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Users", t => t.CustomerId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Users", t => t.DispatcherId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Users", t => t.DriverId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)
+            //    .ForeignKey("dbo.RideStatus", t => t.RideStatusId, cascadeDelete: false)
+            //    .Index(t => t.StartLocationId)
+            //    .Index(t => t.CarTypeId)
+            //    .Index(t => t.CustomerId)
+            //    .Index(t => t.DestinationLocationId)
+            //    .Index(t => t.DispatcherId)
+            //    .Index(t => t.DriverId)
+            //    .Index(t => t.RideStatusId);
+
+            //CreateTable(
+            //    "dbo.Comments",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false),
+            //            Description = c.String(nullable: false),
+            //            Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+            //            UserId = c.Int(nullable: false),
+            //            Rating = c.Int(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id)
+            //    .ForeignKey("dbo.Rides", t => t.Id)
+            //    .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: false)
+            //    .Index(t => t.Id)
+            //    .Index(t => t.UserId);
+
+            //CreateTable(
+            //    "dbo.Users",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            Username = c.String(nullable: false),
+            //            Password = c.String(nullable: false),
+            //            Name = c.String(nullable: false),
+            //            Lastname = c.String(nullable: false),
+            //            GenderId = c.Int(nullable: false),
+            //            NationalIdentificationNumber = c.String(nullable: false),
+            //            PhoneNumber = c.String(nullable: false),
+            //            Email = c.String(nullable: false),
+            //            IsBanned = c.Boolean(nullable: false),
+            //            RoleId = c.Int(nullable: false),
+            //            DriverLocationId = c.Int(),
+            //            CarId = c.Int(),
+            //            Discriminator = c.String(nullable: false, maxLength: 128),
+            //        })
+            //    .PrimaryKey(t => t.Id)
+            //    .ForeignKey("dbo.Genders", t => t.GenderId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: false)
+            //    .ForeignKey("dbo.Locations", t => t.DriverLocationId, cascadeDelete: false)
+            //    .Index(t => t.GenderId)
+            //    .Index(t => t.RoleId)
+            //    .Index(t => t.DriverLocationId);
+
+            //CreateTable(
+            //    "dbo.Genders",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            GenderName = c.String(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id);
+
+            //CreateTable(
+            //    "dbo.Roles",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            RoleName = c.String(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id);
+
+            //CreateTable(
+            //    "dbo.Locations",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            CoordinateX = c.Double(nullable: false),
+            //            CoordinateY = c.Double(nullable: false),
+            //            AddressId = c.Int(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id)
+            //    .ForeignKey("dbo.Addresses", t => t.AddressId, cascadeDelete: true)
+            //    .Index(t => t.AddressId);
+
+            //CreateTable(
+            //    "dbo.RideStatus",
+            //    c => new
+            //        {
+            //            Id = c.Int(nullable: false, identity: true),
+            //            StatusName = c.String(nullable: false),
+            //        })
+            //    .PrimaryKey(t => t.Id);
             CreateTable(
                 "dbo.Addresses",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        StreetName = c.String(nullable: false),
-                        StreetNumber = c.String(nullable: false),
-                        City = c.String(nullable: false),
-                        PostalCode = c.String(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    StreetName = c.String(nullable: true),
+                    StreetNumber = c.String(nullable: true),
+                    City = c.String(nullable: true),
+                    PostalCode = c.String(nullable: true),
+                })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
                 "dbo.Cars",
                 c => new
-                    {
-                        Id = c.Int(nullable: false),
-                        YearOfManufactoring = c.Int(nullable: false),
-                        RegistrationNumber = c.String(nullable: false),
-                        TaxiNumber = c.String(nullable: false),
-                        CarTypeId = c.Int(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true),
+                    YearOfManufactoring = c.Int(nullable: true),
+                    RegistrationNumber = c.String(nullable: true),
+                    TaxiNumber = c.String(nullable: true),
+                    CarTypeId = c.Int(nullable: true),
+                })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
                 .ForeignKey("dbo.Users", t => t.Id)
                 .Index(t => t.Id)
                 .Index(t => t.CarTypeId);
-            
+
             CreateTable(
                 "dbo.CarTypes",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        TypeName = c.String(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    TypeName = c.String(nullable: true),
+                })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
                 "dbo.Rides",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                        StartLocationId = c.Int(nullable: false),
-                        CarTypeId = c.Int(nullable: false),
-                        CustomerId = c.Int(nullable: false),
-                        DestinationLocationId = c.Int(nullable: false),
-                        DispatcherId = c.Int(nullable: false),
-                        DriverId = c.Int(nullable: false),
-                        Price = c.Double(nullable: false),
-                        CommentId = c.Int(nullable: false),
-                        RideStatusId = c.Int(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    Timestamp = c.DateTime(nullable: true, precision: 7, storeType: "datetime2"),
+                    StartLocationId = c.Int(nullable: true),
+                    CarTypeId = c.Int(nullable: true),
+                    CustomerId = c.Int(nullable: true),
+                    DestinationLocationId = c.Int(nullable: true),
+                    DispatcherId = c.Int(nullable: true),
+                    DriverId = c.Int(nullable: true),
+                    Price = c.Double(nullable: true),
+                    CommentId = c.Int(nullable: true),
+                    RideStatusId = c.Int(nullable: true),
+                })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.CarTypes", t => t.CarTypeId, cascadeDelete: false)
                 .ForeignKey("dbo.Users", t => t.CustomerId, cascadeDelete: false)
@@ -75,42 +226,42 @@ namespace Backend.DataAccess.Migrations
                 .Index(t => t.DispatcherId)
                 .Index(t => t.DriverId)
                 .Index(t => t.RideStatusId);
-            
+
             CreateTable(
                 "dbo.Comments",
                 c => new
-                    {
-                        Id = c.Int(nullable: false),
-                        Description = c.String(nullable: false),
-                        Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                        UserId = c.Int(nullable: false),
-                        Rating = c.Int(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true),
+                    Description = c.String(nullable: true),
+                    Timestamp = c.DateTime(nullable: true, precision: 7, storeType: "datetime2"),
+                    UserId = c.Int(nullable: true),
+                    Rating = c.Int(nullable: true),
+                })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Rides", t => t.Id)
                 .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: false)
                 .Index(t => t.Id)
                 .Index(t => t.UserId);
-            
+
             CreateTable(
                 "dbo.Users",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Username = c.String(nullable: false),
-                        Password = c.String(nullable: false),
-                        Name = c.String(nullable: false),
-                        Lastname = c.String(nullable: false),
-                        GenderId = c.Int(nullable: false),
-                        NationalIdentificationNumber = c.String(nullable: false),
-                        PhoneNumber = c.String(nullable: false),
-                        Email = c.String(nullable: false),
-                        IsBanned = c.Boolean(nullable: false),
-                        RoleId = c.Int(nullable: false),
-                        DriverLocationId = c.Int(),
-                        CarId = c.Int(),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    Username = c.String(nullable: true),
+                    Password = c.String(nullable: true),
+                    Name = c.String(nullable: true),
+                    Lastname = c.String(nullable: true),
+                    GenderId = c.Int(nullable: true),
+                    NationalIdentificationNumber = c.String(nullable: true),
+                    PhoneNumber = c.String(nullable: true),
+                    Email = c.String(nullable: true),
+                    IsBanned = c.Boolean(nullable: true),
+                    RoleId = c.Int(nullable: true),
+                    DriverLocationId = c.Int(),
+                    CarId = c.Int(),
+                    Discriminator = c.String(nullable: true, maxLength: 128),
+                })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Genders", t => t.GenderId, cascadeDelete: false)
                 .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: false)
@@ -118,47 +269,46 @@ namespace Backend.DataAccess.Migrations
                 .Index(t => t.GenderId)
                 .Index(t => t.RoleId)
                 .Index(t => t.DriverLocationId);
-            
+
             CreateTable(
                 "dbo.Genders",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        GenderName = c.String(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    GenderName = c.String(nullable: true),
+                })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
                 "dbo.Roles",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        RoleName = c.String(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    RoleName = c.String(nullable: true),
+                })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
                 "dbo.Locations",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        CoordinateX = c.Double(nullable: false),
-                        CoordinateY = c.Double(nullable: false),
-                        AddressId = c.Int(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    CoordinateX = c.Double(nullable: true),
+                    CoordinateY = c.Double(nullable: true),
+                    AddressId = c.Int(nullable: true),
+                })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Addresses", t => t.AddressId, cascadeDelete: true)
                 .Index(t => t.AddressId);
-            
+
             CreateTable(
                 "dbo.RideStatus",
                 c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        StatusName = c.String(nullable: false),
-                    })
+                {
+                    Id = c.Int(nullable: true, identity: true),
+                    StatusName = c.String(nullable: true),
+                })
                 .PrimaryKey(t => t.Id);
-            
         }
         
         public override void Down()
