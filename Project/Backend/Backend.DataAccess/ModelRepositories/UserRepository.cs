@@ -18,5 +18,15 @@ namespace Backend.DataAccess.ModelRepositories
         }
 
         public UserRepository(DbContext context) : base(context) { }
+
+        public IEnumerable<User> GetAllIncludeAll()
+        {
+            return _entities.Include(u => u.Car).Include(u => u.DriverLocation);
+        }
+
+        public User GetByIdIncludeAll(int id)
+        {
+            return _entities.Where(u => u.Id == id).Include(u => u.Car).Include(u => u.DriverLocation).SingleOrDefault();
+        }
     }
 }

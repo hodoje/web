@@ -10,5 +10,7 @@ namespace Backend.DataAccess.ModelRepositoryInterfaces
 {
     public interface IUserRepository : IRepository<User, int>
     {
+        User GetByIdIncludeAll(int id);
+        IEnumerable<User> GetAllIncludeAll();
     }
 }
