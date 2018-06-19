@@ -13,11 +13,17 @@ namespace Backend.Dtos
         [Key]
         public int Id { get; set; }
         [Required]
+        public string StreetName { get; set; }
+        [Required]
+        public string StreetNumber { get; set; }
+        [Required]
+        public string City { get; set; }
+        [Required]
+        public string PostalCode { get; set; }
+        [Required]
         public double CoordinateX { get; set; }
         [Required]
         public double CoordinateY { get; set; }
-        [Required]
-        public AddressDto Address { get; set; }
         [InverseProperty("DriverLocation")]
         public virtual ICollection<User> Drivers { get; set; }
         [InverseProperty("StartLocation")]
