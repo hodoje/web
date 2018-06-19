@@ -28,18 +28,18 @@ namespace DomainEntities.Models
         [Required]
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
-        public virtual Customer Customer { get; set; }
+        public virtual User Customer { get; set; }
         [Required]
         public int DestinationLocationId { get; set; }
         [ForeignKey("DestinationLocationId")]        
         public virtual Location DestinationLocation { get; set; }
         public int DispatcherId { get; set; }
         [ForeignKey("DispatcherId")]        
-        public virtual Dispatcher Dispatcher { get; set; }
+        public virtual User Dispatcher { get; set; }
         [Required]
         public int DriverId { get; set; }
         [ForeignKey("DriverId")]
-        public virtual Driver Driver { get; set; }
+        public virtual User Driver { get; set; }
         public double Price { get; set; }
         public int CommentId { get; set; }
         [ForeignKey("CommentId")]

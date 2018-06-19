@@ -21,12 +21,12 @@ namespace Backend.Dtos
         [Required]
         public string CarType { get; set; }
         [Required]
-        public CustomerDto Customer { get; set; }
+        public UserDto Customer { get; set; }
         [Required]
         public LocationDto DestinationLocation { get; set; }
-        public DispatcherDto Dispatcher { get; set; }
+        public UserDto Dispatcher { get; set; }
         [Required]
-        public DriverDto Driver { get; set; }
+        public UserDto Driver { get; set; }
         public double Price { get; set; }
         public CommentDto Comment { get; set; }
         [Required]

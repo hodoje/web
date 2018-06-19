@@ -10,7 +10,6 @@ namespace Backend.DataAccess.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         // Model repositories        
-        IAddressRepository AddressRepository { get; }        
         ICarRepository CarRepository { get; }
         ICommentRepository CommentRepository { get; }        
         ILocationRepository LocationRepository { get; }

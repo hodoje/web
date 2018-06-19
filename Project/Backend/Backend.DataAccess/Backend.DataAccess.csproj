@@ -82,18 +82,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseContext.cs" />
-    <Compile Include="Migrations\201806182118169_InitialMigration.cs" />
-    <Compile Include="Migrations\201806182118169_InitialMigration.Designer.cs">
-      <DependentUpon>201806182118169_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201806192252320_InitialMigration.cs" />
+    <Compile Include="Migrations\201806192252320_InitialMigration.Designer.cs">
+      <DependentUpon>201806192252320_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="ModelRepositories\AddressRepository.cs" />
     <Compile Include="ModelRepositories\CarRepository.cs" />
     <Compile Include="ModelRepositories\CommentRepository.cs" />
     <Compile Include="ModelRepositories\LocationRepository.cs" />
     <Compile Include="ModelRepositories\RideRepository.cs" />
     <Compile Include="ModelRepositories\UserRepository.cs" />
-    <Compile Include="ModelRepositoryInterfaces\IAddressRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\ICarRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\ICommentRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\ILocationRepository.cs" />
@@ -114,8 +112,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806182118169_InitialMigration.resx">
-      <DependentUpon>201806182118169_InitialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806192252320_InitialMigration.resx">
+      <DependentUpon>201806192252320_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -17,7 +17,6 @@ namespace Backend.DataAccess
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
-        public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Car> Cars { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Ride> Rides { get; set; }

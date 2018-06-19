@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace DomainEntities.Models
 {
-    public abstract class User
+    // For simplicity we are using only one class model for our users that has all possible properties listed in assignment text
+    public class User
     {
         public User()
         {
@@ -30,9 +31,7 @@ namespace DomainEntities.Models
         public string Lastname { get; set; }
         [Required]
         public int Gender { get; set; }
-        //[Required]
         public string NationalIdentificationNumber { get; set; }
-        //[Required]
         public string PhoneNumber { get; set; }
         [Required]
         public string Email { get; set; }
@@ -47,5 +46,11 @@ namespace DomainEntities.Models
         [InverseProperty("Driver")]
         public virtual ICollection<Ride> DriverRides { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public int DriverLocationId { get; set; }
+        [ForeignKey("DriverLocationId")]
+        public virtual Location DriverLocation { get; set; }
+        public int CarId { get; set; }
+        [ForeignKey("CarId")]
+        public virtual Car Car { get; set; }
     }
 }

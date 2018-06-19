@@ -19,7 +19,7 @@ namespace Backend.Dtos
         [Required]
         public AddressDto Address { get; set; }
         [InverseProperty("DriverLocation")]
-        public virtual ICollection<Driver> Drivers { get; set; }
+        public virtual ICollection<User> Drivers { get; set; }
         [InverseProperty("StartLocation")]
         public virtual ICollection<Ride> RideStarts { get; set; }
         [InverseProperty("DestinationLocation")]

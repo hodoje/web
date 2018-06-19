@@ -13,7 +13,7 @@ namespace Backend.App_Start.MappingProfiles
         public UserMappingProfile()
         {
             // Using Driver because that class is a superset of User and includes all possible properties
-            CreateMap<Driver, UserDto>()
+            CreateMap<User, UserDto>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source => ((Gender) source.Gender).ToString()))
                 .ForMember(destination => destination.Role,
@@ -22,7 +22,7 @@ namespace Backend.App_Start.MappingProfiles
                     opts => opts.MapFrom(source => source.Car))
                 .ForMember(destination => destination.DriverLocation,
                     opts => opts.MapFrom(source => source.DriverLocation));
-            CreateMap<UserDto, Driver>()
+            CreateMap<UserDto, User>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source =>
                         Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))

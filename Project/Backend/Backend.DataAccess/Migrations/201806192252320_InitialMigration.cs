@@ -8,18 +8,6 @@ namespace Backend.DataAccess.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.Addresses",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        StreetName = c.String(nullable: false),
-                        StreetNumber = c.String(nullable: false),
-                        City = c.String(nullable: false),
-                        PostalCode = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
                 "dbo.Cars",
                 c => new
                     {
@@ -48,9 +36,8 @@ namespace Backend.DataAccess.Migrations
                         Email = c.String(nullable: false),
                         IsBanned = c.Boolean(nullable: false),
                         Role = c.Int(nullable: false),
-                        DriverLocationId = c.Int(),
-                        CarId = c.Int(),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
+                        DriverLocationId = c.Int(nullable: false),
+                        CarId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Locations", t => t.DriverLocationId, cascadeDelete: false)
@@ -105,13 +92,14 @@ namespace Backend.DataAccess.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        StreetName = c.String(nullable: false),
+                        StreetNumber = c.String(nullable: false),
+                        City = c.String(nullable: false),
+                        PostalCode = c.String(nullable: false),
                         CoordinateX = c.Double(nullable: false),
                         CoordinateY = c.Double(nullable: false),
-                        AddressId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Addresses", t => t.AddressId, cascadeDelete: true)
-                .Index(t => t.AddressId);
+                .PrimaryKey(t => t.Id);
             
         }
         
@@ -126,8 +114,6 @@ namespace Backend.DataAccess.Migrations
             DropForeignKey("dbo.Rides", "StartLocationId", "dbo.Locations");
             DropForeignKey("dbo.Rides", "DestinationLocationId", "dbo.Locations");
             DropForeignKey("dbo.Users", "DriverLocationId", "dbo.Locations");
-            DropForeignKey("dbo.Locations", "AddressId", "dbo.Addresses");
-            DropIndex("dbo.Locations", new[] { "AddressId" });
             DropIndex("dbo.Rides", new[] { "DriverId" });
             DropIndex("dbo.Rides", new[] { "DispatcherId" });
             DropIndex("dbo.Rides", new[] { "DestinationLocationId" });
@@ -142,7 +128,6 @@ namespace Backend.DataAccess.Migrations
             DropTable("dbo.Comments");
             DropTable("dbo.Users");
             DropTable("dbo.Cars");
-            DropTable("dbo.Addresses");
         }
     }
 }

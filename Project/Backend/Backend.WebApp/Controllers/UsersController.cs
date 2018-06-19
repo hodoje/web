@@ -29,13 +29,15 @@ namespace Backend.Controllers
         }
 
         // GET: api/Users
-        public UserDto GetUsers()
+        //public UserDto GetUsers()
+        public IEnumerable<UserDto> GetUsers()
         {
-            Driver u = (Driver)_unitOfWork.UserRepository.GetById(1);
-            u.Car = _unitOfWork.CarRepository.GetById(u.CarId);
-            u.DriverLocation = _unitOfWork.LocationRepository.GetById(u.DriverLocationId);
-            UserDto ud = _iMapper.Map<Driver, UserDto>(u);
-            return ud;
+            //Driver u = GetDriverByIdIncludeAll(1);
+            //UserDto ud = _iMapper.Map<Driver, UserDto>(u);
+            //IEnumerable<Driver> drivers = GetAllDriversIncludeAll();
+            //IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<Driver>, IEnumerable<UserDto>> (drivers);
+            //return userDtos;
+            return new List<UserDto>();
         }
 
         //// GET: api/Users/5
@@ -92,13 +94,7 @@ namespace Backend.Controllers
         {
             UserDto ud = user;
 
-            Driver d = _iMapper.Map<UserDto, Driver>(ud);
-            Customer c = _iMapper.Map<UserDto, Customer>(ud);
-            Dispatcher dp = _iMapper.Map<UserDto, Dispatcher>(ud);
-
-            DriverDto ddto = _iMapper.Map<Driver, DriverDto>(d);
-            CustomerDto cdto = _iMapper.Map<Customer, CustomerDto>(c);
-            DispatcherDto dpdto = _iMapper.Map<Dispatcher, DispatcherDto>(dp);
+            User u = _iMapper.Map<UserDto, User>(ud);
 
             if (!ModelState.IsValid)
             {
@@ -141,12 +137,25 @@ namespace Backend.Controllers
         //    return db.Users.Count(e => e.Id == id) > 0;
         //}
 
-        //public Driver GetDriverByIdIncludeAll(int id)
+        //private User GetDriverByIdIncludeAll(int id)
         //{
-        //    Driver d = (Driver)_unitOfWork.UserRepository.GetById(1);
+        //    User u = _unitOfWork.UserRepository.GetById(1);
         //    d.Car = _unitOfWork.CarRepository.GetById(d.CarId);
         //    d.DriverLocation = _unitOfWork.LocationRepository.GetById(d.DriverLocationId);
+        //    d.DriverLocation.Address = _unitOfWork.AddressRepository.GetById(d.DriverLocation.AddressId);
         //    return d;
+        //}
+
+        //private IEnumerable<Driver> GetAllDriversIncludeAll()
+        //{
+        //    IEnumerable<Driver> drivers = (IEnumerable<Driver>)_unitOfWork.UserRepository.GetAll();
+        //    foreach (Driver d in drivers)
+        //    {
+        //        d.Car = _unitOfWork.CarRepository.GetById(d.CarId);
+        //        d.DriverLocation = _unitOfWork.LocationRepository.GetById(d.DriverLocationId);
+        //        d.DriverLocation.Address = _unitOfWork.AddressRepository.GetById(d.DriverLocation.AddressId);
+        //    }
+        //    return drivers;
         //}
     }
 }

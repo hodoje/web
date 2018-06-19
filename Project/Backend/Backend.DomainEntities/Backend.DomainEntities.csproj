@@ -52,12 +52,8 @@
     <Compile Include="Enums\RideStatus.cs" />
     <Compile Include="Enums\Role.cs" />
     <Compile Include="IRepository.cs" />
-    <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Car.cs" />
     <Compile Include="Models\Comment.cs" />
-    <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\Dispatcher.cs" />
-    <Compile Include="Models\Driver.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Ride.cs" />
     <Compile Include="Models\User.cs" />

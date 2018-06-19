@@ -23,8 +23,6 @@ namespace Backend.DataAccess.UnitOfWork
 
         // Model repositories
         [Dependency]
-        public virtual IAddressRepository AddressRepository { get; set; }
-        [Dependency]
         public virtual ICarRepository CarRepository { get; set; }
         [Dependency]
         public virtual ICommentRepository CommentRepository { get; set; }

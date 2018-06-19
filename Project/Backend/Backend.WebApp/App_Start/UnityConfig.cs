@@ -27,7 +27,6 @@ namespace Backend
 
             container.RegisterType<DbContext, DatabaseContext>(new HierarchicalLifetimeManager());
 
-            container.RegisterType<IAddressRepository, AddressRepository>();
             container.RegisterType<ICarRepository, CarRepository>();
             container.RegisterType<ICommentRepository, CommentRepository>();
             container.RegisterType<ILocationRepository, LocationRepository>();
@@ -38,12 +37,8 @@ namespace Backend
 
             MapperConfiguration config = new MapperConfiguration(c =>
             {
-                c.AddProfile<AddressMappingProfile>();
                 c.AddProfile<CarMappingProfile>();
                 c.AddProfile<CommentMappingProfile>();
-                c.AddProfile<CustomerMappingProfile>();
-                c.AddProfile<DispatcherMappingProfile>();
-                c.AddProfile<DriverMappingProfile>();
                 c.AddProfile<LocationMappingProfile>();
                 c.AddProfile<RideMappingProfile>();
                 c.AddProfile<UserMappingProfile>();

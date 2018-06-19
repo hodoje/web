@@ -51,9 +51,8 @@ namespace Backend.Controllers
 
         public User GetDefault()
         {
-            Driver u = (Driver)_unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
+            User u = _unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
             u.DriverLocation = _unitOfWork.LocationRepository.Find(l => l.Drivers.FirstOrDefault(user => user.Id == u.Id) != null).First();
-            u.DriverLocation.Address = _unitOfWork.AddressRepository.Find(a => a.Id == u.DriverLocation.AddressId).First();
             u.Comments = _unitOfWork.CommentRepository.Find(c => c.UserId == u.Id).ToList();
             u.CustomerRides = _unitOfWork.RideRepository.Find(r => r.DriverId == u.Id).ToList();
             u.DriverRides = _unitOfWork.RideRepository.Find(r => r.DriverId == u.Id).ToList();
