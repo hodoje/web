@@ -1,5 +1,7 @@
 using System.Data.Entity;
 using System.Web.Http;
+using AutoMapper;
+using Backend.Controllers;
 using Backend.DataAccess;
 using Backend.DataAccess.ModelRepositories;
 using Backend.DataAccess.ModelRepositoryInterfaces;
@@ -7,6 +9,8 @@ using Backend.DataAccess.UnitOfWork;
 using Unity;
 using Unity.Lifetime;
 using Unity.WebApi;
+using Backend.App_Start.MappingProfiles;
+using Unity.Injection;
 
 namespace Backend
 {
@@ -31,6 +35,21 @@ namespace Backend
             container.RegisterType<IUserRepository, UserRepository>();
 
             container.RegisterType<IUnitOfWork, UnitOfWork>();
+
+            MapperConfiguration config = new MapperConfiguration(c =>
+            {
+                c.AddProfile<AddressMappingProfile>();
+                c.AddProfile<CarMappingProfile>();
+                c.AddProfile<CommentMappingProfile>();
+                c.AddProfile<CustomerMappingProfile>();
+                c.AddProfile<DispatcherMappingProfile>();
+                c.AddProfile<DriverMappingProfile>();
+                c.AddProfile<LocationMappingProfile>();
+                c.AddProfile<RideMappingProfile>();
+                c.AddProfile<UserMappingProfile>();
+            });
+
+            container.RegisterType<IMapper, Mapper>(new InjectionConstructor(config));
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

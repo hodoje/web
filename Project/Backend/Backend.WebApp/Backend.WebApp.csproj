@@ -125,11 +125,28 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\MappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\AddressMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\CarMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\CommentMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\CustomerMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\DispatcherMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\DriverMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\LocationMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\RideMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\UserMappingProfile.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Dtos\AddressDto.cs" />
+    <Compile Include="Dtos\CarDto.cs" />
+    <Compile Include="Dtos\CommentDto.cs" />
+    <Compile Include="Dtos\CustomerDto.cs" />
+    <Compile Include="Dtos\DispatcherDto.cs" />
+    <Compile Include="Dtos\DriverDto.cs" />
+    <Compile Include="Dtos\LocationDto.cs" />
+    <Compile Include="Dtos\RideDto.cs" />
+    <Compile Include="Dtos\UserDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -147,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Dtos\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Backend.DataAccess\Backend.DataAccess.csproj">
