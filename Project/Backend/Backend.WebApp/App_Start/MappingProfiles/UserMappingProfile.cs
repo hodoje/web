@@ -12,18 +12,27 @@ namespace Backend.App_Start.MappingProfiles
     {
         public UserMappingProfile()
         {
-            CreateMap<User, UserDto>()
+            // Using Driver because that class is a superset of User and includes all possible properties
+            CreateMap<Driver, UserDto>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source => ((Gender) source.Gender).ToString()))
                 .ForMember(destination => destination.Role,
-                    opts => opts.MapFrom(source => ((Role) source.Role).ToString()));                
-            CreateMap<UserDto, User>()
+                    opts => opts.MapFrom(source => ((Role) source.Role).ToString()))
+                .ForMember(destination => destination.Car,
+                    opts => opts.MapFrom(source => source.Car))
+                .ForMember(destination => destination.DriverLocation,
+                    opts => opts.MapFrom(source => source.DriverLocation));
+            CreateMap<UserDto, Driver>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Gender)).Cast<Gender>().Select(g => g.ToString() == source.Gender)))
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))
                 .ForMember(destination => destination.Role,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Role)).Cast<Role>().Select(r => r.ToString() == source.Role)));
+                        Enum.GetValues(typeof(Role)).Cast<Role>().SingleOrDefault(r => r.ToString() == source.Role)))
+                .ForMember(destination => destination.Car,
+                    opts => opts.MapFrom(source => source.Car))
+                .ForMember(destination => destination.DriverLocation,
+                    opts => opts.MapFrom(source => source.DriverLocation));
         }
     }
 }

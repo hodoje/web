@@ -31,8 +31,10 @@ namespace Backend.Controllers
         // GET: api/Users
         public UserDto GetUsers()
         {
-            User u = _unitOfWork.UserRepository.GetById(1);
-            UserDto ud = _iMapper.Map<User, UserDto>(u);
+            Driver u = (Driver)_unitOfWork.UserRepository.GetById(1);
+            u.Car = _unitOfWork.CarRepository.GetById(u.CarId);
+            u.DriverLocation = _unitOfWork.LocationRepository.GetById(u.DriverLocationId);
+            UserDto ud = _iMapper.Map<Driver, UserDto>(u);
             return ud;
         }
 
@@ -84,20 +86,30 @@ namespace Backend.Controllers
         //    return StatusCode(HttpStatusCode.NoContent);
         //}
 
-        //// POST: api/Users
-        //[ResponseType(typeof(User))]
-        //public async Task<IHttpActionResult> PostUser(User user)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        // POST: api/Users
+        [ResponseType(typeof(UserDto))]
+        public IHttpActionResult PostUser(UserDto user)
+        {
+            UserDto ud = user;
 
-        //    db.Users.Add(user);
-        //    await db.SaveChangesAsync();
+            Driver d = _iMapper.Map<UserDto, Driver>(ud);
+            Customer c = _iMapper.Map<UserDto, Customer>(ud);
+            Dispatcher dp = _iMapper.Map<UserDto, Dispatcher>(ud);
 
-        //    return CreatedAtRoute("DefaultApi", new { id = user.Id }, user);
-        //}
+            DriverDto ddto = _iMapper.Map<Driver, DriverDto>(d);
+            CustomerDto cdto = _iMapper.Map<Customer, CustomerDto>(c);
+            DispatcherDto dpdto = _iMapper.Map<Dispatcher, DispatcherDto>(dp);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //_unitOfWork.UserRepository.Add(user);
+            _unitOfWork.Complete();
+
+            return CreatedAtRoute("DefaultApi", new { id = user.Id }, user);
+        }
 
         //// DELETE: api/Users/5
         //[ResponseType(typeof(User))]
@@ -127,6 +139,14 @@ namespace Backend.Controllers
         //private bool UserExists(int id)
         //{
         //    return db.Users.Count(e => e.Id == id) > 0;
+        //}
+
+        //public Driver GetDriverByIdIncludeAll(int id)
+        //{
+        //    Driver d = (Driver)_unitOfWork.UserRepository.GetById(1);
+        //    d.Car = _unitOfWork.CarRepository.GetById(d.CarId);
+        //    d.DriverLocation = _unitOfWork.LocationRepository.GetById(d.DriverLocationId);
+        //    return d;
         //}
     }
 }

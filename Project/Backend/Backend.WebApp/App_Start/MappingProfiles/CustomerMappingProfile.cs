@@ -12,8 +12,34 @@ namespace Backend.App_Start.MappingProfiles
     {
         public CustomerMappingProfile()
         {
-            CreateMap<Customer, CustomerDto>();
-            CreateMap<CustomerDto, Customer>();
+            CreateMap<Customer, UserDto>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source => ((Gender)source.Gender).ToString()))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source => ((Role)source.Role).ToString()))
+                .ForMember(destination => destination.Car,
+                    opts => opts.Ignore())
+                .ForMember(destination => destination.DriverLocation,
+                    opts => opts.Ignore());
+            CreateMap<UserDto, Customer>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Role)).Cast<Role>().SingleOrDefault(r => r.ToString() == source.Role)));
+            CreateMap<Customer, CustomerDto>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source => ((Gender) source.Gender).ToString()))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source => ((Role) source.Role).ToString()));
+            CreateMap<CustomerDto, Customer>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Role)).Cast<Role>().SingleOrDefault(r => r.ToString() == source.Role)));
         }
     }
 }

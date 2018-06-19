@@ -13,11 +13,21 @@ namespace Backend.App_Start.MappingProfiles
         public DriverMappingProfile()
         {
             CreateMap<Driver, DriverDto>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source => ((Gender)source.Gender).ToString()))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source => ((Role)source.Role).ToString()))
                 .ForMember(destination => destination.Car,
                     opts => opts.MapFrom(source => source.Car))
                 .ForMember(destination => destination.DriverLocation,
                     opts => opts.MapFrom(source => source.DriverLocation));
             CreateMap<DriverDto, Driver>()
+                .ForMember(destination => destination.Gender,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))
+                .ForMember(destination => destination.Role,
+                    opts => opts.MapFrom(source =>
+                        Enum.GetValues(typeof(Role)).Cast<Role>().SingleOrDefault(r => r.ToString() == source.Role)))
                 .ForMember(destination => destination.Car,
                     opts => opts.MapFrom(source => source.Car))
                 .ForMember(destination => destination.DriverLocation,
