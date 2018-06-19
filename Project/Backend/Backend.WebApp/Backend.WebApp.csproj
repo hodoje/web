@@ -136,7 +136,13 @@
     <Compile Include="App_Start\MappingProfiles\UserMappingProfile.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AddressesController.cs" />
+    <Compile Include="Controllers\CarsController.cs" />
+    <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\LocationsController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\RidesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Dtos\AddressDto.cs" />
     <Compile Include="Dtos\CarDto.cs" />
