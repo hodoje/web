@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Backend.Models
 {
-    public class Default
+    public class LoginModel
     {
-        public string DefaultName { get; set; }
-        public string DefaultLastName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

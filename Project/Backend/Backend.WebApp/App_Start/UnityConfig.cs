@@ -10,6 +10,8 @@ using Unity;
 using Unity.Lifetime;
 using Unity.WebApi;
 using Backend.App_Start.MappingProfiles;
+using Backend.LoginRepository;
+using Backend.Models;
 using Unity.Injection;
 
 namespace Backend
@@ -34,6 +36,9 @@ namespace Backend
             container.RegisterType<IUserRepository, UserRepository>();
 
             container.RegisterType<IUnitOfWork, UnitOfWork>();
+
+            container.RegisterType<ICacheManager<LoginModel>, CacheManager<LoginModel>>();
+            container.RegisterType<ILoginRepository, LoginRepository.LoginRepository>(new ContainerControlledLifetimeManager());
 
             MapperConfiguration config = new MapperConfiguration(c =>
             {
