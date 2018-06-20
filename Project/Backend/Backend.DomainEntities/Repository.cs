@@ -77,5 +77,14 @@ namespace DomainEntities
                 _entities.RemoveRange(entities);
             }
         }
+
+        public void Update(T entity)
+        {
+            if (entity != null)
+            {
+                _entities.Attach(entity);
+                _context.Entry(entity).State = EntityState.Modified;
+            }
+        }
     }
 }
