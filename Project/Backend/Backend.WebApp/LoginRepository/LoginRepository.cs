@@ -50,7 +50,6 @@ namespace Backend.LoginRepository
                 loggedUsers.Add(user.Username, user);
             }
             _cacheManager.Set(key, loggedUsers.Values, 24);
-            List<LoginModel> list = _cacheManager.Get(key).ToList();
             return true;
         }
     }
