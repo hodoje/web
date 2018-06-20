@@ -139,7 +139,6 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RidesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Dtos\AddressDto.cs" />
     <Compile Include="Dtos\CarDto.cs" />
     <Compile Include="Dtos\CommentDto.cs" />
     <Compile Include="Dtos\LocationDto.cs" />
