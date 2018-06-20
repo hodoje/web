@@ -23,7 +23,7 @@ namespace Backend.App_Start.MappingProfiles
                 .ForMember(destination => destination.Driver,
                     opts => opts.MapFrom(source => source.Driver))
                 .ForMember(destination => destination.CarType,
-                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().Select(ct => ct.ToString() == source.CarType)));
+                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().SingleOrDefault(ct => ct.ToString() == source.CarType)));
         }
     }
 }

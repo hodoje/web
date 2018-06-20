@@ -31,9 +31,9 @@ namespace Backend.App_Start.MappingProfiles
                     opts => opts.MapFrom(source => source.Comment));
             CreateMap<RideDto, Ride>()
                 .ForMember(destination => destination.RideStatus,
-                    opts => opts.MapFrom(source => Enum.GetValues(typeof(RideStatus)).Cast<RideStatus>().Select(rs => rs.ToString() == source.RideStatus)))
+                    opts => opts.MapFrom(source => Enum.GetValues(typeof(RideStatus)).Cast<RideStatus>().SingleOrDefault(rs => rs.ToString() == source.RideStatus)))
                 .ForMember(destination => destination.CarType,
-                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().Select(ct => ct.ToString() == source.CarType)))
+                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().SingleOrDefault(ct => ct.ToString() == source.CarType)))
                 .ForMember(destination => destination.StartLocation,
                     opts => opts.MapFrom(source => source.StartLocation))
                 .ForMember(destination => destination.DestinationLocation,
