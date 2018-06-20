@@ -28,9 +28,9 @@ namespace DomainEntities.Models
         [Required]
         public string PostalCode { get; set; }
         [Required]
-        public double CoordinateX { get; set; }
+        public double Longitude { get; set; }
         [Required]
-        public double CoordinateY { get; set; }
+        public double Latitude { get; set; }
         [InverseProperty("DriverLocation")]
         public virtual ICollection<User> Drivers { get; set; }
         [InverseProperty("StartLocation")]

@@ -7,13 +7,13 @@ namespace Backend.DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class InitialMigration : IMigrationMetadata
+    public sealed partial class InitialModels : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialModels));
         
         string IMigrationMetadata.Id
         {
-            get { return "201806192252320_InitialMigration"; }
+            get { return "201806201825150_InitialModels"; }
         }
         
         string IMigrationMetadata.Source

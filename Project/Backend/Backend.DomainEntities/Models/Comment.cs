@@ -17,12 +17,11 @@ namespace DomainEntities.Models
         [Column(TypeName = "datetime2")]
         [Required]
         public DateTime Timestamp { get; set; }
-        [Required]
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public User User { get; set; }
         [Required]
-        public virtual Ride Ride { get; set; }
+        public Ride Ride { get; set; }
         [Range(0, 5)]
         [Required]
         public int Rating { get; set; }

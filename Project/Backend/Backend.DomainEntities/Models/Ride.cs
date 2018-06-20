@@ -21,29 +21,27 @@ namespace DomainEntities.Models
         [Required]
         public int StartLocationId { get; set; }
         [ForeignKey("StartLocationId")]        
-        public virtual Location StartLocation { get; set; }
+        public Location StartLocation { get; set; }
         [Required]
         [DefaultValue(1)]
-        public int CarType { get; set; }
-        [Required]
-        public int CustomerId { get; set; }
+        public int CarType { get; set; }        
+        public int? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
-        public virtual User Customer { get; set; }
+        public User Customer { get; set; }
         [Required]
         public int DestinationLocationId { get; set; }
         [ForeignKey("DestinationLocationId")]        
-        public virtual Location DestinationLocation { get; set; }
-        public int DispatcherId { get; set; }
+        public Location DestinationLocation { get; set; }
+        public int? DispatcherId { get; set; }
         [ForeignKey("DispatcherId")]        
-        public virtual User Dispatcher { get; set; }
-        [Required]
-        public int DriverId { get; set; }
+        public User Dispatcher { get; set; }
+        public int? DriverId { get; set; }
         [ForeignKey("DriverId")]
-        public virtual User Driver { get; set; }
+        public User Driver { get; set; }
         public double Price { get; set; }
-        public int CommentId { get; set; }
+        public int? CommentId { get; set; }
         [ForeignKey("CommentId")]
-        public virtual Comment Comment { get; set; }
+        public Comment Comment { get; set; }
         [Required]
         public int RideStatus { get; set; }
     }

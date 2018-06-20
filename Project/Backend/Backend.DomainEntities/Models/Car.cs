@@ -12,7 +12,7 @@ namespace DomainEntities.Models
     {
         [Key, ForeignKey("Driver")]
         public int Id { get; set; }
-        public virtual User Driver { get; set; }
+        public User Driver { get; set; }
         [Required]
         public int YearOfManufactoring { get; set; }
         [Required]

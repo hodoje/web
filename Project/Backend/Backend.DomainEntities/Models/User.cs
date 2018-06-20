@@ -29,7 +29,6 @@ namespace DomainEntities.Models
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
-        [Required]
         public int Gender { get; set; }
         public string NationalIdentificationNumber { get; set; }
         public string PhoneNumber { get; set; }
@@ -46,11 +45,11 @@ namespace DomainEntities.Models
         [InverseProperty("Driver")]
         public virtual ICollection<Ride> DriverRides { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        public int DriverLocationId { get; set; }
+        public int? DriverLocationId { get; set; }
         [ForeignKey("DriverLocationId")]
-        public virtual Location DriverLocation { get; set; }
-        public int CarId { get; set; }
+        public Location DriverLocation { get; set; }
+        public int? CarId { get; set; }
         [ForeignKey("CarId")]
-        public virtual Car Car { get; set; }
+        public Car Car { get; set; }
     }
 }

@@ -3,7 +3,7 @@ namespace Backend.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialMigration : DbMigration
+    public partial class InitialModels : DbMigration
     {
         public override void Up()
         {
@@ -36,11 +36,11 @@ namespace Backend.DataAccess.Migrations
                         Email = c.String(nullable: false),
                         IsBanned = c.Boolean(nullable: false),
                         Role = c.Int(nullable: false),
-                        DriverLocationId = c.Int(nullable: false),
-                        CarId = c.Int(nullable: false),
+                        DriverLocationId = c.Int(),
+                        CarId = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Locations", t => t.DriverLocationId, cascadeDelete: false)
+                .ForeignKey("dbo.Locations", t => t.DriverLocationId)
                 .Index(t => t.DriverLocationId);
             
             CreateTable(
@@ -67,20 +67,20 @@ namespace Backend.DataAccess.Migrations
                         Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         StartLocationId = c.Int(nullable: false),
                         CarType = c.Int(nullable: false),
-                        CustomerId = c.Int(nullable: false),
+                        CustomerId = c.Int(),
                         DestinationLocationId = c.Int(nullable: false),
-                        DispatcherId = c.Int(nullable: false),
-                        DriverId = c.Int(nullable: false),
+                        DispatcherId = c.Int(),
+                        DriverId = c.Int(),
                         Price = c.Double(nullable: false),
-                        CommentId = c.Int(nullable: false),
+                        CommentId = c.Int(),
                         RideStatus = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)
                 .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)
-                .ForeignKey("dbo.Users", t => t.CustomerId, cascadeDelete: false)
-                .ForeignKey("dbo.Users", t => t.DispatcherId, cascadeDelete: false)
-                .ForeignKey("dbo.Users", t => t.DriverId, cascadeDelete: false)
+                .ForeignKey("dbo.Users", t => t.CustomerId)
+                .ForeignKey("dbo.Users", t => t.DispatcherId)
+                .ForeignKey("dbo.Users", t => t.DriverId)
                 .Index(t => t.StartLocationId)
                 .Index(t => t.CustomerId)
                 .Index(t => t.DestinationLocationId)
@@ -96,8 +96,8 @@ namespace Backend.DataAccess.Migrations
                         StreetNumber = c.String(nullable: false),
                         City = c.String(nullable: false),
                         PostalCode = c.String(nullable: false),
-                        CoordinateX = c.Double(nullable: false),
-                        CoordinateY = c.Double(nullable: false),
+                        Longitude = c.Double(nullable: false),
+                        Latitude = c.Double(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
