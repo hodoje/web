@@ -15,105 +15,105 @@ namespace Backend.Controllers
 {
     public class RidesController : ApiController
     {
-        private DatabaseContext db = new DatabaseContext();
+        //private DatabaseContext db = new DatabaseContext();
 
-        // GET: api/Rides
-        public IQueryable<Ride> GetRides()
-        {
-            return db.Rides;
-        }
+        //// GET: api/Rides
+        //public IQueryable<Ride> GetRides()
+        //{
+        //    return db.Rides;
+        //}
 
-        // GET: api/Rides/5
-        [ResponseType(typeof(Ride))]
-        public IHttpActionResult GetRide(int id)
-        {
-            Ride ride = db.Rides.Find(id);
-            if (ride == null)
-            {
-                return NotFound();
-            }
+        //// GET: api/Rides/5
+        //[ResponseType(typeof(Ride))]
+        //public IHttpActionResult GetRide(int id)
+        //{
+        //    Ride ride = db.Rides.Find(id);
+        //    if (ride == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(ride);
-        }
+        //    return Ok(ride);
+        //}
 
-        // PUT: api/Rides/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutRide(int id, Ride ride)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// PUT: api/Rides/5
+        //[ResponseType(typeof(void))]
+        //public IHttpActionResult PutRide(int id, Ride ride)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            if (id != ride.Id)
-            {
-                return BadRequest();
-            }
+        //    if (id != ride.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            db.Entry(ride).State = EntityState.Modified;
+        //    db.Entry(ride).State = EntityState.Modified;
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RideExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        db.SaveChanges();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!RideExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+        //    return StatusCode(HttpStatusCode.NoContent);
+        //}
 
-        // POST: api/Rides
-        [ResponseType(typeof(Ride))]
-        public IHttpActionResult PostRide(Ride ride)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// POST: api/Rides
+        //[ResponseType(typeof(Ride))]
+        //public IHttpActionResult PostRide(Ride ride)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            db.Rides.Add(ride);
-            db.SaveChanges();
+        //    db.Rides.Add(ride);
+        //    db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = ride.Id }, ride);
-        }
+        //    return CreatedAtRoute("DefaultApi", new { id = ride.Id }, ride);
+        //}
 
-        // DELETE: api/Rides/5
-        [ResponseType(typeof(Ride))]
-        public IHttpActionResult DeleteRide(int id)
-        {
-            Ride ride = db.Rides.Find(id);
-            if (ride == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Rides/5
+        //[ResponseType(typeof(Ride))]
+        //public IHttpActionResult DeleteRide(int id)
+        //{
+        //    Ride ride = db.Rides.Find(id);
+        //    if (ride == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            db.Rides.Remove(ride);
-            db.SaveChanges();
+        //    db.Rides.Remove(ride);
+        //    db.SaveChanges();
 
-            return Ok(ride);
-        }
+        //    return Ok(ride);
+        //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
 
-        private bool RideExists(int id)
-        {
-            return db.Rides.Count(e => e.Id == id) > 0;
-        }
+        //private bool RideExists(int id)
+        //{
+        //    return db.Rides.Count(e => e.Id == id) > 0;
+        //}
     }
 }

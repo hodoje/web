@@ -13,6 +13,7 @@ using AutoMapper;
 using Backend.DataAccess;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Dtos;
+using Backend.LoginRepository;
 using DomainEntities.Models;
 
 namespace Backend.Controllers
@@ -21,141 +22,129 @@ namespace Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _iMapper;
+        private ILoginRepository _loginRepository;
 
-        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper)
+        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, ILoginRepository loginRepository)
         {
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
+            _loginRepository = loginRepository;
         }
 
         // GET: api/Users
-        //public UserDto GetUsers()
-        public IEnumerable<UserDto> GetUsers()
+        [HttpGet]
+        [ResponseType(typeof(IEnumerable<UserDto>))]
+        public IHttpActionResult GetUsers()
         {
-            //Driver u = GetDriverByIdIncludeAll(1);
-            //UserDto ud = _iMapper.Map<Driver, UserDto>(u);
-            //IEnumerable<Driver> drivers = GetAllDriversIncludeAll();
-            //IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<Driver>, IEnumerable<UserDto>> (drivers);
-            //return userDtos;
-            return new List<UserDto>();
+            IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
+            if (users == null)
+            {
+                return NotFound();
+            }
+            IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
+            return Ok(userDtos);
         }
 
-        //// GET: api/Users/5
-        //[ResponseType(typeof(User))]
-        //public async Task<IHttpActionResult> GetUser(int id)
-        //{
-        //    User user = await db.Users.FindAsync(id);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(user);
-        //}
-
-        //// PUT: api/Users/5
-        //[ResponseType(typeof(void))]
-        //public async Task<IHttpActionResult> PutUser(int id, User user)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != user.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(user).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await db.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!UserExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        // POST: api/Users
+        // GET: api/Users/5
+        [HttpGet]
         [ResponseType(typeof(UserDto))]
-        public IHttpActionResult PostUser(UserDto user)
+        public IHttpActionResult GetUser(int id)
         {
-            UserDto ud = user;
+            User user = _unitOfWork.UserRepository.GetByIdIncludeAll(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            UserDto userDto = _iMapper.Map<User, UserDto>(user);
+            return Ok(userDto);
+        }
 
-            User u = _iMapper.Map<UserDto, User>(ud);
-
+        //PUT: api/Users/5
+        [HttpPut]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutUser(int id, UserDto userDto)
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            //_unitOfWork.UserRepository.Add(user);
-            _unitOfWork.Complete();
+            if (id != userDto.Id)
+            {
+                return BadRequest();
+            }
 
-            return CreatedAtRoute("DefaultApi", new { id = user.Id }, user);
+            User user = _iMapper.Map<UserDto, User>(userDto);
+
+            try
+            {
+                _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.Complete();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        //// DELETE: api/Users/5
-        //[ResponseType(typeof(User))]
-        //public async Task<IHttpActionResult> DeleteUser(int id)
-        //{
-        //    User user = await db.Users.FindAsync(id);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // POST: api/Users
+        [ResponseType(typeof(UserDto))]
+        [HttpPost]
+        public IHttpActionResult PostUser(UserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    db.Users.Remove(user);
-        //    await db.SaveChangesAsync();
+            User user = _iMapper.Map<UserDto, User>(userDto);
 
-        //    return Ok(user);
-        //}
+            _unitOfWork.UserRepository.Add(user);
+            _unitOfWork.Complete();
 
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
+            _iMapper.Map<User, UserDto>(user, userDto);
 
-        //private bool UserExists(int id)
-        //{
-        //    return db.Users.Count(e => e.Id == id) > 0;
-        //}
+            return CreatedAtRoute("DefaultApi", new { id = userDto.Id }, userDto);
+        }
 
-        //private User GetDriverByIdIncludeAll(int id)
-        //{
-        //    User u = _unitOfWork.UserRepository.GetById(1);
-        //    d.Car = _unitOfWork.CarRepository.GetById(d.CarId);
-        //    d.DriverLocation = _unitOfWork.LocationRepository.GetById(d.DriverLocationId);
-        //    d.DriverLocation.Address = _unitOfWork.AddressRepository.GetById(d.DriverLocation.AddressId);
-        //    return d;
-        //}
+        //DELETE: api/Users/5
+        [HttpDelete]
+        [ResponseType(typeof(User))]
+        public IHttpActionResult DeleteUser(int id)
+        {
+            User user = _unitOfWork.UserRepository.GetByIdIncludeAll(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        //private IEnumerable<Driver> GetAllDriversIncludeAll()
-        //{
-        //    IEnumerable<Driver> drivers = (IEnumerable<Driver>)_unitOfWork.UserRepository.GetAll();
-        //    foreach (Driver d in drivers)
-        //    {
-        //        d.Car = _unitOfWork.CarRepository.GetById(d.CarId);
-        //        d.DriverLocation = _unitOfWork.LocationRepository.GetById(d.DriverLocationId);
-        //        d.DriverLocation.Address = _unitOfWork.AddressRepository.GetById(d.DriverLocation.AddressId);
-        //    }
-        //    return drivers;
-        //}
+            _unitOfWork.UserRepository.Remove(user);
+            _unitOfWork.Complete();
+
+            return Ok(user);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _unitOfWork.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private bool UserExists(int id)
+        {
+            return _unitOfWork.UserRepository.GetById(id) != null;
+        }
     }
 }

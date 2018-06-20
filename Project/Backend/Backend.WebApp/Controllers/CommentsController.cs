@@ -15,120 +15,120 @@ namespace Backend.Controllers
 {
     public class CommentsController : ApiController
     {
-        private DatabaseContext db = new DatabaseContext();
+        //private DatabaseContext db = new DatabaseContext();
 
-        // GET: api/Comments
-        public IQueryable<Comment> GetComments()
-        {
-            return db.Comments;
-        }
+        //// GET: api/Comments
+        //public IQueryable<Comment> GetComments()
+        //{
+        //    return db.Comments;
+        //}
 
-        // GET: api/Comments/5
-        [ResponseType(typeof(Comment))]
-        public IHttpActionResult GetComment(int id)
-        {
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
+        //// GET: api/Comments/5
+        //[ResponseType(typeof(Comment))]
+        //public IHttpActionResult GetComment(int id)
+        //{
+        //    Comment comment = db.Comments.Find(id);
+        //    if (comment == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(comment);
-        }
+        //    return Ok(comment);
+        //}
 
-        // PUT: api/Comments/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutComment(int id, Comment comment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// PUT: api/Comments/5
+        //[ResponseType(typeof(void))]
+        //public IHttpActionResult PutComment(int id, Comment comment)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
+        //    if (id != comment.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            db.Entry(comment).State = EntityState.Modified;
+        //    db.Entry(comment).State = EntityState.Modified;
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        db.SaveChanges();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CommentExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+        //    return StatusCode(HttpStatusCode.NoContent);
+        //}
 
-        // POST: api/Comments
-        [ResponseType(typeof(Comment))]
-        public IHttpActionResult PostComment(Comment comment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// POST: api/Comments
+        //[ResponseType(typeof(Comment))]
+        //public IHttpActionResult PostComment(Comment comment)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            db.Comments.Add(comment);
+        //    db.Comments.Add(comment);
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if (CommentExists(comment.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        db.SaveChanges();
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (CommentExists(comment.Id))
+        //        {
+        //            return Conflict();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return CreatedAtRoute("DefaultApi", new { id = comment.Id }, comment);
-        }
+        //    return CreatedAtRoute("DefaultApi", new { id = comment.Id }, comment);
+        //}
 
-        // DELETE: api/Comments/5
-        [ResponseType(typeof(Comment))]
-        public IHttpActionResult DeleteComment(int id)
-        {
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Comments/5
+        //[ResponseType(typeof(Comment))]
+        //public IHttpActionResult DeleteComment(int id)
+        //{
+        //    Comment comment = db.Comments.Find(id);
+        //    if (comment == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            db.Comments.Remove(comment);
-            db.SaveChanges();
+        //    db.Comments.Remove(comment);
+        //    db.SaveChanges();
 
-            return Ok(comment);
-        }
+        //    return Ok(comment);
+        //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
 
-        private bool CommentExists(int id)
-        {
-            return db.Comments.Count(e => e.Id == id) > 0;
-        }
+        //private bool CommentExists(int id)
+        //{
+        //    return db.Comments.Count(e => e.Id == id) > 0;
+        //}
     }
 }
