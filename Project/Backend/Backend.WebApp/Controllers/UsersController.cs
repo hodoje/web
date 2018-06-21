@@ -22,13 +22,11 @@ namespace Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _iMapper;
-        private ILoginRepository _loginRepository;
 
-        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, ILoginRepository loginRepository)
+        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper)
         {
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
-            _loginRepository = loginRepository;
         }
 
         // GET: api/Users

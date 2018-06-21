@@ -10,9 +10,6 @@ namespace Backend.Dtos
 {
     public class CarDto
     {
-        [Key, ForeignKey("Driver")]
-        public int Id { get; set; }
-        public UserDto Driver { get; set; }
         [Required]
         public int YearOfManufactoring { get; set; }
         [Required]

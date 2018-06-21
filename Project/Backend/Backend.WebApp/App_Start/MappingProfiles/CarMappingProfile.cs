@@ -15,13 +15,9 @@ namespace Backend.App_Start.MappingProfiles
         public CarMappingProfile()
         {
             CreateMap<Car, CarDto>()
-                .ForMember(destination => destination.Driver,
-                    opts => opts.MapFrom(source => source.Driver))
                 .ForMember(destination => destination.CarType,
-                    opts => opts.MapFrom(source => ((CarType) source.CarType).ToString()));
+                    opts => opts.MapFrom(source => ((CarType)source.CarType).ToString()));
             CreateMap<CarDto, Car>()
-                .ForMember(destination => destination.Driver,
-                    opts => opts.MapFrom(source => source.Driver))
                 .ForMember(destination => destination.CarType,
                     opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().SingleOrDefault(ct => ct.ToString() == source.CarType)));
         }

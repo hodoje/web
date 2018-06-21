@@ -44,7 +44,8 @@ namespace Backend.Controllers
                 IsBanned = false,
                 NationalIdentificationNumber = "1234",
                 PhoneNumber = "12345",
-                Role = 2
+                Role = 2,
+                Car = new Car { CarType = 2, RegistrationNumber = "ABC123", YearOfManufactoring = 1996, TaxiNumber = "44" }
             };
             _unitOfWork.UserRepository.Add(d);
             _unitOfWork.Complete();

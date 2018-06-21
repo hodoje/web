@@ -3,46 +3,10 @@ namespace Backend.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialModels : DbMigration
+    public partial class InitialModel : DbMigration
     {
         public override void Up()
         {
-            CreateTable(
-                "dbo.Cars",
-                c => new
-                    {
-                        Id = c.Int(nullable: false),
-                        YearOfManufactoring = c.Int(nullable: false),
-                        RegistrationNumber = c.String(nullable: false),
-                        TaxiNumber = c.String(nullable: false),
-                        CarType = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Users", t => t.Id)
-                .Index(t => t.Id);
-            
-            CreateTable(
-                "dbo.Users",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Username = c.String(nullable: false),
-                        Password = c.String(nullable: false),
-                        Name = c.String(nullable: false),
-                        Lastname = c.String(nullable: false),
-                        Gender = c.Int(nullable: false),
-                        NationalIdentificationNumber = c.String(),
-                        PhoneNumber = c.String(),
-                        Email = c.String(nullable: false),
-                        IsBanned = c.Boolean(nullable: false),
-                        Role = c.Int(nullable: false),
-                        DriverLocationId = c.Int(),
-                        CarId = c.Int(),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Locations", t => t.DriverLocationId)
-                .Index(t => t.DriverLocationId);
-            
             CreateTable(
                 "dbo.Comments",
                 c => new
@@ -54,8 +18,8 @@ namespace Backend.DataAccess.Migrations
                         Rating = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Rides", t => t.Id)
                 .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: false)
+                .ForeignKey("dbo.Rides", t => t.Id)
                 .Index(t => t.Id)
                 .Index(t => t.UserId);
             
@@ -76,16 +40,41 @@ namespace Backend.DataAccess.Migrations
                         RideStatus = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)
-                .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)
                 .ForeignKey("dbo.Users", t => t.CustomerId)
                 .ForeignKey("dbo.Users", t => t.DispatcherId)
+                .ForeignKey("dbo.Locations", t => t.DestinationLocationId, cascadeDelete: false)
+                .ForeignKey("dbo.Locations", t => t.StartLocationId, cascadeDelete: false)
                 .ForeignKey("dbo.Users", t => t.DriverId)
                 .Index(t => t.StartLocationId)
                 .Index(t => t.CustomerId)
                 .Index(t => t.DestinationLocationId)
                 .Index(t => t.DispatcherId)
                 .Index(t => t.DriverId);
+            
+            CreateTable(
+                "dbo.Users",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Username = c.String(nullable: false),
+                        Password = c.String(nullable: false),
+                        Name = c.String(nullable: false),
+                        Lastname = c.String(nullable: false),
+                        Gender = c.Int(nullable: false),
+                        NationalIdentificationNumber = c.String(),
+                        PhoneNumber = c.String(),
+                        Email = c.String(nullable: false),
+                        IsBanned = c.Boolean(nullable: false),
+                        Role = c.Int(nullable: false),
+                        DriverLocationId = c.Int(),
+                        Car_YearOfManufactoring = c.Int(nullable: false),
+                        Car_RegistrationNumber = c.String(nullable: false),
+                        Car_TaxiNumber = c.String(nullable: false),
+                        Car_CarType = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Locations", t => t.DriverLocationId)
+                .Index(t => t.DriverLocationId);
             
             CreateTable(
                 "dbo.Locations",
@@ -105,15 +94,15 @@ namespace Backend.DataAccess.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.Cars", "Id", "dbo.Users");
-            DropForeignKey("dbo.Rides", "DriverId", "dbo.Users");
-            DropForeignKey("dbo.Rides", "DispatcherId", "dbo.Users");
-            DropForeignKey("dbo.Rides", "CustomerId", "dbo.Users");
-            DropForeignKey("dbo.Comments", "UserId", "dbo.Users");
             DropForeignKey("dbo.Comments", "Id", "dbo.Rides");
+            DropForeignKey("dbo.Rides", "DriverId", "dbo.Users");
             DropForeignKey("dbo.Rides", "StartLocationId", "dbo.Locations");
             DropForeignKey("dbo.Rides", "DestinationLocationId", "dbo.Locations");
             DropForeignKey("dbo.Users", "DriverLocationId", "dbo.Locations");
+            DropForeignKey("dbo.Rides", "DispatcherId", "dbo.Users");
+            DropForeignKey("dbo.Rides", "CustomerId", "dbo.Users");
+            DropForeignKey("dbo.Comments", "UserId", "dbo.Users");
+            DropIndex("dbo.Users", new[] { "DriverLocationId" });
             DropIndex("dbo.Rides", new[] { "DriverId" });
             DropIndex("dbo.Rides", new[] { "DispatcherId" });
             DropIndex("dbo.Rides", new[] { "DestinationLocationId" });
@@ -121,13 +110,10 @@ namespace Backend.DataAccess.Migrations
             DropIndex("dbo.Rides", new[] { "StartLocationId" });
             DropIndex("dbo.Comments", new[] { "UserId" });
             DropIndex("dbo.Comments", new[] { "Id" });
-            DropIndex("dbo.Users", new[] { "DriverLocationId" });
-            DropIndex("dbo.Cars", new[] { "Id" });
             DropTable("dbo.Locations");
+            DropTable("dbo.Users");
             DropTable("dbo.Rides");
             DropTable("dbo.Comments");
-            DropTable("dbo.Users");
-            DropTable("dbo.Cars");
         }
     }
 }

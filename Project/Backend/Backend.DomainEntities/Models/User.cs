@@ -17,6 +17,7 @@ namespace DomainEntities.Models
             DispatcherRides = new HashSet<Ride>();
             DriverRides = new List<Ride>();
             Comments = new HashSet<Comment>();
+            Car = new Car();                        // Must be instantiated so EF can work it out, otherwise we'll get a run-time exception
         }
 
         [Key]
@@ -48,8 +49,6 @@ namespace DomainEntities.Models
         public int? DriverLocationId { get; set; }
         [ForeignKey("DriverLocationId")]
         public Location DriverLocation { get; set; }
-        public int? CarId { get; set; }
-        [ForeignKey("CarId")]
         public Car Car { get; set; }
     }
 }
