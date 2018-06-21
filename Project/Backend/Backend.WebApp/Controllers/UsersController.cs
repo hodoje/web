@@ -14,6 +14,7 @@ using Backend.DataAccess;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Dtos;
 using Backend.LoginRepository;
+using Backend.Models;
 using DomainEntities.Models;
 
 namespace Backend.Controllers
@@ -22,11 +23,13 @@ namespace Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _iMapper;
+        private ILoginRepository _loginRepository;
 
-        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper)
+        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, ILoginRepository loginRepository)
         {
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
+            _loginRepository = loginRepository;
         }
 
         // GET: api/Users
@@ -34,13 +37,18 @@ namespace Backend.Controllers
         [ResponseType(typeof(IEnumerable<UserDto>))]
         public IHttpActionResult GetUsers()
         {
-            IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
-            if (users == null)
+            LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
+            if (_loginRepository.IsLoggedIn(lm))
             {
-                return NotFound();
+                IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
+                if (users == null)
+                {
+                    return NotFound();
+                }
+                IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
+                return Ok(userDtos);
             }
-            IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
-            return Ok(userDtos);
+            return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
         }
 
         // GET: api/Users/5
