@@ -41,6 +41,7 @@ namespace Backend
 
             MapperConfiguration config = new MapperConfiguration(c =>
             {
+                c.AddProfile<LoginModelMappingProfile>();
                 c.AddProfile<CarMappingProfile>();
                 c.AddProfile<CommentMappingProfile>();
                 c.AddProfile<LocationMappingProfile>();

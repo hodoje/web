@@ -11,5 +11,6 @@ namespace Backend.LoginRepository
     {
         bool Login(LoginModel user);
         bool Logout(LoginModel user);
+        bool IsLoggedIn(LoginModel user);
     }
 }

@@ -129,6 +129,7 @@
     <Compile Include="App_Start\MappingProfiles\CarMappingProfile.cs" />
     <Compile Include="App_Start\MappingProfiles\CommentMappingProfile.cs" />
     <Compile Include="App_Start\MappingProfiles\LocationMappingProfile.cs" />
+    <Compile Include="App_Start\MappingProfiles\LoginModelMappingProfile.cs" />
     <Compile Include="App_Start\MappingProfiles\RideMappingProfile.cs" />
     <Compile Include="App_Start\MappingProfiles\UserMappingProfile.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />

@@ -28,6 +28,23 @@ namespace Backend.LoginRepository
             return LogoutAUser(user);
         }
 
+        public bool IsLoggedIn(LoginModel user)
+        {
+            bool result = false;
+            Dictionary<string, LoginModel> loggedUsers = _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Username, u => u);
+            {
+                LoginModel loggedUser;
+                if ((loggedUser = loggedUsers.SingleOrDefault(u => u.Key == user.Username).Value) != null)
+                {
+                    if (loggedUser.Username == user.Username && loggedUser.Password == user.Password)
+                    {
+                        result = true;
+                    }
+                }
+            }
+            return result;
+        }
+
         private bool LogoutAUser(LoginModel user)
         {
             bool result = false;
