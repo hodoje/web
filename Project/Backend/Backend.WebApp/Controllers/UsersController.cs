@@ -97,8 +97,8 @@ namespace Backend.Controllers
         }
 
         // POST: api/Users
-        [ResponseType(typeof(UserDto))]
         [HttpPost]
+        [ResponseType(typeof(UserDto))]
         public IHttpActionResult PostUser(UserDto userDto)
         {
             if (!ModelState.IsValid)

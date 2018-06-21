@@ -25,7 +25,7 @@ namespace Backend.Controllers
         [HttpPost]
         public IHttpActionResult Login([FromBody] LoginModel userLogin)
         {
-            if (_unitOfWork.UserRepository.Find(u => u.Username == userLogin.Username) != null)
+            if (_unitOfWork.UserRepository.Find(u => u.Username == userLogin.Username).Any())
             {
                 if (_loginRepository.Login(userLogin))
                 {

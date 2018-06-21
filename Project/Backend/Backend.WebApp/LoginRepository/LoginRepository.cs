@@ -31,8 +31,7 @@ namespace Backend.LoginRepository
         private bool LogoutAUser(LoginModel user)
         {
             bool result = false;
-            Dictionary<string, LoginModel> loggedUsers =
-                _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Username, u => u);           
+            Dictionary<string, LoginModel> loggedUsers = _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Username, u => u);           
             if (loggedUsers.ContainsKey(user.Username))
             {
                 loggedUsers.Remove(user.Username);
