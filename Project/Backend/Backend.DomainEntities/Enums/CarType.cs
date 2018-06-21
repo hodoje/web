@@ -1,5 +1,6 @@
 ﻿public enum CarType
 {
-    PASSENGER = 1,
-    VAN = 2
+    DEFAULT = 1,
+    PASSENGER = 2,
+    VAN = 3
 }
