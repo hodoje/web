@@ -45,6 +45,7 @@
     <Compile Include="Interfaces\IWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\XmlReader.cs" />
+    <Compile Include="ReadModels\DispatcherReadModel.cs" />
     <Compile Include="Watcher.cs" />
     <Compile Include="Writers\DatabaseWriter.cs" />
   </ItemGroup>

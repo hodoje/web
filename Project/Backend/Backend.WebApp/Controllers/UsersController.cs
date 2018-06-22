@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using AutoMapper;
 using Backend.DataAccess;
@@ -37,9 +38,9 @@ namespace Backend.Controllers
         [ResponseType(typeof(IEnumerable<UserDto>))]
         public IHttpActionResult GetUsers()
         {
-            LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
-            if (_loginRepository.IsLoggedIn(lm))
-            {
+            //LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
+            //if (_loginRepository.IsLoggedIn(lm))
+            //{
                 IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
                 if (users == null)
                 {
@@ -47,8 +48,8 @@ namespace Backend.Controllers
                 }
                 IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
                 return Ok(userDtos);
-            }
-            return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
+            //}
+            //return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
         }
 
         // GET: api/Users/5
