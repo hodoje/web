@@ -1,3 +1,4 @@
+import { GenericService } from './services/generic.service';
 import { RegistrationService } from './services/registration.service';
 import { UsersService } from './services/users.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -9,18 +10,23 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ContentComponent } from './components/content/content.component';
 import { RidesService } from './services/rides.service';
 import { LoginService } from './services/login.service';
+import { UsersComponent } from './components/users/users.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     SidebarComponent,
-    ContentComponent
+    ContentComponent,
+    UsersComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule
   ],
   providers: [
+    GenericService,
     LoginService,
     RegistrationService,
     UsersService,
