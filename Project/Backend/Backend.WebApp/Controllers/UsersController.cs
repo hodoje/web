@@ -11,10 +11,10 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using AutoMapper;
+using Backend.AccessServices;
 using Backend.DataAccess;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Dtos;
-using Backend.LoginRepository;
 using Backend.Models;
 using DomainEntities.Models;
 
@@ -24,13 +24,13 @@ namespace Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _iMapper;
-        private ILoginRepository _loginRepository;
+        private IAccessService _accessService;
 
-        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, ILoginRepository loginRepository)
+        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, IAccessService accessService)
         {
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
-            _loginRepository = loginRepository;
+            _accessService = accessService;
         }
 
         // GET: api/Users

@@ -1,23 +1,24 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Web;
 
-namespace Backend.LoginRepository
+namespace Backend.AccessServices
 {
-    public class CacheManager<T> : ICacheManager<T> where T : class
+    public class CacheManager<V, T> : ICacheManager<V, T> where T : class
     {
         public ObjectCache CachedData => MemoryCache.Default;
 
-        public IEnumerable<T> Get(string key)
+        public IDictionary<V, T> Get(string key)
         {
-            IEnumerable<T> list = new List<T>();
+            IDictionary<V, T> data = new ConcurrentDictionary<V, T>();
             if (!String.IsNullOrEmpty(key))
             {
-                list = (IEnumerable<T>)CachedData[key];
+                data = (IDictionary<V, T>)CachedData[key];
             }
-            return list;
+            return data;
         }
 
         public bool IsSet(string key)

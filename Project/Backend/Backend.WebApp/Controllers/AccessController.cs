@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Backend.AccessServices;
 using Backend.DataAccess.UnitOfWork;
-using Backend.LoginRepository;
 using Backend.Models;
 
 namespace Backend.Controllers
@@ -14,22 +14,25 @@ namespace Backend.Controllers
     public class AccessController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILoginRepository _loginRepository;
+        private readonly IAccessService _accessService;
+        private readonly HashGenerator _hashGenerator;
 
-        public AccessController(IUnitOfWork unitOfWork, ILoginRepository loginRepository)
+        public AccessController(IUnitOfWork unitOfWork, IAccessService accessService, HashGenerator hashGenerator)
         {
             _unitOfWork = unitOfWork;
-            _loginRepository = loginRepository;
+            _accessService = accessService;
+            _hashGenerator = hashGenerator;
         }
 
         [HttpPost]
-        public IHttpActionResult Login([FromBody] LoginModel userLogin)
+        public IHttpActionResult Login([FromBody]LoginModel user)
         {
-            if (_unitOfWork.UserRepository.Find(u => u.Username == userLogin.Username).Any())
+            if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username).Any())
             {
-                if (_loginRepository.Login(userLogin))
+                ApiMessage<string, LoginModel> response;
+                if ((response = _accessService.Login(user)) != null)
                 {
-                    return Ok();
+                    return Ok(response);
                 }
                 else
                 {
@@ -43,9 +46,9 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Logout([FromBody] LoginModel userLogin)
+        public IHttpActionResult Logout([FromBody]ApiMessage<string, LoginModel> user)
         {
-            if (_loginRepository.Logout(userLogin))
+            if (_accessService.Logout(user.Key))
             {
                 return Ok();
             }
