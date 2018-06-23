@@ -1,0 +1,14 @@
+import { Injectable, Output } from '@angular/core';
+import { EventEmitter } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LoginToNavbarService {
+
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
+
+  login(){
+    this.change.emit(true);
+  }
+}

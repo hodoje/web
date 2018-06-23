@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { NavbarToLoginService } from './../../services/navbar-to-login.service';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { LoginModel } from '../../models/login.model';
+import { ApiMessage } from '../../models/apiMessage.model';
+import { Router } from '@angular/router';
+import { LoginToNavbarService } from '../../services/login-to-navbar.service';
 
 @Component({
   selector: 'login',
@@ -9,19 +13,54 @@ import { LoginModel } from '../../models/login.model';
 })
 export class LoginComponent{
 
-  constructor(private loginService: LoginService) { }
+  isLoggedIn: boolean;
+  apiRequest: ApiMessage;
+  
+  constructor(
+    private loginService: LoginService, 
+    private router: Router, 
+    private loginToNavbarService: LoginToNavbarService,
+    private navbarToLoginService: NavbarToLoginService
+  ) { }
 
-  login(loginModel: LoginModel){
-    this.loginService.login(loginModel).subscribe(
-      data => {console.log(data)},
-      error => {console.log(error)}
-    );
+  ngOnInit(){
+    this.navbarToLoginService.change.subscribe(
+      isLoggedOut => {
+        if(isLoggedOut){
+          this.logout();
+        }
+      })
   }
 
-  logout(loginModel: LoginModel){
-    this.loginService.logout(loginModel).subscribe(
-      data => {console.log(data)},
+  login(loginModel: LoginModel){
+    //if(!localStorage.userHash){
+      this.apiRequest = new ApiMessage("", loginModel);
+
+      this.loginService.login(this.apiRequest).subscribe(
+        (data: ApiMessage) => {
+          localStorage.setItem('userHash', data.key);
+          this.isLoggedIn = true;
+          this.router.navigate(['/home']);
+          this.loginToNavbarService.login();
+        },
+        error => {console.log(error)}
+      );
+    //}
+    //else{
+    // console.log(localStorage.userHash);
+    //}
+  }
+
+  logout(){
+    this.apiRequest = new ApiMessage(localStorage.userHash, null);
+    this.loginService.logout(this.apiRequest).subscribe(
+      (data: ApiMessage) => {
+        if(localStorage.userHash === data.key){
+          localStorage.userHash = null;
+          this.isLoggedIn = false;
+        }
+      },
       error => {console.log(error)}
-    );;
+    );
   }
 }

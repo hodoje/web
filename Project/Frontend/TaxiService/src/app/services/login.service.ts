@@ -1,6 +1,6 @@
+import { ApiMessage } from './../models/apiMessage.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginModel } from '../models/login.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +14,11 @@ export class LoginService{
     this.endpoint = 'access';
   }
 
-  login(loginModel: LoginModel){
-    return this.httpClient.post(`${this.url}/${this.endpoint}/login`, loginModel);
+  login(loginRequest: ApiMessage){
+    return this.httpClient.post(`${this.url}/${this.endpoint}/login`, loginRequest);
   }
 
-  logout(loginModel: LoginModel){
-    return this.httpClient.post(`${this.url}/${this.endpoint}/logout`, loginModel);
+  logout(logoutRequest: ApiMessage){
+    return this.httpClient.post(`${this.url}/${this.endpoint}/logout`, logoutRequest);
   }
 }
