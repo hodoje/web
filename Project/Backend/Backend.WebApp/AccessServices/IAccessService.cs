@@ -9,7 +9,7 @@ namespace Backend.AccessServices
 {
     public interface IAccessService
     {
-        ApiMessage<string, LoginModel> Login(LoginModel user);
+        ApiMessage<string, LoginModel> Login(ApiMessage<string, LoginModel> user);
         bool Logout(string hash);
         bool IsLoggedIn(string hash);
         bool BlockUser(string username);

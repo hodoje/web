@@ -21,17 +21,17 @@ namespace Backend.AccessServices
             _hashGenerator = hashGenerator;
         }
 
-        public ApiMessage<string, LoginModel> Login(LoginModel user)
+        public ApiMessage<string, LoginModel> Login(ApiMessage<string, LoginModel> user)
         {
             ApiMessage<string, LoginModel> returnMessage = new ApiMessage<string, LoginModel>();
             Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
-            if (!loggedUsers.ContainsKey(key))
+            if (!loggedUsers.ContainsKey(user.Key))
             {
-                string hash = _hashGenerator.GenerateHash(user);
-                loggedUsers.Add(hash, user);
+                string hash = _hashGenerator.GenerateHash(user.Data);
+                loggedUsers.Add(hash, user.Data);
 
                 returnMessage.Key = hash;
-                returnMessage.Data = user;
+                returnMessage.Data = user.Data;
             }
             _cacheManager.Set(key, loggedUsers, 24);
             return returnMessage;

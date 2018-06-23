@@ -25,9 +25,9 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Login([FromBody]LoginModel user)
+        public IHttpActionResult Login([FromBody]ApiMessage<string, LoginModel> user)
         {
-            if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username).Any())
+            if (_unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
             {
                 ApiMessage<string, LoginModel> response;
                 if ((response = _accessService.Login(user)) != null)
@@ -41,7 +41,7 @@ namespace Backend.Controllers
             }
             else
             {
-                return BadRequest("User with this username does not exist.");
+                return BadRequest();
             }
         }
 
@@ -50,7 +50,7 @@ namespace Backend.Controllers
         {
             if (_accessService.Logout(user.Key))
             {
-                return Ok();
+                return Ok(user);
             }
             else
             {

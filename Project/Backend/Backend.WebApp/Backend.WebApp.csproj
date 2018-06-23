@@ -153,12 +153,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="LoginRepository\CacheManager.cs" />
-    <Compile Include="LoginRepository\ICacheManager.cs" />
-    <Compile Include="LoginRepository\IAccessService.cs" />
-    <Compile Include="LoginRepository\AccessService.cs" />
+    <Compile Include="AccessServices\CacheManager.cs" />
+    <Compile Include="AccessServices\ICacheManager.cs" />
+    <Compile Include="AccessServices\IAccessService.cs" />
+    <Compile Include="AccessServices\AccessService.cs" />
     <Compile Include="Models\ApiMessage.cs" />
-    <Compile Include="Models\HashGenerator.cs" />
+    <Compile Include="AccessServices\HashGenerator.cs" />
     <Compile Include="Models\IApiMessage.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
