@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace DomainEntities.Models
         [Required]
         public Ride Ride { get; set; }
         [Range(0, 5)]
-        [Required]
+        [DefaultValue(0)]
         public int Rating { get; set; }
     }
 }

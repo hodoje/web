@@ -11,13 +11,9 @@ namespace DomainEntities.Models
     [ComplexType]
     public class Car
     {
-        [Required]
-        public int YearOfManufactoring { get; set; }
-        [Required]
+        public int? YearOfManufactoring { get; set; }
         public string RegistrationNumber { get; set; }
-        [Required]
         public string TaxiNumber { get; set; }
-        [Required]
-        public int CarType { get; set; }
+        public int? CarType { get; set; }
     }
 }

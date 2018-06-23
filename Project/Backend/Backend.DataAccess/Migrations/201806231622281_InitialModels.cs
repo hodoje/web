@@ -3,7 +3,7 @@ namespace Backend.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialModel : DbMigration
+    public partial class InitialModels : DbMigration
     {
         public override void Up()
         {
@@ -67,10 +67,10 @@ namespace Backend.DataAccess.Migrations
                         IsBanned = c.Boolean(nullable: false),
                         Role = c.Int(nullable: false),
                         DriverLocationId = c.Int(),
-                        Car_YearOfManufactoring = c.Int(nullable: false),
-                        Car_RegistrationNumber = c.String(nullable: false),
-                        Car_TaxiNumber = c.String(nullable: false),
-                        Car_CarType = c.Int(nullable: false),
+                        Car_YearOfManufactoring = c.Int(),
+                        Car_RegistrationNumber = c.String(),
+                        Car_TaxiNumber = c.String(),
+                        Car_CarType = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Locations", t => t.DriverLocationId)
@@ -81,10 +81,10 @@ namespace Backend.DataAccess.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        StreetName = c.String(nullable: false),
-                        StreetNumber = c.String(nullable: false),
-                        City = c.String(nullable: false),
-                        PostalCode = c.String(nullable: false),
+                        Address_StreetName = c.String(nullable: false),
+                        Address_StreetNumber = c.String(nullable: false),
+                        Address_City = c.String(nullable: false),
+                        Address_PostalCode = c.String(nullable: false),
                         Longitude = c.Double(nullable: false),
                         Latitude = c.Double(nullable: false),
                     })

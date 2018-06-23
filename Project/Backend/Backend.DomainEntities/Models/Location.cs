@@ -15,18 +15,12 @@ namespace DomainEntities.Models
             Drivers = new HashSet<User>();
             RideStarts = new HashSet<Ride>();
             RideDestinations = new HashSet<Ride>();
+            Address = new Address();
         }
 
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string StreetName { get; set; }
-        [Required]
-        public string StreetNumber { get; set; }
-        [Required]
-        public string City { get; set; }
-        [Required]
-        public string PostalCode { get; set; }
+        public Address Address { get; set; }
         [Required]
         public double Longitude { get; set; }
         [Required]

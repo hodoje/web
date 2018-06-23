@@ -22,10 +22,13 @@ namespace Backend.Controllers
             _unitOfWork = unitOfWork;
             Location dl = new Location
             {
-                City = "NS",
-                StreetName = "STR",
-                StreetNumber = "123",
-                PostalCode = "ABC123",
+                Address =
+                {
+                    City = "NS",
+                    StreetName = "STR",
+                    StreetNumber = "123",
+                    PostalCode = "ABC123"
+                },
                 Longitude = 5,
                 Latitude = 7
             };
@@ -48,6 +51,38 @@ namespace Backend.Controllers
                 Car = new Car { CarType = 2, RegistrationNumber = "ABC123", YearOfManufactoring = 1996, TaxiNumber = "44" }
             };
             _unitOfWork.UserRepository.Add(d);
+
+            Location dll = new Location
+            {
+                Address =
+                {
+                    City = "NSS",
+                    StreetName = "STRR",
+                    StreetNumber = "12345",
+                    PostalCode = "ABC12345"
+                },
+                Longitude = 7,
+                Latitude = 9
+            };
+            _unitOfWork.LocationRepository.Add(dll);
+            _unitOfWork.Complete();
+
+            User dd = new User
+            {
+                Username = "username",
+                Password = "password",
+                Name = "dimitrije",
+                Lastname = "nestorov",
+                DriverLocationId = dll.Id,
+                Email = "dimitrije@email.com",
+                Gender = 1,
+                IsBanned = false,
+                NationalIdentificationNumber = "5678",
+                PhoneNumber = "56789",
+                Role = 2,
+                Car = new Car { CarType = 2, RegistrationNumber = "DEF456", YearOfManufactoring = 2006, TaxiNumber = "66" }
+            };
+            _unitOfWork.UserRepository.Add(dd);
             _unitOfWork.Complete();
         }
 
