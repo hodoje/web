@@ -32,10 +32,14 @@ namespace Backend.Controllers
                 return Conflict();
             }
 
-            if (user.Role == (int)Role.DISPATCHER)
+            if (user.Role == (int)Role.DISPATCHER || user.Role == (int)Role.DRIVER)
             {
                 return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
             }
+
+            user.Car = new Car();                   // Because of EF, since Car is a ComplexType it can't be null, it has to be instantiated
+            user.Role = (int)Role.CUSTOMER;         // Role is not passed through registration form
+            user.IsBanned = false;                  // Initially customer is not banned
 
             _unitOfWork.UserRepository.Add(user);
             _unitOfWork.Complete();
