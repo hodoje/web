@@ -1,15 +1,15 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 
-import { RoleGuard } from './role.guard';
+import { DriverGuard } from './driver.guard';
 
-describe('RoleGuard', () => {
+describe('DriverGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [RoleGuard]
+      providers: [DriverGuard]
     });
   });
 
-  it('should ...', inject([RoleGuard], (guard: RoleGuard) => {
+  it('should ...', inject([DriverGuard], (guard: DriverGuard) => {
     expect(guard).toBeTruthy();
   }));
 });
