@@ -18,6 +18,10 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule } from '@angular/forms';
 import { NavbarToLoginService } from './services/navbar-to-login.service';
+import { ContentComponent } from './components/content/content.component';
+import { CustomerComponent } from './components/customer/customer.component';
+import { DriverComponent } from './components/driver/driver.component';
+import { DispatcherComponent } from './components/dispatcher/dispatcher.component';
 
 const Routes = [
   {
@@ -46,7 +50,11 @@ const Routes = [
     UsersComponent,
     HomeComponent,
     RegistrationComponent,
-    LoginComponent
+    LoginComponent,
+    ContentComponent,
+    CustomerComponent,
+    DriverComponent,
+    DispatcherComponent
   ],
   imports: [
     BrowserModule,
