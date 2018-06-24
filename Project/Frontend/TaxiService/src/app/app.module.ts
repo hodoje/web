@@ -1,6 +1,4 @@
-import { DispatcherGuard } from './guards/dispatcher.guard';
-import { DriverGuard } from './guards/driver.guard';
-import { CustomerGuard } from './guards/customer.guard';
+import { ContentGuard } from './guards/content.guard';
 import { LoginToNavbarService } from './services/login-to-navbar.service';
 import { GenericService } from './services/generic.service';
 import { RegistrationService } from './services/registration.service';
@@ -26,21 +24,6 @@ import { DriverComponent } from './components/driver/driver.component';
 import { DispatcherComponent } from './components/dispatcher/dispatcher.component';
 import { LoginGuard } from './guards/login.guard';
 
-const ContentChildRoutes = [
-  {
-    path: "customer",
-    component: CustomerComponent,
-  },
-  {
-    path: "driver",
-    component: DriverComponent
-  },
-  {
-    path: "dispatcher",
-    component: DispatcherComponent
-  }
-]
-
 const Routes = [
   {
     path: "home",
@@ -49,8 +32,7 @@ const Routes = [
   {
     path: "content",
     component: ContentComponent,
-    children: ContentChildRoutes,
-    canActivate: [LoginGuard]
+    canActivate: [ContentGuard]
   },
   {
     path: "login",
@@ -96,9 +78,7 @@ const Routes = [
     RidesService,
     LoginToNavbarService,
     LoginGuard,
-    CustomerGuard,
-    DriverGuard,
-    DispatcherGuard
+    ContentGuard
   ],
   bootstrap: [AppComponent]
 })

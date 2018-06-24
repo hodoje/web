@@ -1,3 +1,9 @@
-<p>
-  content works!
-</p>
+<div *ngIf="role === 'customer'">
+  <customer></customer>
+</div>
+<div *ngIf="role === 'driver'">
+  <driver></driver>
+</div>
+<div *ngIf="role === 'dispatcher'">
+  <dispatcher></dispatcher>
+</div>

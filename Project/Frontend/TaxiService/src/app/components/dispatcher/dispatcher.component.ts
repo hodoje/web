@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-dispatcher',
+  selector: 'dispatcher',
   templateUrl: './dispatcher.component.html',
   styleUrls: ['./dispatcher.component.css']
 })

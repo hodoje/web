@@ -1,3 +1,6 @@
+import { DriverComponent } from '../driver/driver.component';
+import { CustomerComponent } from '../customer/customer.component';
+import { DispatcherComponent } from '../dispatcher/dispatcher.component';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +10,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentComponent implements OnInit {
 
+  role: string;
+
   constructor() { }
 
   ngOnInit() {
+    this.role = (localStorage.role as string).toLowerCase();
   }
 
 }

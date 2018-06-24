@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-driver',
+  selector: 'driver',
   templateUrl: './driver.component.html',
   styleUrls: ['./driver.component.css']
 })
