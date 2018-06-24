@@ -38,6 +38,7 @@ export class LoginComponent{
     this.loginService.login(this.apiRequest).subscribe(
       (data: ApiMessage) => {
         localStorage.setItem('userHash', data.key);
+        localStorage.setItem('role', data.data.role);
         this.isLoggedIn = true;
         this.router.navigate(['/home']);
         this.loginToNavbarService.login();
@@ -52,6 +53,7 @@ export class LoginComponent{
       (data: ApiMessage) => {
         if(localStorage.userHash === data.key){
           localStorage.userHash = null;
+          localStorage.role = null;
           this.isLoggedIn = false;
         }
       },

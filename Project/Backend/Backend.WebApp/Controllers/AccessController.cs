@@ -15,29 +15,20 @@ namespace Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccessService _accessService;
-        private readonly HashGenerator _hashGenerator;
 
-        public AccessController(IUnitOfWork unitOfWork, IAccessService accessService, HashGenerator hashGenerator)
+        public AccessController(IUnitOfWork unitOfWork, IAccessService accessService)
         {
             _unitOfWork = unitOfWork;
             _accessService = accessService;
-            _hashGenerator = hashGenerator;
         }
 
         [HttpPost]
         public IHttpActionResult Login([FromBody]ApiMessage<string, LoginModel> user)
         {
-            if (_unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
+            ApiMessage<string, LoginModel> response;
+            if ((response = _accessService.Login(user, _unitOfWork)) != null)       // Need to inject unit of work because otherwise it would get disposed
             {
-                ApiMessage<string, LoginModel> response;
-                if ((response = _accessService.Login(user)) != null)
-                {
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return Ok(response);
             }
             else
             {

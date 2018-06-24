@@ -21,20 +21,29 @@ namespace Backend.AccessServices
             _hashGenerator = hashGenerator;
         }
 
-        public ApiMessage<string, LoginModel> Login(ApiMessage<string, LoginModel> user)
+        public ApiMessage<string, LoginModel> Login(ApiMessage<string, LoginModel> user, IUnitOfWork unitOfWork)
         {
-            ApiMessage<string, LoginModel> returnMessage = new ApiMessage<string, LoginModel>();
-            Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
-            if (!loggedUsers.ContainsKey(user.Key))
+            if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
             {
-                string hash = _hashGenerator.GenerateHash(user.Data);
-                loggedUsers.Add(hash, user.Data);
+                ApiMessage<string, LoginModel> returnMessage = new ApiMessage<string, LoginModel>();
+                Dictionary<string, LoginModel> loggedUsers =
+                    (Dictionary<string, LoginModel>) _cacheManager.Get("LoggedUsers");
+                if (!loggedUsers.ContainsKey(user.Key))
+                {
+                    string hash = _hashGenerator.GenerateHash(user.Data);
+                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).SingleOrDefault().Role).ToString();
+                    loggedUsers.Add(hash, user.Data);
 
-                returnMessage.Key = hash;
-                returnMessage.Data = user.Data;
+                    returnMessage.Key = hash;
+                    returnMessage.Data = user.Data;                    
+                }
+                _cacheManager.Set(key, loggedUsers, 24);
+                return returnMessage;
             }
-            _cacheManager.Set(key, loggedUsers, 24);
-            return returnMessage;
+            else
+            {
+                return null;
+            }
         }
 
         public bool Logout(string hash)
