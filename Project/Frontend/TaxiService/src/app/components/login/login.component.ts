@@ -1,4 +1,3 @@
-import { NavbarToLoginService } from './../../services/navbar-to-login.service';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { LoginModel } from '../../models/login.model';
@@ -20,22 +19,12 @@ export class LoginComponent{
   constructor(
     private loginService: LoginService, 
     private router: Router, 
-    private loginToNavbarService: LoginToNavbarService,
-    private navbarToLoginService: NavbarToLoginService
+    private loginToNavbarService: LoginToNavbarService
   ) { }
-
-  ngOnInit(){
-    this.navbarToLoginService.change.subscribe(
-      isLoggedOut => {
-        if(isLoggedOut){
-          this.logout();
-        }
-      })
-  }
 
   login(loginModel: LoginModel){
     this.isBadLogin = false;
-    this.apiRequest = new ApiMessage("", loginModel);
+    this.apiRequest = new ApiMessage("null", loginModel);
 
     this.loginService.login(this.apiRequest).subscribe(
       (data: ApiMessage) => {
@@ -43,6 +32,7 @@ export class LoginComponent{
         localStorage.setItem('role', data.data.role);
         this.isLoggedIn = true;
         this.router.navigate(['/home']);
+
         this.loginToNavbarService.login();
       },
       error => {
@@ -60,9 +50,16 @@ export class LoginComponent{
           localStorage.userHash = null;
           localStorage.role = null;
           this.isLoggedIn = false;
+
+          this.loginToNavbarService.login();
         }
       },
-      error => {console.log(error)}
+      error => {
+        localStorage.userHash = null;
+        localStorage.role = null;
+        this.isLoggedIn = false;
+        console.log(error)
+      }
     );
   }
 }

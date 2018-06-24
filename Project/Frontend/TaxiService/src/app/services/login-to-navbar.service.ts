@@ -6,9 +6,12 @@ import { EventEmitter } from '@angular/core';
 })
 export class LoginToNavbarService {
 
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  isLoggedIn = false;
 
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  
   login(){
-    this.change.emit(true);
+    this.isLoggedIn = !this.isLoggedIn;
+    this.change.emit(this.isLoggedIn);
   }
 }
