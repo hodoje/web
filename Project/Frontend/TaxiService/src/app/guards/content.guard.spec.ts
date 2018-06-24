@@ -1,15 +1,15 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 
-import { DriverGuard } from './driver.guard';
+import { ContentGuard } from './content.guard';
 
-describe('DriverGuard', () => {
+describe('ContentGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DriverGuard]
+      providers: [ContentGuard]
     });
   });
 
-  it('should ...', inject([DriverGuard], (guard: DriverGuard) => {
+  it('should ...', inject([ContentGuard], (guard: ContentGuard) => {
     expect(guard).toBeTruthy();
   }));
 });
