@@ -15,6 +15,7 @@ export class LoginComponent{
 
   isLoggedIn: boolean;
   apiRequest: ApiMessage;
+  isBadLogin: boolean;
   
   constructor(
     private loginService: LoginService, 
@@ -33,6 +34,7 @@ export class LoginComponent{
   }
 
   login(loginModel: LoginModel){
+    this.isBadLogin = false;
     this.apiRequest = new ApiMessage("", loginModel);
 
     this.loginService.login(this.apiRequest).subscribe(
@@ -43,7 +45,10 @@ export class LoginComponent{
         this.router.navigate(['/home']);
         this.loginToNavbarService.login();
       },
-      error => {console.log(error)}
+      error => {
+        this.isBadLogin = true;
+        console.log(error);
+      }
     );
   }
 

@@ -25,6 +25,8 @@
       </div>
       <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!f.valid">
     </form>
+    &nbsp;
+    <div *ngIf="isBadLogin" class="alert alert-danger">Username or password is not valid.</div>
   </div>
   <div class="col-md-4"></div>
 </div>
