@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngIf="!registrationSuccessful">
   <div class="col-md-4"></div>
   <div class="wrapper col-md-4">
     <div class="page-header">
@@ -27,7 +27,7 @@
           minlength="3"
           maxlength="30"
           pattern="[a-zA-Z0-9]*"
-          type="text" name="password" ngModel #password="ngModel" class="form-control form-control-sm">
+          type="password" name="password" ngModel #password="ngModel" class="form-control form-control-sm">
         <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
           <div *ngIf="password.errors.required">Password is required.</div>
           <div *ngIf="password.errors.minlength">Password needs to be at least 3 characters long.</div>
@@ -86,4 +86,17 @@
     </form>      
   </div>
   <div class="col-md-4"></div>
+</div>
+<div *ngIf="registrationSuccessful">
+  <div class="jumbotron">
+    <h2>You have successfully registered.</h2>
+    <ul>
+      <li>
+        <a [routerLink]="['/home']">Home</a>
+      </li>
+      <li>
+        <a [routerLink]="['/login']">Login</a>
+      </li>
+    </ul>
+  </div>
 </div>

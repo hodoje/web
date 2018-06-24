@@ -18,17 +18,13 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input required type="text" name="password" ngModel #password="ngModel" class="form-control form-control-sm">
+        <input required type="password" name="password" ngModel #password="ngModel" class="form-control form-control-sm">
         <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
           <div *ngIf="password.errors.required">Password is required.</div>
         </div>
       </div>
       <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!f.valid">
     </form>
-    <div>
-      <p *ngIf="!isLoggedIn">User not logged in.</p>
-      <p *ngIf="isLoggedIn">User logged in.</p>
-    </div>
   </div>
   <div class="col-md-4"></div>
 </div>

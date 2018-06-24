@@ -33,22 +33,17 @@ export class LoginComponent{
   }
 
   login(loginModel: LoginModel){
-    //if(!localStorage.userHash){
-      this.apiRequest = new ApiMessage("", loginModel);
+    this.apiRequest = new ApiMessage("", loginModel);
 
-      this.loginService.login(this.apiRequest).subscribe(
-        (data: ApiMessage) => {
-          localStorage.setItem('userHash', data.key);
-          this.isLoggedIn = true;
-          this.router.navigate(['/home']);
-          this.loginToNavbarService.login();
-        },
-        error => {console.log(error)}
-      );
-    //}
-    //else{
-    // console.log(localStorage.userHash);
-    //}
+    this.loginService.login(this.apiRequest).subscribe(
+      (data: ApiMessage) => {
+        localStorage.setItem('userHash', data.key);
+        this.isLoggedIn = true;
+        this.router.navigate(['/home']);
+        this.loginToNavbarService.login();
+      },
+      error => {console.log(error)}
+    );
   }
 
   logout(){
