@@ -9,7 +9,6 @@ import { RouterModule, Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { AccessComponent } from './components/access/access.component';
 import { RidesService } from './services/rides.service';
 import { LoginService } from './services/login.service';
 import { UsersComponent } from './components/users/users.component';
@@ -44,7 +43,6 @@ const Routes = [
     AppComponent,
     NavbarComponent,
     SidebarComponent,
-    AccessComponent,
     UsersComponent,
     HomeComponent,
     RegistrationComponent,
