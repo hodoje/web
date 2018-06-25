@@ -12,7 +12,9 @@ namespace Backend.App_Start.MappingProfiles
     {
         public LocationMappingProfile()
         {
-            CreateMap<Location, LocationDto>();
+            CreateMap<Location, LocationDto>()
+                .ForMember(destination => destination.Address,
+                opts => opts.MapFrom(source => source.Address));
             CreateMap<LocationDto, Location>();
         }
     }

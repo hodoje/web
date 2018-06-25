@@ -25,10 +25,10 @@ namespace Backend.App_Start.MappingProfiles
             CreateMap<UserDto, User>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Gender)).Cast<Gender>().SingleOrDefault(g => g.ToString() == source.Gender)))
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>().FirstOrDefault(g => g.ToString() == source.Gender)))
                 .ForMember(destination => destination.Role,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Role)).Cast<Role>().SingleOrDefault(r => r.ToString() == source.Role)))
+                        Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(r => r.ToString() == source.Role)))
                 .ForMember(destination => destination.Car,
                     opts => opts.MapFrom(source => source.Car))
                 .ForMember(destination => destination.DriverLocation,

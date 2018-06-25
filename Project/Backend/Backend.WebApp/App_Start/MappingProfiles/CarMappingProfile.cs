@@ -16,10 +16,12 @@ namespace Backend.App_Start.MappingProfiles
         {
             CreateMap<Car, CarDto>()
                 .ForMember(destination => destination.CarType,
-                    opts => opts.MapFrom(source => ((CarType)source.CarType).ToString()));
+                    destination => destination.PreCondition(source => source.CarType != null))
+                .ForMember(destination => destination.CarType,
+                    destination => destination.MapFrom(source => ((CarType) source.CarType).ToString()));
             CreateMap<CarDto, Car>()
                 .ForMember(destination => destination.CarType,
-                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().SingleOrDefault(ct => ct.ToString() == source.CarType)));
+                    opts => opts.MapFrom(source => Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == source.CarType)));
         }
     }
 }

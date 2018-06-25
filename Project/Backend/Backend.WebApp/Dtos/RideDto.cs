@@ -11,25 +11,16 @@ namespace Backend.Dtos
 {
     public class RideDto
     {
-        [Key]
         public int Id { get; set; }
-        [Column(TypeName = "datetime2")]
-        [Required]
         public DateTime Timestamp { get; set; }
-        [Required]
         public LocationDto StartLocation { get; set; }
-        [Required]
         public string CarType { get; set; }
-        [Required]
         public UserDto Customer { get; set; }
-        [Required]
         public LocationDto DestinationLocation { get; set; }
         public UserDto Dispatcher { get; set; }
-        [Required]
         public UserDto Driver { get; set; }
         public double Price { get; set; }
         public CommentDto Comment { get; set; }
-        [Required]
         public string RideStatus { get; set; }
     }
 }

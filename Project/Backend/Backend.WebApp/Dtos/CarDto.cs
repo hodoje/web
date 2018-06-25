@@ -9,14 +9,10 @@ using DomainEntities.Models;
 namespace Backend.Dtos
 {
     public class CarDto
-    {
-        [Required]
-        public int YearOfManufactoring { get; set; }
-        [Required]
+    {        
+        public int? YearOfManufactoring { get; set; }
         public string RegistrationNumber { get; set; }
-        [Required]
         public string TaxiNumber { get; set; }
-        [Required]
         public string CarType { get; set; }
     }
 }
