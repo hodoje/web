@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class GenericService {
 
-  constructor(private url: string, private endpoint: string, private httpClient: HttpClient) { }
+  constructor(private url: string, private endpoint: string, protected httpClient: HttpClient) { }
 
   public getById(id: number){
     return this.httpClient.get(`${this.url}/${this.endpoint}/${id}`);

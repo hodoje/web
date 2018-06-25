@@ -41,13 +41,13 @@ namespace Backend.Controllers
             //LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
             //if (_loginRepository.IsLoggedIn(lm))
             //{
-                IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
-                if (users == null)
-                {
-                    return NotFound();
-                }
-                IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
-                return Ok(userDtos);
+            IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
+            if (users == null || users.Count() < 1)
+            {
+                return NotFound();
+            }
+            IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
+            return Ok(userDtos);
             //}
             //return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
         }
@@ -63,6 +63,21 @@ namespace Backend.Controllers
                 return NotFound();
             }
             UserDto userDto = _iMapper.Map<User, UserDto>(user);
+            return Ok(userDto);
+        }
+
+        [HttpPost]
+        [Route("api/users/getuserbyusername")]
+        public IHttpActionResult GetUser(ApiMessage<string, LoginModel> user)
+        {
+            // Before this line, user.data.username and user.data.password are null
+            if ((user = _accessService.GetLoginData(user.Key, _unitOfWork)) == null)
+            {
+                return BadRequest();
+            }
+            
+            User u = _unitOfWork.UserRepository.GetUserByUsername(user.Data.Username, user.Data.Role);
+            UserDto userDto = _iMapper.Map<User, UserDto>(u);
             return Ok(userDto);
         }
 

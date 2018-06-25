@@ -12,5 +12,9 @@ namespace Backend.DataAccess.ModelRepositoryInterfaces
     {
         User GetByIdIncludeAll(int id);
         IEnumerable<User> GetAllIncludeAll();
+        User GetUserByUsername(string username, string role);
+        IEnumerable<User> GetAllCustomers();
+        IEnumerable<User> GetAllDriversIncludeAll();
+        IEnumerable<User> GetAllDispatchers();
     }
 }

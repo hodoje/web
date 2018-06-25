@@ -19,14 +19,35 @@ namespace Backend.DataAccess.ModelRepositories
 
         public UserRepository(DbContext context) : base(context) { }
 
-        public IEnumerable<User> GetAllIncludeAll()
-        {
-            return _entities.Include(u => u.DriverLocation);
-        }
-
         public User GetByIdIncludeAll(int id)
         {
-            return _entities.Where(u => u.Id == id).Include(u => u.DriverLocation).SingleOrDefault();
+            return _entities.Where(u => u.Id == id).Include(u => u.DriverLocation).FirstOrDefault();
+        }
+
+        public IEnumerable<User> GetAllIncludeAll()
+        {
+            return _entities.Include(u => u.DriverLocation).ToList();
+        }
+
+        public User GetUserByUsername(string username, string role)
+        {
+            User user = _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).Include(u => u.DriverLocation).FirstOrDefault();
+            return user;
+        }
+
+        public IEnumerable<User> GetAllCustomers()
+        {
+            return _entities.Where(u => u.Role == (int) Role.CUSTOMER).ToList();
+        }
+
+        public IEnumerable<User> GetAllDriversIncludeAll()
+        {
+            return _entities.Where(u => u.Role == (int)Role.DRIVER).Include(u => u.DriverLocation).ToList();
+        }
+
+        public IEnumerable<User> GetAllDispatchers()
+        {
+            return _entities.Where(u => u.Role == (int) Role.DISPATCHER).ToList();
         }
     }
 }

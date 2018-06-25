@@ -31,7 +31,7 @@ namespace Backend.AccessServices
                 if (!loggedUsers.ContainsKey(user.Key))
                 {
                     string hash = _hashGenerator.GenerateHash(user.Data);
-                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).SingleOrDefault().Role).ToString();
+                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
                     loggedUsers.Add(hash, user.Data);
 
                     returnMessage.Key = hash;
@@ -72,6 +72,21 @@ namespace Backend.AccessServices
             return result;
         }
 
+        public ApiMessage<string, LoginModel> GetLoginData(string userHash, IUnitOfWork unitOfWork)
+        {
+            ApiMessage<string, LoginModel> loginData = null;
+            Dictionary<string, LoginModel> loggedUsers =
+                (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
+            if (loggedUsers.ContainsKey(userHash))
+            {
+                loginData = new ApiMessage<string, LoginModel>
+                {
+                    Key = userHash,
+                    Data = loggedUsers[userHash]
+                };
+            }
+            return loginData;
+        }
         public bool BlockUser(string username)
         {
             throw new NotImplementedException();
