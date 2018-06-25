@@ -25,9 +25,20 @@ namespace Backend.Controllers
         [HttpPost]
         public IHttpActionResult Login([FromBody]ApiMessage<string, LoginModel> user)
         {
-            ApiMessage<string, LoginModel> response;
-            if ((response = _accessService.Login(user, _unitOfWork)) != null)       // Need to inject unit of work because otherwise it would get disposed
+            ApiMessage<string, LoginModel> allDataResponse;
+            if ((allDataResponse = _accessService.Login(user, _unitOfWork)) != null)       // Need to inject unit of work because otherwise it would get disposed
             {
+                // With this new message we get rid of the reference that allDataResponse has on MemoryCache
+                ApiMessage<string, LoginModel> response = new ApiMessage<string, LoginModel>
+                {
+                    Key = allDataResponse.Key,
+                    Data = new LoginModel
+                    {
+                        Username = null,
+                        Password = null,
+                        Role = allDataResponse.Data.Role
+                    }
+                };
                 return Ok(response);
             }
             else
