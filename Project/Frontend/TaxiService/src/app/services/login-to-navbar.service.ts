@@ -11,7 +11,6 @@ export class LoginToNavbarService {
   @Output() change: EventEmitter<boolean> = new EventEmitter();
   
   login(){
-    this.isLoggedIn = !this.isLoggedIn;
-    this.change.emit(this.isLoggedIn);
+    this.change.emit(true);
   }
 }
