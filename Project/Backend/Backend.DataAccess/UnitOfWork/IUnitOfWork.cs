@@ -14,6 +14,7 @@ namespace Backend.DataAccess.UnitOfWork
         ILocationRepository LocationRepository { get; }
         IRideRepository RideRepository { get; }        
         IUserRepository UserRepository { get; }
+        ICarRepository CarRepository { get; }
 
         int Complete();
     }

@@ -11,20 +11,20 @@ namespace DomainEntities.Models
 {
     public class Comment
     {
-        [Key, ForeignKey("Ride")]
+        [Key]
         public int Id { get; set; }
         [Required]
+        [StringLength(1000)]
         public string Description { get; set; }
-        [Column(TypeName = "datetime2")]
         [Required]
         public DateTime Timestamp { get; set; }
+        [Required]
         public int UserId { get; set; }
-        [ForeignKey("UserId")]
         public User User { get; set; }
         [Required]
+        public int RideId { get; set; }
         public Ride Ride { get; set; }
         [Range(0, 5)]
-        [DefaultValue(0)]
         public int Rating { get; set; }
     }
 }

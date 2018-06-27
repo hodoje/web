@@ -10,9 +10,11 @@ namespace Backend.Dtos
 {
     public class CarDto
     {        
-        public int? YearOfManufactoring { get; set; }
+        public int? Id { get; set; }
+        public int YearOfManufactoring { get; set; }
         public string RegistrationNumber { get; set; }
-        public string TaxiNumber { get; set; }
+        public int TaxiNumber { get; set; }
         public string CarType { get; set; }
+        public int DriverId { get; set; }
     }
 }

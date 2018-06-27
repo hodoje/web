@@ -26,6 +26,7 @@ namespace Backend.Dtos
         public List<Ride> DriverRides { get; set; }
         public List<Comment> Comments { get; set; }
         public LocationDto DriverLocation { get; set; }
+        public int CarId { get; set; }
         public CarDto Car { get; set; }
     }
 }

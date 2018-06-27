@@ -1,10 +1,10 @@
 ﻿public enum RideStatus
 {
-    CREATED = 1,
-    CANCELLED = 2,
-    FORMED = 3,
-    PROCESSED = 4,
-    ACCEPTED = 5,
-    FAILED = 6,
-    SUCCESSFUL = 7
+    CREATED = 0,
+    CANCELLED = 1,
+    FORMED = 2,
+    PROCESSED = 3,
+    ACCEPTED = 4,
+    FAILED = 5,
+    SUCCESSFUL = 6
 }

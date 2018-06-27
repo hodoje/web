@@ -30,6 +30,8 @@ namespace Backend.DataAccess.UnitOfWork
         public virtual IRideRepository RideRepository { get; set; }
         [Dependency]
         public virtual IUserRepository UserRepository { get; set; }
+        [Dependency]
+        public virtual ICarRepository CarRepository { get; set; }
 
         public virtual int Complete()
         {

@@ -14,11 +14,8 @@ namespace Backend.Dtos
         public Address Address { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
-        [InverseProperty("DriverLocation")]
         public virtual ICollection<User> Drivers { get; set; }
-        [InverseProperty("StartLocation")]
         public virtual ICollection<Ride> RideStarts { get; set; }
-        [InverseProperty("DestinationLocation")]
         public virtual ICollection<Ride> RideDestinations { get; set; }
     }
 }

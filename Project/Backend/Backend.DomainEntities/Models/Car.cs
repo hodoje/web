@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -8,12 +9,22 @@ using System.Threading.Tasks;
 
 namespace DomainEntities.Models
 {
-    [ComplexType]
     public class Car
     {
-        public int? YearOfManufactoring { get; set; }
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        [Range(1900, 2018)]
+        public int YearOfManufactoring { get; set; }
+        [Required]
         public string RegistrationNumber { get; set; }
-        public string TaxiNumber { get; set; }
-        public int? CarType { get; set; }
+        [Required]
+        [Range(0, 1000000)]
+        public int TaxiNumber { get; set; }
+        [Required]
+        public int CarType { get; set; }
+        [Required]
+        public int DriverId { get; set; }
+        public User Driver { get; set; }
     }
 }

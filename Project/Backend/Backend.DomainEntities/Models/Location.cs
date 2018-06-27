@@ -20,16 +20,16 @@ namespace DomainEntities.Models
 
         [Key]
         public int Id { get; set; }
+        [Required]
         public Address Address { get; set; }
         [Required]
+        [Range(-180, 180)]
         public double Longitude { get; set; }
         [Required]
+        [Range(-90, 90)]
         public double Latitude { get; set; }
-        [InverseProperty("DriverLocation")]
         public virtual ICollection<User> Drivers { get; set; }
-        [InverseProperty("StartLocation")]
         public virtual ICollection<Ride> RideStarts { get; set; }
-        [InverseProperty("DestinationLocation")]
         public virtual ICollection<Ride> RideDestinations { get; set; }
     }
 }

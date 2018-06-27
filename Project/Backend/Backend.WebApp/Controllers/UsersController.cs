@@ -97,6 +97,10 @@ namespace Backend.Controllers
             }
 
             User user = _iMapper.Map<UserDto, User>(userDto);
+            if (user.Role == (int) Role.DRIVER)
+            {
+                user.DriverLocation.Drivers = null;
+            }
 
             try
             {
@@ -149,6 +153,7 @@ namespace Backend.Controllers
                 return NotFound();
             }
 
+            
             _unitOfWork.UserRepository.Remove(user);
             _unitOfWork.Complete();
 

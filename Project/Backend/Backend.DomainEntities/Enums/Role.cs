@@ -1,6 +1,6 @@
 ﻿public enum Role
 {
-    CUSTOMER = 1,
-    DRIVER = 2,
-    DISPATCHER = 3
+    CUSTOMER = 0,
+    DRIVER = 1,
+    DISPATCHER = 2
 }

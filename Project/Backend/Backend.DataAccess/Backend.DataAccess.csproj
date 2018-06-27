@@ -87,10 +87,12 @@
       <DependentUpon>201806231622281_InitialModels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="ModelRepositories\CarRepository.cs" />
     <Compile Include="ModelRepositories\CommentRepository.cs" />
     <Compile Include="ModelRepositories\LocationRepository.cs" />
     <Compile Include="ModelRepositories\RideRepository.cs" />
     <Compile Include="ModelRepositories\UserRepository.cs" />
+    <Compile Include="ModelRepositoryInterfaces\ICarRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\ICommentRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\ILocationRepository.cs" />
     <Compile Include="ModelRepositoryInterfaces\IRideRepository.cs" />

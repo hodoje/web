@@ -26,12 +26,13 @@ namespace Backend.DataAccess.ModelRepositories
 
         public IEnumerable<User> GetAllIncludeAll()
         {
-            return _entities.Include(u => u.DriverLocation).ToList();
+            return _entities.Include(u => u.Car).Include(u => u.DriverLocation).ToList();
         }
 
         public User GetUserByUsername(string username, string role)
         {
-            User user = _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).Include(u => u.DriverLocation).FirstOrDefault();
+            //User user = _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).Include(u => u.DriverLocation).FirstOrDefault();
+            User user = _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).FirstOrDefault();
             return user;
         }
 
@@ -40,9 +41,10 @@ namespace Backend.DataAccess.ModelRepositories
             return _entities.Where(u => u.Role == (int) Role.CUSTOMER).ToList();
         }
 
-        public IEnumerable<User> GetAllDriversIncludeAll()
+        public IEnumerable<User> GetAllDrivers()
         {
-            return _entities.Where(u => u.Role == (int)Role.DRIVER).Include(u => u.DriverLocation).ToList();
+            //return _entities.Where(u => u.Role == (int)Role.DRIVER).Include(u => u.Car).Include(u => u.DriverLocation).ToList();
+            return _entities.Where(u => u.Role == (int)Role.DRIVER).ToList();
         }
 
         public IEnumerable<User> GetAllDispatchers()

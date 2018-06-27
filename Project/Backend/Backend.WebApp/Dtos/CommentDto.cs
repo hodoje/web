@@ -13,7 +13,9 @@ namespace Backend.Dtos
         public int Id { get; set; }
         public string Description { get; set; }
         public DateTime Timestamp { get; set; }
+        public int UserId { get; set; }
         public UserDto User { get; set; }
+        public int RideId { get; set; }
         public RideDto Ride { get; set; }
         public int Rating { get; set; }
     }

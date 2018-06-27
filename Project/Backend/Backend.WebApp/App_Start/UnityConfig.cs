@@ -29,6 +29,7 @@ namespace Backend
 
             container.RegisterType<DbContext, DatabaseContext>(new HierarchicalLifetimeManager());
 
+            container.RegisterType<ICarRepository, CarRepository>();
             container.RegisterType<ICommentRepository, CommentRepository>();
             container.RegisterType<ILocationRepository, LocationRepository>();
             container.RegisterType<IRideRepository, RideRepository>();
