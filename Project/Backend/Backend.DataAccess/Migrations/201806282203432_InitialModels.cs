@@ -15,7 +15,7 @@ namespace Backend.DataAccess.Migrations
                         YearOfManufactoring = c.Int(nullable: false),
                         RegistrationNumber = c.String(nullable: false),
                         TaxiNumber = c.Int(nullable: false),
-                        CarType = c.Int(nullable: false, defaultValue: 0),
+                        CarType = c.Int(nullable: false),
                         DriverId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
@@ -36,7 +36,7 @@ namespace Backend.DataAccess.Migrations
                         PhoneNumber = c.String(maxLength: 10),
                         Email = c.String(nullable: false, maxLength: 254),
                         IsBanned = c.Boolean(nullable: false),
-                        Role = c.Int(nullable: false, defaultValue: 0),
+                        Role = c.Int(nullable: false),
                         DriverLocationId = c.Int(),
                         CarId = c.Int(),
                     })
@@ -53,7 +53,7 @@ namespace Backend.DataAccess.Migrations
                         Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         UserId = c.Int(nullable: false),
                         RideId = c.Int(nullable: false),
-                        Rating = c.Int(nullable: false, defaultValue: 0),
+                        Rating = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Rides", t => t.Id)
@@ -70,8 +70,8 @@ namespace Backend.DataAccess.Migrations
                         StartLocationId = c.Int(nullable: false),
                         DestinationLocationId = c.Int(),
                         Price = c.Double(nullable: false),
-                        RideStatus = c.Int(nullable: false, defaultValue: 0),
-                        CarType = c.Int(nullable: false, defaultValue: 0),
+                        RideStatus = c.Int(nullable: false),
+                        CarType = c.Int(nullable: false),
                         CustomerId = c.Int(),
                         DispatcherId = c.Int(),
                         DriverId = c.Int(),
