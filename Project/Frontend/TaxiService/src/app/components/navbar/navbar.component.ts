@@ -10,7 +10,7 @@ import { LoginToNavbarService } from '../../services/login-to-navbar.service';
 })
 export class NavbarComponent implements OnInit{
   
-  isLoggedIn: boolean;
+  isLoggedIn = false;
 
   constructor(private loginToNavbarService: LoginToNavbarService, private loginService: LoginService) { }
 
