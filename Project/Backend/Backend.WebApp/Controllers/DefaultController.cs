@@ -100,7 +100,7 @@ namespace Backend.Controllers
             Car c = new Car
             {
                 Id = dd.Id,
-                CarType = (int) CarType.PASSENGER,
+                CarType = (int)CarType.PASSENGER,
                 DriverId = dd.Id,
                 RegistrationNumber = "ABC123",
                 TaxiNumber = 66,

@@ -25,12 +25,14 @@ namespace Backend.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _iMapper;
         private IAccessService _accessService;
+        private HashGenerator _hashGenerator;
 
-        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, IAccessService accessService)
+        public UsersController(IUnitOfWork unitOfWork, IMapper iMapper, IAccessService accessService, HashGenerator hashGenerator)
         {
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
             _accessService = accessService;
+            _hashGenerator = hashGenerator;
         }
 
         // GET: api/Users
@@ -96,15 +98,25 @@ namespace Backend.Controllers
                 return BadRequest();
             }
 
-            User user = _iMapper.Map<UserDto, User>(userDto);
-            if (user.Role == (int) Role.DRIVER)
-            {
-                user.DriverLocation.Drivers = null;
-            }
+            //User oldUser = _unitOfWork.UserRepository.GetById(id);
+            User updatedUser = _iMapper.Map<UserDto, User>(userDto);
+
+            //if (oldUser.Username != updatedUser.Username)
+            //{
+                
+            //}
+            //if (oldUser.Password != updatedUser.Password)
+            //{
+                
+            //}
+            //if (updatedUser.Role == (int) Role.DRIVER)
+            //{
+            //    updatedUser.DriverLocation.Drivers = null;
+            //}
 
             try
             {
-                _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.UserRepository.Update(updatedUser);
                 _unitOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException)
@@ -134,9 +146,19 @@ namespace Backend.Controllers
 
             User user = _iMapper.Map<UserDto, User>(userDto);
 
-            _unitOfWork.UserRepository.Add(user);
-            _unitOfWork.Complete();
-
+            try
+            {
+                _unitOfWork.UserRepository.Add(user);
+                _unitOfWork.Complete();
+            }
+            catch (DbUpdateException)
+            {
+                if (UserExists(user.Id))
+                {
+                    return Conflict();
+                }
+            }
+            
             _iMapper.Map<User, UserDto>(user, userDto);
 
             return CreatedAtRoute("DefaultApi", new { id = userDto.Id }, userDto);
@@ -144,20 +166,24 @@ namespace Backend.Controllers
 
         //DELETE: api/Users/5
         [HttpDelete]
-        [ResponseType(typeof(User))]
+        [ResponseType(typeof(UserDto))]
         public IHttpActionResult DeleteUser(int id)
         {
             User user = _unitOfWork.UserRepository.GetById(id);
+            Car usersCar = _unitOfWork.CarRepository.GetById(id);
+            UserDto userDto = _iMapper.Map<User, UserDto>(user);
             if (user == null)
             {
                 return NotFound();
             }
 
+            _unitOfWork.CarRepository.Remove(usersCar);
+            _unitOfWork.Complete();
             
             _unitOfWork.UserRepository.Remove(user);
             _unitOfWork.Complete();
 
-            return Ok(user);
+            return Ok(userDto);
         }
 
         protected override void Dispose(bool disposing)
