@@ -17,22 +17,15 @@ namespace Backend.App_Start.MappingProfiles
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source => ((Gender) source.Gender).ToString()))
                 .ForMember(destination => destination.Role,
-                    opts => opts.MapFrom(source => ((Role) source.Role).ToString()))
-                .ForMember(destination => destination.Car,
-                    opts => opts.MapFrom(source => source.Car))
-                .ForMember(destination => destination.DriverLocation,
-                    opts => opts.MapFrom(source => source.DriverLocation));
+                    opts => opts.MapFrom(source => ((Role) source.Role).ToString()));
             CreateMap<UserDto, User>()
                 .ForMember(destination => destination.Gender,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Gender)).Cast<Gender>().FirstOrDefault(g => g.ToString() == source.Gender)))
+                        Enum.GetValues(typeof(Gender)).Cast<Gender>()
+                            .FirstOrDefault(g => g.ToString() == source.Gender)))
                 .ForMember(destination => destination.Role,
                     opts => opts.MapFrom(source =>
-                        Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(r => r.ToString() == source.Role)))
-                .ForMember(destination => destination.Car,
-                    opts => opts.MapFrom(source => source.Car))
-                .ForMember(destination => destination.DriverLocation,
-                    opts => opts.MapFrom(source => source.DriverLocation));
+                        Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(r => r.ToString() == source.Role)));
         }
     }
 }

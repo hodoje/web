@@ -22,8 +22,6 @@ namespace Backend.Dtos
         public bool IsBanned { get; set; }
         public string Role { get; set; }
         public int? DriverLocationId { get; set; }
-        public LocationDto DriverLocation { get; set; }
         public int? CarId { get; set; }
-        public CarDto Car { get; set; }
     }
 }
