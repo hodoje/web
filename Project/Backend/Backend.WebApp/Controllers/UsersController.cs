@@ -41,7 +41,7 @@ namespace Backend.Controllers
             //LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
             //if (_loginRepository.IsLoggedIn(lm))
             //{
-            IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
+            IEnumerable<User> users = _unitOfWork.UserRepository.GetAll();
             if (users == null || users.Count() < 1)
             {
                 return NotFound();
@@ -57,7 +57,7 @@ namespace Backend.Controllers
         [ResponseType(typeof(UserDto))]
         public IHttpActionResult GetUser(int id)
         {
-            User user = _unitOfWork.UserRepository.GetByIdIncludeAll(id);
+            User user = _unitOfWork.UserRepository.GetById(id);
             if (user == null)
             {
                 return NotFound();
@@ -68,7 +68,7 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("api/users/getuserbyusername")]
-        public IHttpActionResult GetUser(ApiMessage<string, LoginModel> user)
+        public IHttpActionResult GetUser([FromBody]ApiMessage<string, LoginModel> user)
         {
             // Before this line, user.data.username and user.data.password are null
             if ((user = _accessService.GetLoginData(user.Key, _unitOfWork)) == null)
@@ -147,7 +147,7 @@ namespace Backend.Controllers
         [ResponseType(typeof(User))]
         public IHttpActionResult DeleteUser(int id)
         {
-            User user = _unitOfWork.UserRepository.GetByIdIncludeAll(id);
+            User user = _unitOfWork.UserRepository.GetById(id);
             if (user == null)
             {
                 return NotFound();
