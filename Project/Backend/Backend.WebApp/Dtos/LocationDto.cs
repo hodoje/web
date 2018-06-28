@@ -14,8 +14,5 @@ namespace Backend.Dtos
         public Address Address { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
-        public virtual ICollection<User> Drivers { get; set; }
-        public virtual ICollection<Ride> RideStarts { get; set; }
-        public virtual ICollection<Ride> RideDestinations { get; set; }
     }
 }

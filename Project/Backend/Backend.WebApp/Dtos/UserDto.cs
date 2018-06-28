@@ -21,12 +21,9 @@ namespace Backend.Dtos
         public string Email { get; set; }
         public bool IsBanned { get; set; }
         public string Role { get; set; }
-        public List<Ride> CustomerRides { get; set; }
-        public List<Ride> DispatcherRides { get; set; }
-        public List<Ride> DriverRides { get; set; }
-        public List<Comment> Comments { get; set; }
+        public int? DriverLocationId { get; set; }
         public LocationDto DriverLocation { get; set; }
-        public int CarId { get; set; }
+        public int? CarId { get; set; }
         public CarDto Car { get; set; }
     }
 }
