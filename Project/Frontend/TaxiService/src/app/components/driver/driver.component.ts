@@ -1,3 +1,4 @@
+import { CarsService } from './../../services/cars.service';
 import { Location } from './../../models/location.model';
 import { UsersService } from './../../services/users.service';
 import { Component, OnInit } from '@angular/core';
@@ -20,7 +21,7 @@ export class DriverComponent implements OnInit {
   shouldDisplayData = false;
   shouldDisplayCarData = false;
 
-  constructor(private userService: UsersService) { }
+  constructor(private userService: UsersService, private carsService: CarsService) { }
 
   ngOnInit() {
   }
@@ -61,26 +62,36 @@ export class DriverComponent implements OnInit {
     );
   }
 
-  // getMyCarData(){
-  //   if(!this.shouldDisplayCarData){
-  //     let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
+  getMyCarData(){
+    if(!this.shouldDisplayCarData){
+      //let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
 
-  //     this.userService.getUserByUsername(apiMessage).subscribe(
-  //       (data: User) =>{
-  //         this.personalData = data;
-  //         this.shouldDisplayCarData = !this.shouldDisplayCarData;
-  //       },
-  //       error => {
-  //         this.shouldDisplayCarData = !this.shouldDisplayCarData;
-  //       });
+      this.carsService.getById(this.personalData.carId).subscribe(
+        (data: Car) =>{
+          this.carData = data;
+          console.log(data);
+          this.shouldDisplayCarData = !this.shouldDisplayCarData;
+        },
+        error => {
+          this.shouldDisplayCarData = !this.shouldDisplayCarData;
+        });
+    }
+    else{
+      this.shouldDisplayCarData = !this.shouldDisplayCarData;
+    }
+  }
 
-  //   }
-  //   else{
-  //     this.shouldDisplayCarData = !this.shouldDisplayCarData;
-  //   }
-  // }
-
-  // changeMyCarData(){
-
-  // }
+  changeMyCarData(updatedCar: Car){
+    updatedCar.id = this.carData.id;
+    updatedCar.driverId = this.carData.driverId;    
+    this.carsService.put(updatedCar.id, updatedCar).subscribe(
+      data => {
+        console.log(data);
+        this.shouldDisplayData = !this.shouldDisplayData;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
 }
