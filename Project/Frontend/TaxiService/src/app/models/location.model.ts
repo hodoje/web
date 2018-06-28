@@ -3,5 +3,5 @@ export class Location{
   id: number;
   address: Address;
   longitude: number;
-  latitue: number;
+  latitude: number;
 }

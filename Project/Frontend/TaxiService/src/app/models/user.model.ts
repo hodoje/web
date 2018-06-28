@@ -1,5 +1,3 @@
-import { Location } from './location.model';
-import { Car } from './car.model';
 export class User{
   id: number;
   username: string;
@@ -12,6 +10,6 @@ export class User{
   email: string;
   isBanned: boolean;
   role: string;
-  car: Car;
-  driverLocation: Location;
+  carId: number;
+  driverLocationId: number;
 }
