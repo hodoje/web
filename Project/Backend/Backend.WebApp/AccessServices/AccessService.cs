@@ -26,19 +26,23 @@ namespace Backend.AccessServices
             if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
             {
                 ApiMessage<string, LoginModel> returnMessage = new ApiMessage<string, LoginModel>();
-                Dictionary<string, LoginModel> loggedUsers =
-                    (Dictionary<string, LoginModel>) _cacheManager.Get("LoggedUsers");
-                if (!loggedUsers.ContainsKey(user.Key))
+                Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>) _cacheManager.Get("LoggedUsers");
+                string hash = _hashGenerator.GenerateHash(user.Data);
+                user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
+                if (!loggedUsers.ContainsKey(hash))
                 {
-                    string hash = _hashGenerator.GenerateHash(user.Data);
-                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
                     loggedUsers.Add(hash, user.Data);
 
                     returnMessage.Key = hash;
-                    returnMessage.Data = user.Data;                    
+                    returnMessage.Data = user.Data;
+
+                    _cacheManager.Set(key, loggedUsers, 24);
+                    return returnMessage;
                 }
-                _cacheManager.Set(key, loggedUsers, 24);
-                return returnMessage;
+                else
+                {
+                    return null;
+                }
             }
             else
             {
