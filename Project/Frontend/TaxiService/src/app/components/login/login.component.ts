@@ -14,7 +14,8 @@ export class LoginComponent{
 
   isLoggedIn: boolean;
   apiRequest: ApiMessage;
-  isBadLogin: boolean;
+  isBadLoginParams: boolean;
+  isOtherError: boolean;
   
   constructor(
     private loginService: LoginService, 
@@ -23,7 +24,7 @@ export class LoginComponent{
   ) { }
 
   login(loginModel: LoginModel){
-    this.isBadLogin = false;
+    this.isBadLoginParams = false;
     this.apiRequest = new ApiMessage("null", loginModel);
 
     this.loginService.login(this.apiRequest).subscribe(
@@ -36,7 +37,12 @@ export class LoginComponent{
         this.loginToNavbarService.login();
       },
       error => {
-        this.isBadLogin = true;
+        if(error.status === 400){
+          this.isBadLoginParams = true;
+        }
+        else{
+          this.isOtherError = true;
+        }
         console.log(error);
       }
     );
