@@ -14,7 +14,7 @@ export class ContentGuard implements CanActivate {
       return true;
     }
     else{
-      this.router.navigate(['/home']);
+      this.router.navigate(['/login']);
       return false;
     }
   }
