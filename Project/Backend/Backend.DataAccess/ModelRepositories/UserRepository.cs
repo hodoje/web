@@ -31,8 +31,7 @@ namespace Backend.DataAccess.ModelRepositories
 
         public User GetUserByUsername(string username, string role)
         {            
-            User user = _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).FirstOrDefault();
-            return user;
+           return _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).FirstOrDefault();
         }
 
         public IEnumerable<User> GetAllCustomers()
