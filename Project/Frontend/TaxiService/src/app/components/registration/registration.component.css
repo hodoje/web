@@ -1,8 +1,0 @@
-.wrapper{
-    width:350px;
-}
-
-.form-group.required label:before {
-    content:"*";
-    color:red;
-  }

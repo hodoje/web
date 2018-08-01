@@ -1,3 +1,6 @@
+import { Location } from './location.model';
+import { Car } from "./car.model";
+
 export class User{
   id: number;
   username: string;
@@ -11,5 +14,7 @@ export class User{
   isBanned: boolean;
   role: string;
   carId: number;
+  car: Car;
   driverLocationId: number;
+  driverLocation: Location;
 }

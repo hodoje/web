@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class GenericService {
+// @Injectable({
+//   providedIn: 'root'
+// })
+export abstract class GenericService {
 
   constructor(private url: string, private endpoint: string, protected httpClient: HttpClient) { }
 

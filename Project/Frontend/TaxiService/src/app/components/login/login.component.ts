@@ -8,7 +8,7 @@ import { LoginToNavbarService } from '../../services/login-to-navbar.service';
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent{
 
@@ -32,7 +32,7 @@ export class LoginComponent{
         localStorage.setItem('userHash', data.key);
         localStorage.setItem('role', data.data.role);
         this.isLoggedIn = true;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/content']);
 
         this.loginToNavbarService.login();
       },

@@ -1,3 +1,4 @@
+import { Ride } from './../../models/ride.model';
 import { UsersService } from './../../services/users.service';
 import { Component, OnInit } from '@angular/core';
 import { ApiMessage } from '../../models/apiMessage.model';
@@ -9,14 +10,17 @@ import { RegistrationService } from '../../services/registration.service';
 @Component({
   selector: 'customer',
   templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css']
+  styleUrls: ['./customer.component.scss']
 })
 export class CustomerComponent implements OnInit {
 
   personalData: User;
+  ridesHistory: Ride[];
   shouldDisplayData = false;
 
-  constructor(private userService: UsersService) { }
+  constructor(private userService: UsersService) {
+    this.ridesHistory = new Array as Ride[];
+  }
 
   ngOnInit() {
   }

@@ -1,9 +1,14 @@
-<div *ngIf="role === 'customer'">
-  <customer></customer>
-</div>
-<div *ngIf="role === 'driver'">
-  <driver></driver>
-</div>
-<div *ngIf="role === 'dispatcher'">
-  <dispatcher></dispatcher>
+<div class="wrapper">
+  <sidebar></sidebar>
+  <div class="content">
+    <div *ngIf="role === 'customer'">
+      <customer></customer>
+    </div>
+    <div *ngIf="role === 'driver'">
+      <driver></driver>
+    </div>
+    <div *ngIf="role === 'dispatcher'">
+      <dispatcher></dispatcher>
+    </div>
+  </div>
 </div>

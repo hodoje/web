@@ -11,7 +11,7 @@ import { Car } from '../../models/car.model';
 @Component({
   selector: 'driver',
   templateUrl: './driver.component.html',
-  styleUrls: ['./driver.component.css']
+  styleUrls: ['./driver.component.scss']
 })
 export class DriverComponent implements OnInit {
 

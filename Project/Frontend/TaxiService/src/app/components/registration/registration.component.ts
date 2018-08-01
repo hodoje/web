@@ -5,7 +5,7 @@ import { RegistrationService } from '../../services/registration.service';
 @Component({
   selector: 'registration',
   templateUrl: './registration.component.html',
-  styleUrls: ['./registration.component.css']
+  styleUrls: ['./registration.component.scss']
 })
 export class RegistrationComponent{
 

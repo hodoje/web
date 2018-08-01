@@ -6,8 +6,9 @@ import { GenericService } from './services/generic.service';
 import { RegistrationService } from './services/registration.service';
 import { UsersService } from './services/users.service';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Component } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterModule, Router, CanActivate } from '@angular/router';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -70,10 +71,10 @@ const Routes = [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot(Routes)
+    RouterModule.forRoot(Routes),
+    MDBBootstrapModule.forRoot()
   ],
   providers: [
-    GenericService,
     LoginService,
     RegistrationService,
     UsersService,
