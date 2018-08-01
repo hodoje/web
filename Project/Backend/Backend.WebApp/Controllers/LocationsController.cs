@@ -1,119 +1,148 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Backend.DataAccess;
-using DomainEntities.Models;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Data;
+//using System.Data.Entity;
+//using System.Data.Entity.Infrastructure;
+//using System.Linq;
+//using System.Net;
+//using System.Net.Http;
+//using System.Web.Http;
+//using System.Web.Http.Description;
+//using AutoMapper;
+//using Backend.DataAccess;
+//using Backend.DataAccess.UnitOfWork;
+//using Backend.Dtos;
+//using DomainEntities.Models;
 
-namespace Backend.Controllers
-{
-    public class LocationsController : ApiController
-    {
-        private DatabaseContext db = new DatabaseContext();
+//namespace Backend.Controllers
+//{
+//    public class LocationsController : ApiController
+//    {
+//        private readonly IUnitOfWork _unitOfWork;
+//        private IMapper _iMapper;
 
-        // GET: api/Locations
-        public IQueryable<Location> GetLocations()
-        {
-            return db.Locations;
-        }
+//        public LocationsController(IUnitOfWork unitOfWork, IMapper iMapper)
+//        {
+//            _unitOfWork = unitOfWork;
+//            _iMapper = iMapper;
+//        }
 
-        // GET: api/Locations/5
-        [ResponseType(typeof(Location))]
-        public IHttpActionResult GetLocation(int id)
-        {
-            Location location = db.Locations.Find(id);
-            if (location == null)
-            {
-                return NotFound();
-            }
+//        // GET: api/Locations
+//        [HttpGet]
+//        [ResponseType(typeof(IEnumerable<LocationDto>))]
+//        public IHttpActionResult GetLocations()
+//        {
+//            IEnumerable<Location> locations = _unitOfWork.LocationRepository.GetAll();
+//            if (locations == null || locations.Count() < 1)
+//            {
+//                return NotFound();
+//            }
+//            IEnumerable<LocationDto> locatinoDtos = _iMapper.Map<IEnumerable<Location>, IEnumerable<LocationDto>>(locations);
+//            return Ok(locatinoDtos);
+//        }
 
-            return Ok(location);
-        }
+//        // GET: api/Locations/5
+//        [HttpGet]
+//        [ResponseType(typeof(LocationDto))]
+//        public IHttpActionResult GetLocation(int id)
+//        {
+//            Location location = _unitOfWork.LocationRepository.GetById(id);
+//            if (location == null)
+//            {
+//                return NotFound();
+//            }
+//            LocationDto locationDto = _iMapper.Map<Location, LocationDto>(location);
+//            return Ok(locationDto);
+//        }
 
-        // PUT: api/Locations/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutLocation(int id, Location location)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+//        // PUT: api/Locations/5
+//        [HttpPut]
+//        [ResponseType(typeof(void))]
+//        public IHttpActionResult PutLocation(int id, LocationDto locationDto)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                return BadRequest(ModelState);
+//            }
 
-            if (id != location.Id)
-            {
-                return BadRequest();
-            }
+//            if (id != locationDto.Id)
+//            {
+//                return BadRequest();
+//            }
 
-            db.Entry(location).State = EntityState.Modified;
+//            Location location = _iMapper.Map<LocationDto, Location>(locationDto);
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LocationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+//            try
+//            {
+//                _unitOfWork.LocationRepository.Add(location);
+//                _unitOfWork.Complete();
+//            }
+//            catch (DbUpdateConcurrencyException)
+//            {
+//                if (!LocationExists(id))
+//                {
+//                    return NotFound();
+//                }
+//                else
+//                {
+//                    throw;
+//                }
+//            }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+//            return StatusCode(HttpStatusCode.NoContent);
+//        }
 
-        // POST: api/Locations
-        [ResponseType(typeof(Location))]
-        public IHttpActionResult PostLocation(Location location)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+//        // POST: api/Locations
+//        [ResponseType(typeof(LocationDto))]
+//        public IHttpActionResult PostLocation(LocationDto locationDto)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                return BadRequest(ModelState);
+//            }
 
-            db.Locations.Add(location);
-            db.SaveChanges();
+//            Location location = _iMapper.Map<LocationDto, Location>(locationDto);
 
-            return CreatedAtRoute("DefaultApi", new { id = location.Id }, location);
-        }
+//            try
+//            {
+//                _unitOfWork.LocationRepository.Add(location);
+//                _unitOfWork.Complete();
+//            }
+//            catch (DbUpdateConcurrencyException)
+//            {
+//            }
 
-        // DELETE: api/Locations/5
-        [ResponseType(typeof(Location))]
-        public IHttpActionResult DeleteLocation(int id)
-        {
-            Location location = db.Locations.Find(id);
-            if (location == null)
-            {
-                return NotFound();
-            }
+//            return CreatedAtRoute("DefaultApi", new { id = location.Id }, location);
+//        }
 
-            db.Locations.Remove(location);
-            db.SaveChanges();
+//        // DELETE: api/Locations/5
+//        [ResponseType(typeof(Location))]
+//        public IHttpActionResult DeleteLocation(int id)
+//        {
+//            Location location = db.Locations.Find(id);
+//            if (location == null)
+//            {
+//                return NotFound();
+//            }
 
-            return Ok(location);
-        }
+//            db.Locations.Remove(location);
+//            db.SaveChanges();
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//            return Ok(location);
+//        }
 
-        private bool LocationExists(int id)
-        {
-            return db.Locations.Count(e => e.Id == id) > 0;
-        }
-    }
-}
+//        protected override void Dispose(bool disposing)
+//        {
+//            if (disposing)
+//            {
+//                db.Dispose();
+//            }
+//            base.Dispose(disposing);
+//        }
+
+//        private bool LocationExists(int id)
+//        {
+//            return db.Locations.Count(e => e.Id == id) > 0;
+//        }
+//    }
+//}

@@ -37,9 +37,10 @@ namespace Backend.Controllers
                 return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
             }
 
-            user.Car = new Car();                   // Because of EF, since Car is a ComplexType it can't be null, it has to be instantiated
             user.Role = (int)Role.CUSTOMER;         // Role is not passed through registration form
             user.IsBanned = false;                  // Initially customer is not banned
+            user.NationalIdentificationNumber = (String.IsNullOrWhiteSpace(user.NationalIdentificationNumber)) ? null : user.NationalIdentificationNumber;
+            user.PhoneNumber = (String.IsNullOrWhiteSpace(user.PhoneNumber)) ? null : user.PhoneNumber;
 
             _unitOfWork.UserRepository.Add(user);
             _unitOfWork.Complete();
