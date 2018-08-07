@@ -6,6 +6,7 @@ import { LoginModel } from '../../models/login.model';
 import { User } from '../../models/user.model';
 import { RegistrationModel } from '../../models/registration.model';
 import { RegistrationService } from '../../services/registration.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'customer',
@@ -18,7 +19,7 @@ export class CustomerComponent implements OnInit {
   ridesHistory: Ride[];
   shouldDisplayData = false;
 
-  constructor(private userService: UsersService) {
+  constructor(private userService: UsersService, private notificationService: NotificationService) {
     this.ridesHistory = new Array as Ride[];
   }
 
@@ -55,5 +56,10 @@ export class CustomerComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  useHub(input){
+    console.log(input.field);
+    this.notificationService.broadcastMessage(input.field);
   }
 }

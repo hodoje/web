@@ -17,6 +17,7 @@ import { LoginService } from './services/login.service';
 import { LoginToNavbarService } from './services/login-to-navbar.service';
 import { RegistrationService } from './services/registration.service';
 import { UsersService } from './services/users.service';
+import { NotificationService } from './services/notification.service';
 
 import { ContentGuard } from './guards/content.guard';
 import { LoginGuard } from './guards/login.guard';
@@ -83,6 +84,7 @@ const Routes = [
     CarsService,
     LocationsService,
     LoginToNavbarService,
+    NotificationService,
     LoginGuard,
     ContentGuard
   ],

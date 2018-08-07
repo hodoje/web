@@ -13,8 +13,8 @@ namespace Backend
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            var cors = new EnableCorsAttribute("http://localhost:4200", "*", "*");
-            config.EnableCors(cors);
+            //var cors = new EnableCorsAttribute("http://localhost:4200", "*", "*");
+            //config.EnableCors(cors);
 
             // Using Camel Case notation instead of Pascal notation because JS uses Camel Case
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

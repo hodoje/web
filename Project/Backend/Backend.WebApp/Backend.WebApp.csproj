@@ -185,6 +185,8 @@
     <Compile Include="AccessServices\ICacheManager.cs" />
     <Compile Include="AccessServices\IAccessService.cs" />
     <Compile Include="AccessServices\AccessService.cs" />
+    <Compile Include="Hubs\ICustomer.cs" />
+    <Compile Include="Hubs\RideStatusUpdateHub.cs" />
     <Compile Include="Models\ApiMessage.cs" />
     <Compile Include="AccessServices\HashGenerator.cs" />
     <Compile Include="Models\IApiMessage.cs" />

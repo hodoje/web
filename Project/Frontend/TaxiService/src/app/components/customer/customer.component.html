@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col col-md-4">
-      <h3>Call a ride?</h3>
+      <h3>Call a ride</h3>
       <form #rideForm="ngForm" (ngSubmit)="(rideForm.value)">
         <div class="form-group">
           <label for="username">Username</label>
@@ -179,6 +179,10 @@
     </div>
     <div class="col col-md-4">
       <h3>History</h3>
+      <form #f="ngForm" (ngSubmit)="useHub(f.value)">
+        <input type="text" name="field" ngModel #field="ngModel"/>
+        <input type="submit" value="Click me!"/>
+      </form>
       <div *ngIf="ridesHistory.length > 0">
         <table class="table">
           <tr *ngFor="let ride of ridesHistory">
