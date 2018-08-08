@@ -30,26 +30,22 @@ namespace Backend.AccessServices
             // This lock handles multiple fast same parameter logins
             lock (lockk)
             {
-                if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
+                string hash = _hashGenerator.GenerateHash(user.Data);
+
+                user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
+
+                if (!loggedUsers.ContainsKey(hash))
                 {
-                    string hash = _hashGenerator.GenerateHash(user.Data);
-
-                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username)
-                        .FirstOrDefault().Role).ToString();
-
-                    if (!loggedUsers.ContainsKey(hash))
+                    if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
                     {
-                        if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
-                        {
-                            loggedUsers.Add(hash, user.Data);
+                        loggedUsers.Add(hash, user.Data);
 
-                            returnMessage = new ApiMessage<string, LoginModel>();
-                            returnMessage.Key = hash;
-                            returnMessage.Data = user.Data;
+                        returnMessage = new ApiMessage<string, LoginModel>();
+                        returnMessage.Key = hash;
+                        returnMessage.Data = user.Data;
 
-                            _cacheManager.Set(key, loggedUsers, 24);
-                            return returnMessage;
-                        }
+                        _cacheManager.Set(key, loggedUsers, 24);
+                        return returnMessage;
                     }
                 }
             }
