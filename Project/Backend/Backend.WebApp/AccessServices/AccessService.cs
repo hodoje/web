@@ -13,6 +13,7 @@ namespace Backend.AccessServices
         private ICacheManager<string, LoginModel> _cacheManager;
         private HashGenerator _hashGenerator;
         private string key = "LoggedUsers";
+        static object lockk = new object();
 
         public AccessService(ICacheManager<string, LoginModel> cacheManager, HashGenerator hashGenerator)
         {
@@ -23,31 +24,36 @@ namespace Backend.AccessServices
 
         public ApiMessage<string, LoginModel> Login(ApiMessage<string, LoginModel> user, IUnitOfWork unitOfWork)
         {
-            if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
+            ApiMessage<string, LoginModel> returnMessage = null;
+            Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
+
+            // This lock handles multiple fast same parameter logins
+            lock (lockk)
             {
-                ApiMessage<string, LoginModel> returnMessage = new ApiMessage<string, LoginModel>();
-                Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>) _cacheManager.Get("LoggedUsers");
-                string hash = _hashGenerator.GenerateHash(user.Data);
-                user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
-                if (!loggedUsers.ContainsKey(hash))
+                if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).Any())
                 {
-                    loggedUsers.Add(hash, user.Data);
+                    string hash = _hashGenerator.GenerateHash(user.Data);
 
-                    returnMessage.Key = hash;
-                    returnMessage.Data = user.Data;
+                    user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username)
+                        .FirstOrDefault().Role).ToString();
 
-                    _cacheManager.Set(key, loggedUsers, 24);
-                    return returnMessage;
-                }
-                else
-                {
-                    return null;
+                    if (!loggedUsers.ContainsKey(hash))
+                    {
+                        if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
+                        {
+                            loggedUsers.Add(hash, user.Data);
+
+                            returnMessage = new ApiMessage<string, LoginModel>();
+                            returnMessage.Key = hash;
+                            returnMessage.Data = user.Data;
+
+                            _cacheManager.Set(key, loggedUsers, 24);
+                            return returnMessage;
+                        }
+                    }
                 }
             }
-            else
-            {
-                return null;
-            }
+            return returnMessage;
         }
 
         public bool Logout(string hash)
