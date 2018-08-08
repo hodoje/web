@@ -45,7 +45,6 @@ namespace Backend.AccessServices
                         returnMessage.Data = user.Data;
 
                         _cacheManager.Set(key, loggedUsers, 24);
-                        return returnMessage;
                     }
                 }
             }
