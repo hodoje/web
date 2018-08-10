@@ -148,8 +148,11 @@ namespace Backend.Controllers
 
             try
             {
-                _unitOfWork.UserRepository.Add(user);
-                _unitOfWork.Complete();
+                if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username) == null)
+                {
+                    _unitOfWork.UserRepository.Add(user);
+                    _unitOfWork.Complete();
+                }
             }
             catch (DbUpdateException)
             {

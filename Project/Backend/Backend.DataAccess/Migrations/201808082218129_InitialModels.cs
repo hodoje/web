@@ -27,7 +27,7 @@ namespace Backend.DataAccess.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Username = c.String(nullable: false, maxLength: 30),
+                        Username = c.String(nullable: false, maxLength: 450),
                         Password = c.String(nullable: false, maxLength: 30),
                         Name = c.String(nullable: false, maxLength: 30),
                         Lastname = c.String(nullable: false, maxLength: 30),
@@ -42,6 +42,7 @@ namespace Backend.DataAccess.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Locations", t => t.DriverLocationId)
+                .Index(t => t.Username, unique: true)
                 .Index(t => t.DriverLocationId);
             
             CreateTable(
@@ -124,6 +125,7 @@ namespace Backend.DataAccess.Migrations
             DropIndex("dbo.Comments", new[] { "UserId" });
             DropIndex("dbo.Comments", new[] { "Id" });
             DropIndex("dbo.Users", new[] { "DriverLocationId" });
+            DropIndex("dbo.Users", new[] { "Username" });
             DropIndex("dbo.Cars", new[] { "Id" });
             DropTable("dbo.Locations");
             DropTable("dbo.Rides");

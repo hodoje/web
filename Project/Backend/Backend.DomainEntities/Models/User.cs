@@ -24,8 +24,9 @@ namespace DomainEntities.Models
         [Key]
         public int Id { get; set; }        
         [Required]
+        [Index(IsUnique=true)]
         [MinLength(8)]
-        [MaxLength(30)]
+        [MaxLength(450)]
         public string Username { get; set; }
         [Required]
         [MinLength(8)]
