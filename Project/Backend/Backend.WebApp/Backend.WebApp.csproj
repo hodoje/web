@@ -189,8 +189,11 @@
     <Compile Include="Hubs\RideStatusUpdateHub.cs" />
     <Compile Include="Models\ApiMessage.cs" />
     <Compile Include="AccessServices\HashGenerator.cs" />
+    <Compile Include="Models\CancelRideRequestModel.cs" />
+    <Compile Include="Models\ChangeRideRequestModel.cs" />
     <Compile Include="Models\IApiMessage.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\RideRequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

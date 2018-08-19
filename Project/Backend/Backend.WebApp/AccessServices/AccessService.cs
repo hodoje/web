@@ -27,24 +27,27 @@ namespace Backend.AccessServices
             ApiMessage<string, LoginModel> returnMessage = null;
             Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
 
-            // This lock handles multiple fast same parameter logins
+            // This lock handles multiple fast same-parameter logins
             lock (lockk)
             {
-                string hash = _hashGenerator.GenerateHash(user.Data);
-
-                user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
-
-                if (!loggedUsers.ContainsKey(hash))
+                if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username && u.Password == user.Data.Password).FirstOrDefault() != null)
                 {
-                    if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
+                    string hash = _hashGenerator.GenerateHash(user.Data);
+
+                    user.Data.Role = ((Role) unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
+
+                    if (!loggedUsers.ContainsKey(hash))
                     {
-                        loggedUsers.Add(hash, user.Data);
+                        if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
+                        {
+                            loggedUsers.Add(hash, user.Data);
 
-                        returnMessage = new ApiMessage<string, LoginModel>();
-                        returnMessage.Key = hash;
-                        returnMessage.Data = user.Data;
+                            returnMessage = new ApiMessage<string, LoginModel>();
+                            returnMessage.Key = hash;
+                            returnMessage.Data = user.Data;
 
-                        _cacheManager.Set(key, loggedUsers, 24);
+                            _cacheManager.Set(key, loggedUsers, 24);
+                        }
                     }
                 }
             }

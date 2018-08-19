@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -86,40 +87,54 @@ namespace Backend.Controllers
         //PUT: api/Users/5
         [HttpPut]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutUser(int id, UserDto userDto)
+        public IHttpActionResult PutUser(int id, ApiMessage<string, UserDto> updatedUserApiMessage)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != userDto.Id)
+            if (id != updatedUserApiMessage.Data.Id)
             {
                 return BadRequest();
             }
 
-            //User oldUser = _unitOfWork.UserRepository.GetById(id);
-            User updatedUser = _iMapper.Map<UserDto, User>(userDto);
-
-            //if (oldUser.Username != updatedUser.Username)
-            //{
-                
-            //}
-            //if (oldUser.Password != updatedUser.Password)
-            //{
-                
-            //}
-            //if (updatedUser.Role == (int) Role.DRIVER)
-            //{
-            //    updatedUser.DriverLocation.Drivers = null;
-            //}
+            string hash = updatedUserApiMessage.Key;
 
             try
             {
-                _unitOfWork.UserRepository.Update(updatedUser);
+                User oldUser = _unitOfWork.UserRepository.GetById(id);
+                string oldUsername = oldUser.Username;
+                string oldPassword = oldUser.Password;
+                User updatedUser = _iMapper.Map<UserDto, User>(updatedUserApiMessage.Data);
+
+                foreach (PropertyInfo property in typeof(User).GetProperties())
+                {
+                    if (property.CanWrite)
+                    {
+                        property.SetValue(oldUser, property.GetValue(updatedUser, null), null);
+                    }
+                }
+
+                _unitOfWork.UserRepository.Update(oldUser);
                 _unitOfWork.Complete();
+
+                if (oldUsername != updatedUser.Username || oldPassword != updatedUser.Password)
+                {
+                    _accessService.Logout(updatedUserApiMessage.Key);
+                    ApiMessage<string, LoginModel> newLogin = new ApiMessage<string, LoginModel>();
+                    newLogin.Key = null;
+                    newLogin.Data = new LoginModel
+                    {
+                        Username = updatedUser.Username,
+                        Password = updatedUser.Password,
+                        Role = ((Role)updatedUser.Role).ToString()
+                    };
+                    hash = _accessService.Login(newLogin, _unitOfWork).Key;
+                }
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException)
             {
                 if (!UserExists(id))
                 {
@@ -131,7 +146,7 @@ namespace Backend.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(hash);
         }
 
         // POST: api/Users
