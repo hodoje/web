@@ -4,4 +4,8 @@ export class Location{
   address: Address;
   longitude: number;
   latitude: number;
+
+  constructor(){
+    this.address = new Address();
+  }
 }
