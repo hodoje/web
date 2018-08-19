@@ -27,7 +27,7 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterModule, Router, CanActivate } from '@angular/router';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const Routes = [
   {
@@ -73,6 +73,7 @@ const Routes = [
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(Routes),
     MDBBootstrapModule.forRoot()
   ],

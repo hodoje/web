@@ -20,7 +20,7 @@ export abstract class GenericService {
     return this.httpClient.post(`${this.url}/${this.endpoint}`, item);
   }
 
-  public put(id: number, item:any){
+  public put(id: number, item: any){
     return this.httpClient.put(`${this.url}/${this.endpoint}/${id}`, item);
   }
 
