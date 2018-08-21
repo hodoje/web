@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col col-md-4">
       <h2>Need a ride?</h2>
-      <div *ngIf="!isRideRequestSent">
+      <div *ngIf="!isRideRequestPending">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
             Call a ride
@@ -40,16 +40,17 @@
                     <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
                   </div>
                   <div class="form-group">
-                    <h3>What car type would you like?</h3>
-                    <select required formControlName="carType" name="carType" class="form-control form-control-sm">
-                      <option selected>DEFAULT</option>
+                    <h3>What type of car would you like?</h3>
+                    <h6>If this field is left empty a random type of car will arrive.</h6>
+                    <select formControlName="carType" name="carType" class="form-control form-control-sm">
                       <option>PASSENGER</option>
                       <option>VAN</option>
                     </select>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Submit</button>
+                    <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Submit</button>
+                    <button *ngIf="isRideChanging" class="btn btn-primary" (click)="changeARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Submit</button>
                   </div>    
                 </form>
               </div>
@@ -57,42 +58,8 @@
             </div>
           </div>
         </div>
-        <!-- <div class="card">
-          <div class="card-body">
-            <form [formGroup]="rideForm" (ngSubmit)="callARide(rideForm.value)">
-              <div class="form-group" formGroupName="location">
-                <h3>What's your location?</h3>
-                <div formGroupName="address">
-                  <legend>Address</legend>
-                  <label for="streetName">Street Name</label>
-                  <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
-                  <label for="streetNumber">Street Number</label>
-                  <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
-                  <label for="city">City</label>
-                  <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
-                  <label for="postalCode">Postal Code</label>
-                  <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
-                </div>
-                <legend>Coordinates</legend>
-                <label for="longitude">Longitude</label>
-                <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
-                <label for="latitude">Latitude</label>
-                <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
-              </div>
-              <div class="form-group">
-                <legend>Car type</legend>
-                <select required formControlName="carType" name="carType" class="form-control form-control-sm">
-                  <option selected>DEFAULT</option>
-                  <option>PASSENGER</option>
-                  <option>VAN</option>
-                </select>
-              </div>
-              <input class="btn btn-primary" type="submit" value="Submit" [disabled]="!rideForm.valid">
-            </form>
-          </div>
-        </div>      -->
       </div>
-      <div *ngIf="isRideRequestSent">
+      <div *ngIf="isRideRequestPending">
         <div class="card">
           <!--Card content-->
           <div class="card-block">
@@ -102,9 +69,9 @@
               <p class="card-text">Pending...</p>
           </div>
           <!--/.Card content-->
-          <button class="btn btn-primary">Change</button>
+          <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#exampleModalLong">Change</button>
           <button class="btn btn-primary" (click)="cancelARide()">Cancel</button>
-      </div>
+        </div>
       </div>
     </div>
     <div class="col col-md-4">
@@ -265,8 +232,8 @@
 
       </div>
       <h2>History</h2>
-      <div class="card scrollable">
-        <div class="card-body">
+      <!-- <div class="card scrollable">
+        <div class="card-body"> -->
           <form #f="ngForm" (ngSubmit)="useHub(f.value)">
             <input type="text" name="field" ngModel #field="ngModel"/>
             <input type="submit" value="Click me!"/>
@@ -313,8 +280,8 @@
               </tr>
             </table>
           </div>
-        </div>
-      </div>
+        <!-- </div>
+      </div> -->
     </div>
   </div>  
 </div>

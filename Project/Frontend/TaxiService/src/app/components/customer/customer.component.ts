@@ -1,3 +1,4 @@
+import { ChangeRideRequest } from './../../models/changeRideRequest';
 import { CancelRideRequest } from './../../models/cancelRideRequest';
 import { RidesService } from './../../services/rides.service';
 import { Location } from './../../models/location.model';
@@ -27,8 +28,9 @@ export class CustomerComponent implements OnInit {
   ridesHistory: Ride[];
   shouldDisplaySaveChanges = false;
   rideStatus: RideStatus;
+  isRideRequestPending = false;
+  isRideChanging = false;
 
-  isRideRequestSent = false;
   rideForm = new FormGroup({
     location: new FormGroup({
       address: new FormGroup({
@@ -47,40 +49,22 @@ export class CustomerComponent implements OnInit {
     private userService: UsersService, 
     private notificationService: NotificationService,
     private ridesService: RidesService) {
-    this.ridesHistory = new Array as Ride[];
+    this.personalData = new User();
     this.getMyData();
-    // let ride = new Ride();
-    // ride.startLocation = new Location();
-    // ride.startLocation.address.streetName = "narodnog fronta";
-    // ride.startLocation.address.streetNumber = "6";
-    // ride.carType = "PASSENGER";
-    // let ride2 = new Ride();
-    // ride2.startLocation = new Location();
-    // ride2.startLocation.address.streetName = "narodnog fronta";
-    // ride.startLocation.address.streetNumber = "6";
-    // ride2.carType = "PASSENGER";
-    // this.ridesHistory.push(ride);
-    // this.ridesHistory.push(ride2);
+    this.ridesHistory = new Array as Ride[];
   }
 
   ngOnInit() {
   }
 
   getMyData(){
-    //if(!this.shouldDisplaySaveChanges){
-      let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
-      this.userService.getUserByUsername(apiMessage).subscribe(
-      (data: User) =>{
-        this.personalData = data;
-        this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
-      },
-      error => {
-        //this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
-      });
-    //}
-    //else{
-    //  this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
-    //}
+    //let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
+
+    this.userService.getUserByUsername().subscribe(
+    (data: User) =>{
+      this.personalData = data;
+      this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+    });
   }
 
   changeMyData(registrationModel: RegistrationModel){
@@ -88,7 +72,9 @@ export class CustomerComponent implements OnInit {
     updatedUser.id = this.personalData.id;
     updatedUser.isBanned = this.personalData.isBanned;
     updatedUser.role = this.personalData.role;
+
     let apiMessage = new ApiMessage(localStorage.userHash, updatedUser);
+
     this.userService.put(updatedUser.id, apiMessage).subscribe(
       (data: string) => {
         localStorage.userHash = data;
@@ -101,22 +87,41 @@ export class CustomerComponent implements OnInit {
   }
 
   callARide(rideRequest: RideRequest){
-    jQuery("#exampleModalLong").modal("hide");
-    console.log(rideRequest);
+    jQuery("#exampleModalLong").modal("toggle");
+
+    if(rideRequest.carType === null){
+      rideRequest.carType = 'DEFAULT';
+    }
     this.ridesService.requestRide(rideRequest).subscribe((data: Ride) =>{
-      console.log(data.startLocation);
+      
     });
-    this.isRideRequestSent = true;
-    let newRide = new Ride();
-    newRide.startLocation = rideRequest.location;
-    newRide.carType = rideRequest.carType;
-    this.ridesHistory.push(newRide);
+    this.isRideRequestPending = true;
+  }
+
+  changeARide(changeRideRequest: ChangeRideRequest){
+    jQuery("#exampleModalLong").modal("toggle");
+    this.isRideRequestPending = !this.isRideRequestPending;
+    this.isRideChanging = false;
+
+    if(changeRideRequest.carType === null){
+      changeRideRequest.carType = 'DEFAULT';
+    }
+
+    this.ridesService.changeRide(changeRideRequest).subscribe((data: Ride) =>{
+      console.log(data);
+    });
+  }
+
+  toggleChangeRide(){
+    this.isRideRequestPending = !this.isRideRequestPending;
+    this.isRideChanging = true;
+    jQuery("#exampleModalLong").modal("toggle");
   }
 
   cancelARide(){
     let cancelRideRequest = new CancelRideRequest(true);
     this.ridesService.cancelRide(cancelRideRequest).subscribe(data => {console.log(data)});
-    this.isRideRequestSent = false;
+    this.isRideRequestPending = false;
   }
 
   useHub(input){

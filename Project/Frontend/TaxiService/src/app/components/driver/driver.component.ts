@@ -28,9 +28,9 @@ export class DriverComponent implements OnInit {
 
   getMyData(){
     if(!this.shouldDisplayData){
-      let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
+      //let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
 
-      this.userService.getUserByUsername(apiMessage).subscribe(
+      this.userService.getUserByUsername().subscribe(
       (data: User) =>{
         this.personalData = data;
         console.log(data);
