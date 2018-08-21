@@ -95,6 +95,15 @@ namespace Backend.AccessServices
             }
             return loginData;
         }
+
+        public string ExtractHash(string encodedHash)
+        {
+            byte[] data = System.Convert.FromBase64String(encodedHash);
+            var escapedDecodedHash = System.Text.ASCIIEncoding.ASCII.GetString(data);
+            var extractedHash = Uri.UnescapeDataString(escapedDecodedHash);
+            return extractedHash;
+        }
+
         public bool BlockUser(string username)
         {
             throw new NotImplementedException();
