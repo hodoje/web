@@ -69,18 +69,18 @@ namespace Backend.Controllers
             return Ok(userDto);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("api/users/getuserbyusername")]
-        public IHttpActionResult GetUser([FromBody]ApiMessage<string, LoginModel> user)
+        public IHttpActionResult GetUser()
         {
-            // Before this line, user.data.username and user.data.password are null
-            if ((user = _accessService.GetLoginData(user.Key, _unitOfWork)) == null)
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+            if (user == null)
             {
                 return BadRequest();
             }
-            
-            User u = _unitOfWork.UserRepository.GetUserByUsername(user.Data.Username, user.Data.Role);
-            UserDto userDto = _iMapper.Map<User, UserDto>(u);
+            UserDto userDto = _iMapper.Map<User, UserDto>(user);
             return Ok(userDto);
         }
 

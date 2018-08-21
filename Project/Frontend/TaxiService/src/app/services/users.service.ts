@@ -1,6 +1,6 @@
 import { ApiMessage } from './../models/apiMessage.model';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GenericService } from './generic.service';
 
 @Injectable({
@@ -12,7 +12,10 @@ export class UsersService extends GenericService {
     super('http://localhost:3737/api', 'users', httpClient);
   }
 
-  getUserByUsername(apiMessage: ApiMessage){
-    return this.httpClient.post('http://localhost:3737/api/users/getuserbyusername', apiMessage);
+  getUserByUsername(){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.get('http://localhost:3737/api/users/getuserbyusername', {'headers' : headers});
   }
 }
