@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
@@ -21,15 +22,16 @@ namespace Backend.Controllers
     public class RidesController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
-        private IAccessService _accessServices;
+        private IAccessService _accessService;
         private IMapper _iMapper;
 
         public RidesController(IUnitOfWork unitOfWork, IAccessService accessService, IMapper iMapper)
         {
             _unitOfWork = unitOfWork;
-            _accessServices = accessService;
+            _accessService = accessService;
             _iMapper = iMapper;
         }
+
 
         [HttpPost]
         [Route("api/rides/rideRequest")]
@@ -52,7 +54,7 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            LoginModel loginModel = _accessServices.GetLoginData(rideRequestApiMessage.Key, _unitOfWork).Data;
+            LoginModel loginModel = _accessService.GetLoginData(rideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
             Ride newRide = new Ride();
@@ -77,9 +79,37 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("api/rides/changeRideRequest")]
-        public IHttpActionResult ChangeRideRequest(ApiMessage<string, RideRequestModel> changeRideRequestApiMessage)
+        public IHttpActionResult ChangeRideRequest(ApiMessage<string, ChangeRideRequestModel> changeRideRequestApiMessage)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            LoginModel loginModel = _accessService.GetLoginData(changeRideRequestApiMessage.Key, _unitOfWork).Data;
+            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+            Ride oldRide = _unitOfWork.RideRepository.Find(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
+            oldRide.StartLocation = _unitOfWork.LocationRepository.GetById(oldRide.StartLocationId);
+            Ride updatedRide = new Ride()
+            {
+                StartLocation = _iMapper.Map<LocationDto, Location>(changeRideRequestApiMessage.Data.Location),
+                CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(t => t.ToString() == changeRideRequestApiMessage.Data.CarType)
+            };
+
+            oldRide.StartLocation.Address = updatedRide.StartLocation.Address;
+            oldRide.StartLocation.Longitude = updatedRide.StartLocation.Longitude;
+            oldRide.StartLocation.Latitude = updatedRide.StartLocation.Latitude;
+            oldRide.CarType = updatedRide.CarType;
+
+            try
+            {
+                _unitOfWork.RideRepository.Update(oldRide);
+                _unitOfWork.Complete();
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
             return Ok();
         }
 
@@ -87,7 +117,7 @@ namespace Backend.Controllers
         [Route("api/rides/cancelRideRequest")]
         public IHttpActionResult CancelRideRequest(ApiMessage<string, CancelRideRequestModel> cancelRideRequestApiMessage)
         {
-            LoginModel loginModel = _accessServices.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
+            LoginModel loginModel = _accessService.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
             Ride oldRide = _unitOfWork.RideRepository.Find(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             oldRide.RideStatus = (int) RideStatus.CANCELLED;
