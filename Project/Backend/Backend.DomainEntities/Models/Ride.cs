@@ -16,6 +16,7 @@ namespace DomainEntities.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [Index(IsUnique = true)]
         public DateTime Timestamp { get; set; }
         [Required]
         public int StartLocationId { get; set; }  
