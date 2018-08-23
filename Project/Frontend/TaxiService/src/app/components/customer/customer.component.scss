@@ -1,6 +1,8 @@
 .scrollable{
-  height: 550px;
+  height: 80%;
   overflow-y: scroll;
+  position: fixed;
+  padding: 1px;
 }
 
 .modal{
@@ -9,7 +11,7 @@
 
 textarea{
   font-size: 16px;
-  padding: 0px;
+  padding: 5px;
   resize: none;
   background-color: lightgray;
 }

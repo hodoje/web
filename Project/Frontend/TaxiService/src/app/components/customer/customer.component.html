@@ -2,6 +2,7 @@
   <div class="row">
     <div class="col col-md-4">
       <h2>Need a ride?</h2>
+      <br/>
       <div *ngIf="!isRideRequestPending">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#callARideModal">
@@ -77,7 +78,7 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="commentModalTitle">Tell us what happened.</h5>
+                <h5 class="modal-title" id="commentModalTitle">Tell us what went wrong.</h5>
                 <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button> -->
@@ -98,6 +99,7 @@
     </div>
     <div class="col col-md-4">
       <h2>My personal data</h2>
+      <br/>
       <!-- <button class="btn btn-primary" (click)="getMyData()">Display my data</button> -->
       <!-- <div *ngIf="shouldDisplayData"> -->
       <div class="card-body">
@@ -252,13 +254,28 @@
     </div>
     <div class="col col-md-4">
       <h2>History</h2>
+      <div class="tools">
+        <span><a class="btn btn-primary btn-sm waves-light"
+          mdbPopover="And here some amazing content. It's very engaging. Right?"
+          placement="bottom"
+          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="filter()">Filter</a></span>
+        &nbsp;
+        <span><a class="btn btn-primary btn-sm waves-light"
+          mdbPopover="And here some amazing content. It's very engaging. Right?"
+          placement="bottom"
+          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="sort()">Sort</a></span>
+        &nbsp;
+        <span><a class="btn btn-primary btn-sm waves-light"
+          mdbPopover="And here some amazing content. It's very engaging. Right?"
+          placement="bottom"
+          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="search()">Search</a></span>
+      </div>
       <div *ngIf="ridesHistory.length > 0" class="scrollable">
-        <div class="card-body">
+        <!-- <div class="card-body"> -->
           <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
             <input type="text" name="field" ngModel #field="ngModel"/>
             <input type="submit" value="Click me!"/>
           </form> -->
-          
             <table class="table">
               <tr *ngFor="let ride of ridesHistory">
                 <td>
@@ -307,9 +324,8 @@
                         <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
                           <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
                           <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [(ngModel)]="ride.comment.description"></textarea>
-                          <!-- <div *ngIf="description.dirty"> -->
+                          <span class="card-text float-left">{{ride.customer.username}} at {{ride.comment.timestamp.toLocaleTimeString()}} {{ride.comment.timestamp.toLocaleDateString()}}</span>
                           <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                          <!-- </div> -->
                         </form>
                       </div>
                     </div>
@@ -319,8 +335,7 @@
                 </td>
               </tr>
             </table>
-          
-        </div>
+        <!-- </div> -->
       </div>
     </div>
   </div>

@@ -137,6 +137,7 @@ export class CustomerComponent implements OnInit {
         tempRidesArr.forEach(r => {
           let tempdate = new Date(r.timestamp);
           r.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
+          r.comment.timestamp = new Date(r.comment.timestamp);
         });
         this.ridesHistory = tempRidesArr;
       }
@@ -157,6 +158,7 @@ export class CustomerComponent implements OnInit {
   addComment(comment: Comment){
     comment.id = comment.rideId;
     comment.timestamp = new Date();
+    //comment.timestamp.
     this.ridesService.addComment(comment).subscribe(
       (data: Ride) => {
         console.log(data);
@@ -179,6 +181,18 @@ export class CustomerComponent implements OnInit {
       (data) => {
       }
     );
+  }
+
+  filter(){
+
+  }
+
+  sort(){
+
+  }
+
+  search(){
+    
   }
 
   useHub(input){
