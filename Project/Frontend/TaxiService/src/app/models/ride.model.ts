@@ -3,7 +3,7 @@ import { User } from './user.model';
 import { Location } from './location.model';
 export class Ride{
   id: number;
-  timestamp: Date;
+  timestamp: string;
   startLocation: Location;
   carType: string;
   customer: User;
