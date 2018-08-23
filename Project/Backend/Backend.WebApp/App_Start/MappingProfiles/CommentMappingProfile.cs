@@ -12,16 +12,16 @@ namespace Backend.App_Start.MappingProfiles
     {
         public CommentMappingProfile()
         {
-            CreateMap<Comment, CommentDto>()
-                .ForMember(destination => destination.User,
-                    opts => opts.MapFrom(source => source.User))
-                .ForMember(destination => destination.Ride,
-                    opts => opts.MapFrom(source => source.Ride));
-            CreateMap<CommentDto, Comment>()
-                .ForMember(destination => destination.User,
-                    opts => opts.MapFrom(source => source.User))
-                .ForMember(destination => destination.Ride,
-                    opts => opts.MapFrom(source => source.Ride));
+            CreateMap<Comment, CommentDto>();
+                //.ForMember(destination => destination.User,
+                //    opts => opts.MapFrom(source => source.User));
+                //.ForMember(destination => destination.Ride,
+                //    opts => opts.MapFrom(source => source.Ride));
+            CreateMap<CommentDto, Comment>();
+                //.ForMember(destination => destination.User,
+                //    opts => opts.MapFrom(source => source.User));
+            //.ForMember(destination => destination.Ride,
+            //    opts => opts.MapFrom(source => source.Ride));
         }
     }
 }
