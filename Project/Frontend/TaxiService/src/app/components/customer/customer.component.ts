@@ -1,3 +1,4 @@
+import { Comment } from './../../models/comment.model';
 import { ChangeRideRequest } from './../../models/changeRideRequest';
 import { CancelRideRequest } from './../../models/cancelRideRequest';
 import { RidesService } from './../../services/rides.service';
@@ -13,6 +14,7 @@ import { NotificationService } from '../../services/notification.service';
 import { RideStatus } from './../../models/rideStatus';
 import { RideRequest } from './../../models/rideRequest';
 import { FormGroup, FormControl } from '../../../../node_modules/@angular/forms';
+import { Address } from '../../models/address.model';
 
 // for modal hiding in callARide
 declare var jQuery: any;
@@ -30,6 +32,8 @@ export class CustomerComponent implements OnInit {
   rideStatus: RideStatus;
   isRideRequestPending = false;
   isRideChanging = false;
+  isRideCancelled = false;
+  ratingList = [false, false, false, false, false];
 
   rideForm = new FormGroup({
     location: new FormGroup({
@@ -50,16 +54,15 @@ export class CustomerComponent implements OnInit {
     private notificationService: NotificationService,
     private ridesService: RidesService) {
     this.personalData = new User();
+    this.ridesHistory = [];
     this.getMyData();
-    this.ridesHistory = new Array as Ride[];
+    this.getAllMyRides();
   }
 
   ngOnInit() {
   }
 
   getMyData(){
-    //let apiMessage = new ApiMessage(localStorage.userHash, new LoginModel(null, null, localStorage.role));
-
     this.userService.getUserByUsername().subscribe(
     (data: User) =>{
       this.personalData = data;
@@ -87,19 +90,20 @@ export class CustomerComponent implements OnInit {
   }
 
   callARide(rideRequest: RideRequest){
-    jQuery("#exampleModalLong").modal("toggle");
+    jQuery("#callARideModal").modal("toggle");
 
     if(rideRequest.carType === null){
       rideRequest.carType = 'DEFAULT';
     }
-    this.ridesService.requestRide(rideRequest).subscribe((data: Ride) =>{
+    this.ridesService.requestRide(rideRequest).subscribe(
+      (data: Ride) =>{
       
     });
     this.isRideRequestPending = true;
   }
 
   changeARide(changeRideRequest: ChangeRideRequest){
-    jQuery("#exampleModalLong").modal("toggle");
+    jQuery("#callARideModal").modal("toggle");
     this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = false;
 
@@ -107,21 +111,74 @@ export class CustomerComponent implements OnInit {
       changeRideRequest.carType = 'DEFAULT';
     }
 
-    this.ridesService.changeRide(changeRideRequest).subscribe((data: Ride) =>{
-      console.log(data);
+    this.ridesService.changeRide(changeRideRequest).subscribe(
+      (data: Ride) => {
+        console.log(data);
     });
   }
 
   toggleChangeRide(){
     this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = true;
-    jQuery("#exampleModalLong").modal("toggle");
+    jQuery("#callARideModal").modal("toggle");
   }
 
   cancelARide(){
     let cancelRideRequest = new CancelRideRequest(true);
     this.ridesService.cancelRide(cancelRideRequest).subscribe(data => {console.log(data)});
     this.isRideRequestPending = false;
+    this.isRideCancelled = true;
+  }
+
+  getAllMyRides(){
+    this.ridesService.getAllMyRides().subscribe(
+      data => {
+        let tempRidesArr = data as Ride[];
+        tempRidesArr.forEach(r => {
+          let tempdate = new Date(r.timestamp);
+          r.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
+        });
+        this.ridesHistory = tempRidesArr;
+      }
+    )
+  }
+
+  commentCancelledRide(comment){
+    console.log(comment);
+    jQuery("#commentModal").modal("toggle");
+    this.isRideCancelled = !this.isRideCancelled;
+
+    let newComment = new Comment();
+    newComment.description = comment.description;
+    newComment.timestamp = new Date();
+    this.ridesService.commentCancelledRide(newComment).subscribe(data => console.log(data));
+  }
+
+  addComment(comment: Comment){
+    comment.id = comment.rideId;
+    comment.timestamp = new Date();
+    this.ridesService.addComment(comment).subscribe(
+      (data: Ride) => {
+        console.log(data);
+      }
+    )
+  }
+
+  rate(rideId, ratingIndex){
+    for(var i in this.ratingList){
+      if(i <= ratingIndex){
+        this.ratingList[i] = true;
+      }
+      else{
+        this.ratingList[i] = false;
+      }
+    }
+    let comment = this.ridesHistory.filter(r => r.id === rideId)[0].comment;
+    comment.rating = ratingIndex + 1;
+    this.ridesService.rateARide(comment).subscribe(
+      (data) => {
+      }
+    );
   }
 
   useHub(input){

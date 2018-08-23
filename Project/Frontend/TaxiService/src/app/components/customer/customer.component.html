@@ -4,16 +4,16 @@
       <h2>Need a ride?</h2>
       <div *ngIf="!isRideRequestPending">
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#callARideModal">
             Call a ride
         </button>
         
         <!-- Modal -->
-        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal fade" id="callARideModal" tabindex="-1" role="dialog" aria-labelledby="callARideModalTitle" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Call a ride</h5>
+                <h5 class="modal-title" id="callARideModalTitle">Call a ride</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -54,7 +54,6 @@
                   </div>    
                 </form>
               </div>
-              
             </div>
           </div>
         </div>
@@ -69,8 +68,31 @@
               <p class="card-text">Pending...</p>
           </div>
           <!--/.Card content-->
-          <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#exampleModalLong">Change</button>
-          <button class="btn btn-primary" (click)="cancelARide()">Cancel</button>
+          <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#callARideModal">Change</button>
+          <button class="btn btn-primary" type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal" (click)="cancelARide()">Cancel</button>
+        </div>
+      </div>
+      <div *ngIf="isRideCancelled">
+        <div data-backdrop="static" data-keyboard="false" class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="commentModalTitle">Tell us what happened.</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button> -->
+              </div>
+              <div class="modal-body">
+                <form #commentRideForm="ngForm" (ngSubmit)="commentCancelledRide(commentRideForm.value)">
+                  <input class="form-control form-control-lg" placeholder="Leave a comment..." name="description" [(ngModel)]="description">
+                  <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                    <button type="submit" class="btn btn-primary">Comment</button>
+                  </div>    
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -78,6 +100,7 @@
       <h2>My personal data</h2>
       <!-- <button class="btn btn-primary" (click)="getMyData()">Display my data</button> -->
       <!-- <div *ngIf="shouldDisplayData"> -->
+      <div class="card-body">
         <form #changeDataForm="ngForm" (ngSubmit)="changeMyData(changeDataForm.value)">
           <table class="table table-sm table-hover">
             <tbody>
@@ -225,20 +248,17 @@
           </table>
           <input *ngIf="shouldDisplaySaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
         </form>
-      <!-- </div> -->
+      </div>
     </div>
     <div class="col col-md-4">
-      <div class="scrollable">
-
-      </div>
       <h2>History</h2>
-      <!-- <div class="card scrollable">
-        <div class="card-body"> -->
-          <form #f="ngForm" (ngSubmit)="useHub(f.value)">
+      <div *ngIf="ridesHistory.length > 0" class="scrollable">
+        <div class="card-body">
+          <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
             <input type="text" name="field" ngModel #field="ngModel"/>
             <input type="submit" value="Click me!"/>
-          </form>
-          <div *ngIf="ridesHistory.length > 0">
+          </form> -->
+          
             <table class="table">
               <tr *ngFor="let ride of ridesHistory">
                 <td>
@@ -270,18 +290,38 @@
                         <br/>
                         <span class="card-text">Car type: </span>
                         <span class="card-text">{{ride.carType}}</span>
+                        <br/>
+                        <span class="card-text">Timestamp: </span>
+                        <span class="card-text">{{ride.timestamp}}</span>
+                        <br/>
+                        <span class="card-text">Status: </span>
+                        <span class="card-text">{{ride.rideStatus}}</span>
+                        <br/>
+                        <span class="card-text">Rating: </span>
+                        <span>
+                            <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
+                              <i [ngStyle]="{'color': (i < ride.comment.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                        </span>
+                        <br/>
+                        <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                          <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                          <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [(ngModel)]="ride.comment.description"></textarea>
+                          <!-- <div *ngIf="description.dirty"> -->
+                          <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                          <!-- </div> -->
+                        </form>
                       </div>
                     </div>
                     <!--/.Card content-->
-                    <p class="card-body">...Comment...</p>
                   </div>
                   <!--/.Card-->
                 </td>
               </tr>
             </table>
-          </div>
-        <!-- </div>
-      </div> -->
+          
+        </div>
+      </div>
     </div>
-  </div>  
+  </div>
 </div>

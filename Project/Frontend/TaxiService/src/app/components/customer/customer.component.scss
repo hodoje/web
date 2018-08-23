@@ -1,8 +1,19 @@
-.card.scrollable{
-  height: 400px;
+.scrollable{
+  height: 550px;
   overflow-y: scroll;
 }
 
 .modal{
   overflow-y: scroll;
+}
+
+textarea{
+  font-size: 16px;
+  padding: 0px;
+  resize: none;
+  background-color: lightgray;
+}
+
+.star{
+  font-size: 20px;
 }
