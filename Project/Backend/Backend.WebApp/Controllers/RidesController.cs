@@ -38,18 +38,22 @@ namespace Backend.Controllers
         public IHttpActionResult GetAllMyRides()
         {
             string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-            User user = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
-            List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComment(user.Id).ToList();
-            foreach (Ride r in allUserRides)
+            if (_accessService.GetLoginData(hash, _unitOfWork).Data != null)
             {
-                if (r.Comment == null)
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User user = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+                List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComment(user.Id).ToList();
+                foreach (Ride r in allUserRides)
                 {
-                    r.Comment = new Comment();
+                    if (r.Comment == null)
+                    {
+                        r.Comment = new Comment();
+                    }
                 }
+                List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
+                return Ok(allUserRidesDtos);
             }
-            List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
-            return Ok(allUserRidesDtos);
+            return BadRequest();
         }
 
         [HttpPost]
@@ -198,7 +202,7 @@ namespace Backend.Controllers
             else
             {
                 comment.Description = commentDto.Description;
-                comment.Timestamp = commentDto.Timestamp;
+                comment.Timestamp = commentDto.Timestamp.ToLocalTime();
                 _unitOfWork.CommentRepository.Update(comment);
                 _unitOfWork.Complete();
             }
