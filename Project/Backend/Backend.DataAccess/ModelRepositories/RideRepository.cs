@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -18,5 +19,14 @@ namespace Backend.DataAccess.ModelRepositories
         }
 
         public RideRepository(DbContext context) : base(context) { }
+        public IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComment(int userId)
+        {
+            return _entities.Where(r => r.CustomerId == userId).Include(r => r.StartLocation).Include(r => r.Comment);
+        }
+
+        public Ride GetRideByIdIncludeLocationAndComment(int id)
+        {
+            return _entities.Where(r => r.Id == id).Include(r => r.StartLocation).Include(r => r.Comment).FirstOrDefault();
+        }
     }
 }

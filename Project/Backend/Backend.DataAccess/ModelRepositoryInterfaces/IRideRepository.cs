@@ -10,5 +10,7 @@ namespace Backend.DataAccess.ModelRepositoryInterfaces
 {
     public interface IRideRepository : IRepository<Ride, int>
     {
+        IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComment(int userId);
+        Ride GetRideByIdIncludeLocationAndComment(int id);
     }
 }
