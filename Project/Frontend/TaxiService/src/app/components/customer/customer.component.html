@@ -99,10 +99,10 @@
     </div>
     <div class="col col-md-4">
       <h2>My personal data</h2>
-      <br/>
+      <!-- <br/> -->
       <!-- <button class="btn btn-primary" (click)="getMyData()">Display my data</button> -->
       <!-- <div *ngIf="shouldDisplayData"> -->
-      <div class="card-body">
+      <!-- <div class="card-body"> -->
         <form #changeDataForm="ngForm" (ngSubmit)="changeMyData(changeDataForm.value)">
           <table class="table table-sm table-hover">
             <tbody>
@@ -250,25 +250,82 @@
           </table>
           <input *ngIf="shouldDisplaySaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
         </form>
-      </div>
+      <!-- </div> -->
     </div>
     <div class="col col-md-4">
       <h2>History</h2>
       <div class="tools">
-        <span><a class="btn btn-primary btn-sm waves-light"
-          mdbPopover="And here some amazing content. It's very engaging. Right?"
-          placement="bottom"
-          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="filter()">Filter</a></span>
+        <div>
+          <div>Filter</div>
+          <div>
+            <form>
+              <select>
+                <option *ngFor="let status of rideStatuses">{{status}}</option>
+              </select>
+            </form>
+          </div>
+        </div>
         &nbsp;
-        <span><a class="btn btn-primary btn-sm waves-light"
-          mdbPopover="And here some amazing content. It's very engaging. Right?"
-          placement="bottom"
-          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="sort()">Sort</a></span>
+        <div>
+          <div>Sort</div>
+        </div>
         &nbsp;
-        <span><a class="btn btn-primary btn-sm waves-light"
-          mdbPopover="And here some amazing content. It's very engaging. Right?"
-          placement="bottom"
-          mdbPopoverHeader="Popover on bottom" mdbWavesEffect (click)="search()">Search</a></span>
+        <div>
+          <div>Search</div>
+        </div>
+        <!-- <div class="btn-group" mdbDropdown>
+          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
+              Filter
+          </button>
+          <div class="dropdown-menu dropdown-primary">
+            <h5 class="dropdown-header">Ride status:</h5>
+            <a class="dropdown-item" href="#">Created</a>
+            <a class="dropdown-item" href="#">Cancelled</a>
+            <a class="dropdown-item" href="#">Formed</a>
+            <a class="dropdown-item" href="#">Processed</a>
+            <a class="dropdown-item" href="#">Accepted</a>
+            <a class="dropdown-item" href="#">Failed</a>
+            <a class="dropdown-item" href="#">Successful</a>
+          </div>
+        </div>
+        &nbsp;
+        <div class="btn-group" mdbDropdown>
+          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
+              Sort
+          </button>
+          <div class="dropdown-menu dropdown-primary">
+              <h5 class="dropdown-header">Sort by</h5>
+              <a class="dropdown-item" href="#">Timestamp</a>
+              <div class="sort-menu-timestamp">
+                <form>
+                  <input type="datetime-local">
+                </form>
+              </div>
+              <div class="divider dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Rating</a>
+              <div class="sort-menu-rating">
+
+              </div>
+              <div class="divider dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Price</a>
+              <div class="sort-menu-price">
+
+              </div>
+          </div>
+        </div>
+        &nbsp;
+        <div class="btn-group" mdbDropdown>
+          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
+              Search
+          </button>
+          <div class="dropdown-menu dropdown-primary">
+              <a class="dropdown-item" href="#"></a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+              <div class="divider dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Separated link</a>
+          </div>
+        </div> -->
       </div>
       <div *ngIf="ridesHistory.length > 0" class="scrollable">
         <!-- <div class="card-body"> -->
@@ -324,7 +381,7 @@
                         <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
                           <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
                           <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [(ngModel)]="ride.comment.description"></textarea>
-                          <span class="card-text float-left">{{ride.customer.username}} at {{ride.comment.timestamp.toLocaleTimeString()}} {{ride.comment.timestamp.toLocaleDateString()}}</span>
+                          <span class="card-text float-left">{{ride.customer.username}} at {{ride.comment.timestamp.toLocaleDateString()}} {{ride.comment.timestamp.toLocaleTimeString()}}</span>
                           <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
                         </form>
                       </div>

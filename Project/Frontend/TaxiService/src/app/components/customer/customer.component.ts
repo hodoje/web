@@ -29,7 +29,7 @@ export class CustomerComponent implements OnInit {
   personalData: User;
   ridesHistory: Ride[];
   shouldDisplaySaveChanges = false;
-  rideStatus: RideStatus;
+  rideStatuses: string[];
   isRideRequestPending = false;
   isRideChanging = false;
   isRideCancelled = false;
@@ -49,12 +49,14 @@ export class CustomerComponent implements OnInit {
     carType: new FormControl()
   })
 
-  constructor(
-    private userService: UsersService, 
-    private notificationService: NotificationService,
-    private ridesService: RidesService) {
+  constructor(private userService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
     this.personalData = new User();
     this.ridesHistory = [];
+    this.rideStatuses = [];
+    let rideStatusEnumKeys = Object.keys(RideStatus);
+    for(var s of rideStatusEnumKeys){
+      this.rideStatuses.push(s);
+    }
     this.getMyData();
     this.getAllMyRides();
   }
