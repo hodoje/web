@@ -228,5 +228,26 @@ namespace Backend.Controllers
             _unitOfWork.Complete();
             return Ok(comment.Rating);
         }
+
+        [HttpGet]
+        [Route("api/rides/filter")]
+        public IHttpActionResult FilterRides()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("api/rides/sort")]
+        public IHttpActionResult Sort()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("api/rides/search")]
+        public IHttpActionResult Search()
+        {
+            return Ok();
+        }
     }
 }
