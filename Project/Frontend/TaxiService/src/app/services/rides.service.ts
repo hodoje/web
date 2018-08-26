@@ -1,5 +1,6 @@
+import { RefineRidesModel } from './../models/refine.model';
 import { ApiMessage } from './../models/apiMessage.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GenericService } from './generic.service';
 import { RideRequest } from '../models/rideRequest';
@@ -57,5 +58,13 @@ export class RidesService extends GenericService {
     headers = headers.append('Access-Control-Allow-Credentials', 'true');
     headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
     return this.httpClient.post('http://localhost:3737/api/rides/rateARide', comment, {'headers': headers})
+  }
+
+  refine(refine){
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-type', 'application/json');
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/refine', refine, {'headers': headers});
   }
 }

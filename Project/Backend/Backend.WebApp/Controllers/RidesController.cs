@@ -16,6 +16,7 @@ using Backend.Models;
 using DomainEntities.Models;
 using Backend.AccessServices;
 using Backend.Dtos;
+using Newtonsoft.Json;
 
 namespace Backend.Controllers
 {
@@ -229,25 +230,204 @@ namespace Backend.Controllers
             return Ok(comment.Rating);
         }
 
-        [HttpGet]
-        [Route("api/rides/filter")]
-        public IHttpActionResult FilterRides()
+        // Here we will encounter some magic strings...
+        // And some so poorly optimized code, like you can get fired for doing this...
+        [HttpPost]
+        [Route("api/rides/refine")]
+        public IHttpActionResult RefineRides(RefineRidesModel refine)
         {
-            return Ok();
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            LoginModel loginModel = null;
+            if (_accessService.IsLoggedIn(hash))
+            {
+                if (_accessService.GetLoginData(hash, _unitOfWork) != null)
+                {
+                    loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                }
+            }
+            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+
+            List<Ride> refinedRides = new List<Ride>();
+            if (String.IsNullOrWhiteSpace(refine.Filter))
+            {
+                // NO FILTER
+
+                bool shouldDateSearch = (refine.Search.ByDate.From != null || refine.Search.ByDate.To != null);
+                bool shouldRatingSearch = (refine.Search.ByRating.From != null || refine.Search.ByRating.To != null);
+                bool shouldPriceSearch = (refine.Search.ByPrice.From != null || refine.Search.ByPrice.To != null);
+
+                List<Ride> distinctList = new List<Ride>();
+
+                if (shouldDateSearch)
+                {
+                    //BY DATE
+                    if ((refine.Search.ByDate.From == null && refine.Search.ByDate.To == null) ||
+                    (refine.Search.ByDate.From == DateTime.MinValue && refine.Search.ByDate.To == DateTime.MinValue))
+                    {
+                        distinctList =
+                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id);
+                    }
+                    else
+                    {
+                        if (refine.Search.ByDate.From == null || refine.Search.ByDate.From == DateTime.MinValue)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Timestamp <= refine.Search.ByDate.To);
+                        }
+                        else if (refine.Search.ByDate.To == null || refine.Search.ByDate.To == DateTime.MinValue)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Timestamp >= refine.Search.ByDate.From);
+                        }
+                        else
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Timestamp >= refine.Search.ByDate.From &&
+                                                                                                                     r.Timestamp <= refine.Search.ByDate.To);
+                        }
+                    }
+                }
+
+                if (shouldRatingSearch)
+                {
+                    // BY RATING              
+                    if (refine.Search.ByRating.From == null && refine.Search.ByRating.To == null)
+                    {
+                        distinctList =
+                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id);
+                    }
+                    else
+                    {
+                        if (refine.Search.ByRating.From == null)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Comment.Rating <= refine.Search.ByRating.To);
+                        }
+                        else if (refine.Search.ByRating.To == null)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Comment.Rating >= refine.Search.ByRating.From);
+                        }
+                        else
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Comment.Rating >= refine.Search.ByRating.From &&
+                                                                                                                     r.Comment.Rating <= refine.Search.ByRating.To);
+                        }
+                    }
+                }
+
+                if (shouldPriceSearch)
+                {
+                    // BY PRICE
+                    if (refine.Search.ByPrice.From == null && refine.Search.ByPrice.To == null)
+                    {
+                        distinctList =
+                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id);
+                    }
+                    else
+                    {
+                        if (refine.Search.ByPrice.From == null)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Price <= refine.Search.ByPrice.To);
+                        }
+                        else if (refine.Search.ByRating.To == null)
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Price >= refine.Search.ByPrice.From);
+                        }
+                        else
+                        {
+                            distinctList =
+                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id &&
+                                                                                                                     r.Price >= refine.Search.ByPrice.From &&
+                                                                                                                     r.Price <= refine.Search.ByPrice.To);
+                        }
+                    }
+                }
+
+                if (!shouldDateSearch && !shouldRatingSearch && !shouldRatingSearch)
+                {
+                    distinctList = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComment(user.Id).ToList();
+                }
+
+                distinctList = distinctList.GroupBy(r => r.Id).Select(group => group.FirstOrDefault()).ToList();
+
+                refinedRides = SortList(refine.Sort, distinctList);
+            }
+            else
+            {
+                // FILTER
+                List<Ride> filteredList = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id && 
+                                                                                                                   ((RideStatus) r.RideStatus).ToString() == refine.Filter).ToList();
+                refinedRides = SortList(refine.Sort, filteredList);
+            }
+            
+            List<RideDto> refinedRideDtos = _iMapper.Map<List<Ride>, List<RideDto>>(refinedRides);
+            return Ok(refinedRideDtos);
         }
 
-        [HttpGet]
-        [Route("api/rides/sort")]
-        public IHttpActionResult Sort()
+        private List<Ride> SortList(SortRidesModel sortCriteria, List<Ride> unsortedList)
         {
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route("api/rides/search")]
-        public IHttpActionResult Search()
-        {
-            return Ok();
+            List<Ride> sortedList = new List<Ride>();
+            if (String.IsNullOrWhiteSpace(sortCriteria.ByDate))
+            {
+                if (String.IsNullOrWhiteSpace(sortCriteria.ByRating))
+                {
+                    sortedList = unsortedList.ToList();
+                }
+                else if (sortCriteria.ByRating == "HIGHEST")
+                {
+                    sortedList = unsortedList.OrderByDescending(r => r.Comment.Rating).ToList();
+                }
+                else if (sortCriteria.ByRating == "LOWEST")
+                {
+                    sortedList = unsortedList.OrderBy(r => r.Comment.Rating).ToList();
+                }
+            }
+            else
+            {
+                if (sortCriteria.ByDate == "OLDEST")
+                {
+                    if (String.IsNullOrWhiteSpace(sortCriteria.ByRating))
+                    {
+                        sortedList = unsortedList.OrderBy(r => r.Timestamp).ToList();
+                    }
+                    else if (sortCriteria.ByRating == "HIGHEST")
+                    {
+                        sortedList = unsortedList.OrderBy(r => r.Timestamp).ThenByDescending(r => r.Comment.Rating).ToList();
+                    }
+                    else if (sortCriteria.ByRating == "LOWEST")
+                    {
+                        sortedList = unsortedList.OrderBy(r => r.Timestamp).ThenBy(r => r.Comment.Rating).ToList();
+                    }
+                }
+                else if (sortCriteria.ByDate == "NEWEST")
+                {
+                    if (String.IsNullOrWhiteSpace(sortCriteria.ByRating))
+                    {
+                        sortedList = unsortedList.OrderByDescending(r => r.Timestamp).ToList();
+                    }
+                    else if (sortCriteria.ByRating == "HIGHEST")
+                    {
+                        sortedList = unsortedList.OrderByDescending(r => r.Timestamp).ThenByDescending(r => r.Comment.Rating).ToList();
+                    }
+                    else if (sortCriteria.ByRating == "LOWEST")
+                    {
+                        sortedList = unsortedList.OrderByDescending(r => r.Timestamp).ThenBy(r => r.Comment.Rating).ToList();
+                    }
+                }
+            }
+            return sortedList;
         }
     }
 }

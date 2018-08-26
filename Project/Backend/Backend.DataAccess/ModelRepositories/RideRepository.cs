@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.DataAccess.ModelRepositoryInterfaces;
@@ -27,6 +28,13 @@ namespace Backend.DataAccess.ModelRepositories
         public Ride GetRideByIdIncludeLocationAndComment(int id)
         {
             return _entities.Where(r => r.Id == id).Include(r => r.StartLocation).Include(r => r.Comment).FirstOrDefault();
+        }
+
+        public IEnumerable<Ride> FilterUserRidesIncludeLocationAndComment(Expression<Func<Ride, bool>> predicate)
+        {
+            List<Ride> filteredRides = new List<Ride>();
+            filteredRides = _entities.Where(predicate).Include(r => r.StartLocation).Include(r => r.Comment).ToList();
+            return filteredRides;
         }
     }
 }

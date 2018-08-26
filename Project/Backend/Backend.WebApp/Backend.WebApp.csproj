@@ -193,7 +193,13 @@
     <Compile Include="Models\ChangeRideRequestModel.cs" />
     <Compile Include="Models\IApiMessage.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\RefineRidesModel.cs" />
     <Compile Include="Models\RideRequestModel.cs" />
+    <Compile Include="Models\SearchRidesModel.cs" />
+    <Compile Include="Models\SortRidesModel.cs" />
+    <Compile Include="Models\SubSearchByDateModel.cs" />
+    <Compile Include="Models\SubSearchByPriceModel.cs" />
+    <Compile Include="Models\SubSearchByRatingModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

@@ -1,3 +1,4 @@
+import { RefineRidesModel } from './../../models/refine.model';
 import { Comment } from './../../models/comment.model';
 import { ChangeRideRequest } from './../../models/changeRideRequest';
 import { CancelRideRequest } from './../../models/cancelRideRequest';
@@ -34,6 +35,7 @@ export class CustomerComponent implements OnInit {
   isRideChanging = false;
   isRideCancelled = false;
   ratingList = [false, false, false, false, false];
+  lastRefine: RefineRidesModel;
 
   rideForm = new FormGroup({
     location: new FormGroup({
@@ -49,19 +51,42 @@ export class CustomerComponent implements OnInit {
     carType: new FormControl()
   })
 
+  refineForm = new FormGroup({
+    filter: new FormControl(),
+    sort: new FormGroup({
+      byDate: new FormControl(),
+      byRating: new FormControl()
+    }),
+    search: new FormGroup({
+      byDate: new FormGroup({
+        from: new FormControl(),
+        to: new FormControl()
+      }),
+      byRating: new FormGroup({
+        from: new FormControl(),
+        to: new FormControl()
+      }),
+      byPrice: new FormGroup({
+        from: new FormControl(),
+        to: new FormControl()
+      }),
+    })
+  })
+
   constructor(private userService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
     this.personalData = new User();
     this.ridesHistory = [];
     this.rideStatuses = [];
+  }
+
+  ngOnInit() {
+    this.lastRefine = new RefineRidesModel();
     let rideStatusEnumKeys = Object.keys(RideStatus);
     for(var s of rideStatusEnumKeys){
       this.rideStatuses.push(s);
     }
     this.getMyData();
     this.getAllMyRides();
-  }
-
-  ngOnInit() {
   }
 
   getMyData(){
@@ -113,10 +138,7 @@ export class CustomerComponent implements OnInit {
       changeRideRequest.carType = 'DEFAULT';
     }
 
-    this.ridesService.changeRide(changeRideRequest).subscribe(
-      (data: Ride) => {
-        console.log(data);
-    });
+    this.ridesService.changeRide(changeRideRequest).subscribe();
   }
 
   toggleChangeRide(){
@@ -127,45 +149,43 @@ export class CustomerComponent implements OnInit {
 
   cancelARide(){
     let cancelRideRequest = new CancelRideRequest(true);
-    this.ridesService.cancelRide(cancelRideRequest).subscribe(data => {console.log(data)});
+    this.ridesService.cancelRide(cancelRideRequest).subscribe();
     this.isRideRequestPending = false;
     this.isRideCancelled = true;
   }
 
+  private parseRides(unparsedRides: Ride[]){
+    let parsedRides = unparsedRides;
+    parsedRides.forEach(r => {
+      let tempdate = new Date(r.timestamp);
+      r.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
+      r.comment.timestamp = new Date(r.comment.timestamp);
+    });
+    return parsedRides;
+  }
+
   getAllMyRides(){
     this.ridesService.getAllMyRides().subscribe(
-      data => {
-        let tempRidesArr = data as Ride[];
-        tempRidesArr.forEach(r => {
-          let tempdate = new Date(r.timestamp);
-          r.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
-          r.comment.timestamp = new Date(r.comment.timestamp);
-        });
-        this.ridesHistory = tempRidesArr;
+      (data: Ride[]) => {
+        this.ridesHistory = this.parseRides(data);
       }
     )
   }
 
   commentCancelledRide(comment){
-    console.log(comment);
     jQuery("#commentModal").modal("toggle");
     this.isRideCancelled = !this.isRideCancelled;
 
     let newComment = new Comment();
     newComment.description = comment.description;
     newComment.timestamp = new Date();
-    this.ridesService.commentCancelledRide(newComment).subscribe(data => console.log(data));
+    this.ridesService.commentCancelledRide(newComment).subscribe();
   }
 
   addComment(comment: Comment){
     comment.id = comment.rideId;
     comment.timestamp = new Date();
-    //comment.timestamp.
-    this.ridesService.addComment(comment).subscribe(
-      (data: Ride) => {
-        console.log(data);
-      }
-    )
+    this.ridesService.addComment(comment).subscribe();
   }
 
   rate(rideId, ratingIndex){
@@ -185,20 +205,37 @@ export class CustomerComponent implements OnInit {
     );
   }
 
-  filter(){
-
-  }
-
-  sort(){
-
-  }
-
-  search(){
-    
+  refineRides(refineForm, typeOfButton){
+    if(typeOfButton == "FILTER"){
+      refineForm.value.search = null;
+      refineForm.controls.search.reset();
+    }
+    else if(typeOfButton == "SEARCH"){
+      refineForm.value.filter = null;
+      refineForm.controls.filter.reset();
+    }
+    else if(typeOfButton == "SORT"){
+      if(this.lastRefine.filter !== null){
+        refineForm.value.search = null;
+        refineForm.controls.search.reset();
+      }
+      else{
+        refineForm.value.filter = null;
+        refineForm.controls.filter.reset();
+      }
+    }
+    this.lastRefine = refineForm.value;
+    this.ridesService.refine(refineForm.value).subscribe(
+      (data: Ride[]) =>{
+        this.ridesHistory = this.parseRides(data);
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   useHub(input){
-    console.log(input.field);
     this.notificationService.broadcastMessage(input.field);
   }
 }

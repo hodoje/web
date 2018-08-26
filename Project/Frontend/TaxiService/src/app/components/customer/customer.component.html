@@ -256,76 +256,105 @@
       <h2>History</h2>
       <div class="tools">
         <div>
-          <div>Filter</div>
-          <div>
-            <form>
-              <select>
-                <option *ngFor="let status of rideStatuses">{{status}}</option>
-              </select>
-            </form>
-          </div>
-        </div>
-        &nbsp;
-        <div>
-          <div>Sort</div>
-        </div>
-        &nbsp;
-        <div>
-          <div>Search</div>
-        </div>
-        <!-- <div class="btn-group" mdbDropdown>
-          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
-              Filter
-          </button>
-          <div class="dropdown-menu dropdown-primary">
-            <h5 class="dropdown-header">Ride status:</h5>
-            <a class="dropdown-item" href="#">Created</a>
-            <a class="dropdown-item" href="#">Cancelled</a>
-            <a class="dropdown-item" href="#">Formed</a>
-            <a class="dropdown-item" href="#">Processed</a>
-            <a class="dropdown-item" href="#">Accepted</a>
-            <a class="dropdown-item" href="#">Failed</a>
-            <a class="dropdown-item" href="#">Successful</a>
-          </div>
-        </div>
-        &nbsp;
-        <div class="btn-group" mdbDropdown>
-          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
-              Sort
-          </button>
-          <div class="dropdown-menu dropdown-primary">
-              <h5 class="dropdown-header">Sort by</h5>
-              <a class="dropdown-item" href="#">Timestamp</a>
-              <div class="sort-menu-timestamp">
-                <form>
-                  <input type="datetime-local">
-                </form>
+          <form [formGroup]="refineForm">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="false" aria-controls="collapseExample">
+              Filter rides
+            </button>
+            <div class="collapse" id="filterCollapse">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-header">
+                    <div class="input-group">
+                      <select class="custom-select form-control" name="filter" formControlName="filter">
+                        <option value="">--choose option--</option>
+                        <option *ngFor="let status of rideStatuses">{{status}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="input-group">
+                    <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'FILTER')">
+                      Filter &nbsp;<a class="fa fa-filter"></a>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div class="divider dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Rating</a>
-              <div class="sort-menu-rating">
-
+            </div> 
+            <div formGroupName="sort">
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#sortCollapse" aria-expanded="false" aria-controls="collapseExample">
+                Sort rides
+              </button>
+              <div class="collapse" id="sortCollapse">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-header">
+                      By date:
+                      <div class="form-group">
+                        <select name="byDate" formControlName="byDate" class="custom-select form-control form-control-sm">
+                          <option selected value="">--choose option--</option>
+                          <option>NEWEST</option>
+                          <option>OLDEST</option>
+                        </select>
+                      </div>
+                    </div>
+                    &nbsp;
+                    <div class="card-header">
+                      By rating:
+                      <div class="form-group">
+                        <select name="byRating" formControlName="byRating" class="custom-select form-control form-control-sm">
+                          <option selected value="">--choose option--</option>
+                          <option>HIGHEST</option>
+                          <option>LOWEST</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'SORT')">
+                        Sort&nbsp;<a class="fa fa-sort"></a>
+                      </button>
+                    </div>                    
+                  </div>
+                </div>
               </div>
-              <div class="divider dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Price</a>
-              <div class="sort-menu-price">
-
+            </div>
+            <div formGroupName="search">
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false" aria-controls="collapseExample">
+                Search
+              </button>
+              <div class="collapse" id="searchCollapse">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-header">
+                      By date:
+                      <div class="form-group" formGroupName="byDate">
+                        <input type="datetime-local" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="datetime-local" class="form-control form-control-sm" name="to" formControlName="to">
+                      </div>
+                    </div>
+                    <div class="card-header">
+                      By rating:
+                      <div class="form-group" formGroupName="byRating">
+                        <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
+                      </div>
+                    </div>
+                    <div class="card-header">
+                      By price:
+                      <div class="form-group" formGroupName="byPrice">
+                        <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'SEARCH')">
+                        Search&nbsp;<a class="fa fa-search"></a>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-          </div>
+            </div>
+          </form>      
         </div>
-        &nbsp;
-        <div class="btn-group" mdbDropdown>
-          <button mdbDropdownToggle type="button" mdbBtn color="primary" class="dropdown-toggle waves-light btn-sm" mdbWavesEffect>
-              Search
-          </button>
-          <div class="dropdown-menu dropdown-primary">
-              <a class="dropdown-item" href="#"></a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-              <div class="divider dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Separated link</a>
-          </div>
-        </div> -->
       </div>
       <div *ngIf="ridesHistory.length > 0" class="scrollable">
         <!-- <div class="card-body"> -->
@@ -344,6 +373,9 @@
                         <!--Title-->
                         <h4 class="card-title">{{ride.startLocation.address.streetName}} {{ride.startLocation.address.streetNumber}}</h4>
                         <!--Text-->
+                        <span class="card-text">Price: </span>
+                        <span class="card-text">{{ride.price}}</span>
+                        <br/>
                         <span class="card-text">Street name: </span>
                         <span class="card-text">{{ride.startLocation.address.streetName}}</span>
                         <br/>

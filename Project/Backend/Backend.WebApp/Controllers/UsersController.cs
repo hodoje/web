@@ -74,14 +74,18 @@ namespace Backend.Controllers
         public IHttpActionResult GetUser()
         {
             string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-            if (user == null)
+            if (_accessService.IsLoggedIn(hash))
             {
-                return BadRequest();
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+                //if (user == null)
+                //{
+                //    return BadRequest();
+                //}
+                UserDto userDto = _iMapper.Map<User, UserDto>(user);
+                return Ok(userDto);
             }
-            UserDto userDto = _iMapper.Map<User, UserDto>(user);
-            return Ok(userDto);
+            return BadRequest();
         }
 
         //PUT: api/Users/5
