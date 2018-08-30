@@ -34,6 +34,14 @@ namespace Backend.DataAccess.ModelRepositories
            return _entities.Where(u => u.Username == username && ((Role)u.Role).ToString() == role).FirstOrDefault();
         }
 
+        // Used only for Drivers
+        public User GetUserByUsernameIncludeAll(string username, string role)
+        {
+            return _entities.Where(u => u.Username == username && ((Role) u.Role).ToString() == role)
+                            .Include(u => u.Car)
+                            .Include(u => u.DriverLocation).FirstOrDefault();
+        }
+
         public IEnumerable<User> GetAllCustomers()
         {
             return _entities.Where(u => u.Role == (int) Role.CUSTOMER).ToList();
