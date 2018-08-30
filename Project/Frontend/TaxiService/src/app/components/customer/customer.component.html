@@ -1,13 +1,14 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col col-md-4">
-      <h2>Need a ride?</h2>
-      <br/>
+    <div class="col col-md-3">
+      <h2>Need a ride?</h2>      
       <div *ngIf="!isRideRequestPending">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#callARideModal">
-            Call a ride
-        </button>
+          Call a ride
+      </button>
+      </div>
+      <div>
         
         <!-- Modal -->
         <div class="modal fade" id="callARideModal" tabindex="-1" role="dialog" aria-labelledby="callARideModalTitle" aria-hidden="true">
@@ -50,8 +51,8 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Submit</button>
-                    <button *ngIf="isRideChanging" class="btn btn-primary" (click)="changeARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Submit</button>
+                    <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Call</button>
+                    <button *ngIf="isRideChanging" class="btn btn-primary" (click)="changeARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Change</button>
                   </div>    
                 </form>
               </div>
@@ -97,7 +98,7 @@
         </div>
       </div>
     </div>
-    <div class="col col-md-4">
+    <div class="col col-md-3">
       <h2>My personal data</h2>
       <!-- <br/> -->
       <!-- <button class="btn btn-primary" (click)="getMyData()">Display my data</button> -->
@@ -252,12 +253,12 @@
         </form>
       <!-- </div> -->
     </div>
-    <div class="col col-md-4">
-      <h2>History</h2>
+    <div class="col col-md-3">
       <div class="tools">
+        <h2>Refine history</h2>
         <div>
           <form [formGroup]="refineForm">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="false" aria-controls="collapseExample">
+            <button class="btn btn-primary refine" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="false" aria-controls="collapseExample">
               Filter rides
             </button>
             <div class="collapse" id="filterCollapse">
@@ -265,8 +266,8 @@
                 <div class="card-body">
                   <div class="card-header">
                     <div class="input-group">
-                      <select class="custom-select form-control" name="filter" formControlName="filter">
-                        <option value="">--choose option--</option>
+                      <select class="custom-select form-control form-control-sm" name="filter" formControlName="filter">
+                        <option selected value="">--choose option--</option>
                         <option *ngFor="let status of rideStatuses">{{status}}</option>
                       </select>
                     </div>
@@ -280,7 +281,7 @@
               </div>
             </div> 
             <div formGroupName="sort">
-              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#sortCollapse" aria-expanded="false" aria-controls="collapseExample">
+              <button class="btn btn-primary refine" type="button" data-toggle="collapse" data-target="#sortCollapse" aria-expanded="false" aria-controls="collapseExample">
                 Sort rides
               </button>
               <div class="collapse" id="sortCollapse">
@@ -288,7 +289,7 @@
                   <div class="card-body">
                     <div class="card-header">
                       By date:
-                      <div class="form-group">
+                      <div class="input-group">
                         <select name="byDate" formControlName="byDate" class="custom-select form-control form-control-sm">
                           <option selected value="">--choose option--</option>
                           <option>NEWEST</option>
@@ -299,7 +300,7 @@
                     &nbsp;
                     <div class="card-header">
                       By rating:
-                      <div class="form-group">
+                      <div class="input-group">
                         <select name="byRating" formControlName="byRating" class="custom-select form-control form-control-sm">
                           <option selected value="">--choose option--</option>
                           <option>HIGHEST</option>
@@ -307,7 +308,7 @@
                         </select>
                       </div>
                     </div>
-                    <div class="form-group">
+                    <div class="input-group">
                       <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'SORT')">
                         Sort&nbsp;<a class="fa fa-sort"></a>
                       </button>
@@ -317,30 +318,54 @@
               </div>
             </div>
             <div formGroupName="search">
-              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false" aria-controls="collapseExample">
+              <button class="btn btn-primary refine" type="button" data-toggle="collapse" data-target="#searchCollapse" aria-expanded="false" aria-controls="collapseExample">
                 Search
               </button>
               <div class="collapse" id="searchCollapse">
                 <div class="card">
                   <div class="card-body">
-                    <div class="card-header">
+                    <div class="card-header" formGroupName="byDate">
                       By date:
-                      <div class="form-group" formGroupName="byDate">
-                        <input type="datetime-local" class="form-control form-control-sm" name="from" formControlName="from">
-                        <input type="datetime-local" class="form-control form-control-sm" name="to" formControlName="to">
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="from">From</label>
+                        </div>
+                        <input type="date" class="form-control form-control-sm" name="from" formControlName="from">
+                      </div>
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="to">To</label>
+                        </div>
+                        <input type="date" class="form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
-                    <div class="card-header">
+                    <div class="card-header" formGroupName="byRating">
                       By rating:
-                      <div class="form-group" formGroupName="byRating">
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="from">From</label>
+                        </div>
                         <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                      </div>
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="to">To</label>
+                        </div>
                         <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
-                    <div class="card-header">
+                    <div class="card-header" formGroupName="byPrice">
                       By price:
-                      <div class="form-group" formGroupName="byPrice">
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="from">From</label>
+                        </div>
                         <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                      </div>
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="to">To</label>
+                        </div>
                         <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
@@ -356,6 +381,9 @@
           </form>      
         </div>
       </div>
+    </div>
+    <div class="col col-md-3">
+      <h2>History</h2>
       <div *ngIf="ridesHistory.length > 0" class="scrollable">
         <!-- <div class="card-body"> -->
           <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
@@ -371,49 +399,49 @@
                     <div class="card-block">
                       <div class="card-body">
                         <!--Title-->
-                        <h4 class="card-title">{{ride.startLocation.address.streetName}} {{ride.startLocation.address.streetNumber}}</h4>
+                        <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
                         <!--Text-->
                         <span class="card-text">Price: </span>
-                        <span class="card-text">{{ride.price}}</span>
+                        <span class="card-text">{{ride?.price}}</span>
                         <br/>
                         <span class="card-text">Street name: </span>
-                        <span class="card-text">{{ride.startLocation.address.streetName}}</span>
+                        <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
                         <br/>
                         <span class="card-text">Street number: </span>
-                        <span class="card-text">{{ride.startLocation.address.streetNumber}}</span>
+                        <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
                         <br/>
                         <span class="card-text">City: </span>
-                        <span class="card-text">{{ride.startLocation.address.city}}</span>
+                        <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
                         <br/>
                         <span class="card-text">Postal code: </span>
-                        <span class="card-text">{{ride.startLocation.address.postalCode}}</span>
+                        <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
                         <br/>
                         <span class="card-text">Longitude: </span>
-                        <span class="card-text">{{ride.startLocation.longitude}}</span>
+                        <span class="card-text">{{ride?.startLocation?.longitude}}</span>
                         <br/>
                         <span class="card-text">Latitude: </span>
-                        <span class="card-text">{{ride.startLocation.latitude}}</span>
+                        <span class="card-text">{{ride?.startLocation?.latitude}}</span>
                         <br/>
                         <span class="card-text">Car type: </span>
-                        <span class="card-text">{{ride.carType}}</span>
+                        <span class="card-text">{{ride?.carType}}</span>
                         <br/>
                         <span class="card-text">Timestamp: </span>
-                        <span class="card-text">{{ride.timestamp}}</span>
+                        <span class="card-text">{{ride?.timestamp}}</span>
                         <br/>
                         <span class="card-text">Status: </span>
-                        <span class="card-text">{{ride.rideStatus}}</span>
+                        <span class="card-text">{{ride?.rideStatus}}</span>
                         <br/>
                         <span class="card-text">Rating: </span>
                         <span>
                             <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
-                              <i [ngStyle]="{'color': (i < ride.comment.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                              <i [ngStyle]="{'color': (i < ride?.comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
                             </a>
                         </span>
                         <br/>
                         <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
                           <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                          <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [(ngModel)]="ride.comment.description"></textarea>
-                          <span class="card-text float-left">{{ride.customer.username}} at {{ride.comment.timestamp.toLocaleDateString()}} {{ride.comment.timestamp.toLocaleTimeString()}}</span>
+                          <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="ride?.comment?.description" (ngModelChange)="ride.comment.description=$event"></textarea>
+                          <span *ngIf="ride?.comment?.description !== null" class="card-text float-left">{{ride?.customer?.username}} at {{ride?.comment?.timestamp?.toLocaleDateString()}} {{ride?.comment?.timestamp?.toLocaleTimeString()}}</span>
                           <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
                         </form>
                       </div>

@@ -6,7 +6,7 @@ import { RidesService } from './../../services/rides.service';
 import { Location } from './../../models/location.model';
 import { Ride } from './../../models/ride.model';
 import { UsersService } from './../../services/users.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiMessage } from '../../models/apiMessage.model';
 import { LoginModel } from '../../models/login.model';
 import { User } from '../../models/user.model';
@@ -49,7 +49,7 @@ export class CustomerComponent implements OnInit {
       latitude: new FormControl()
     }),
     carType: new FormControl()
-  })
+  });
 
   refineForm = new FormGroup({
     filter: new FormControl(),
@@ -71,15 +71,22 @@ export class CustomerComponent implements OnInit {
         to: new FormControl()
       }),
     })
-  })
+  });
 
   constructor(private userService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
-    this.personalData = new User();
-    this.ridesHistory = [];
-    this.rideStatuses = [];
+    // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
+    //   if(!this.isRideRequestPending){
+    //     this.isRideRequestPending = true;
+    //     //this.isRideChanging = false;
+    //     //jQuery("#callARideModal").modal("toggle");
+    //   }
+    // }.bind(this));
   }
 
   ngOnInit() {
+    this.personalData = new User();
+    this.ridesHistory = [];
+    this.rideStatuses = [];
     this.lastRefine = new RefineRidesModel();
     let rideStatusEnumKeys = Object.keys(RideStatus);
     for(var s of rideStatusEnumKeys){
@@ -124,42 +131,60 @@ export class CustomerComponent implements OnInit {
     }
     this.ridesService.requestRide(rideRequest).subscribe(
       (data: Ride) =>{
-      
+        this.ridesHistory.push(this.parseSingleRide(data));
     });
     this.isRideRequestPending = true;
   }
 
   changeARide(changeRideRequest: ChangeRideRequest){
     jQuery("#callARideModal").modal("toggle");
-    this.isRideRequestPending = !this.isRideRequestPending;
+    //this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = false;
 
     if(changeRideRequest.carType === null){
       changeRideRequest.carType = 'DEFAULT';
     }
 
-    this.ridesService.changeRide(changeRideRequest).subscribe();
+    this.ridesService.changeRide(changeRideRequest).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      }
+    );
   }
 
   toggleChangeRide(){
-    this.isRideRequestPending = !this.isRideRequestPending;
+    //this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = true;
-    jQuery("#callARideModal").modal("toggle");
+    //jQuery("#callARideModal").modal("toggle");
   }
 
   cancelARide(){
     let cancelRideRequest = new CancelRideRequest(true);
-    this.ridesService.cancelRide(cancelRideRequest).subscribe();
+    this.ridesService.cancelRide(cancelRideRequest).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      }
+    );
     this.isRideRequestPending = false;
     this.isRideCancelled = true;
+  }
+
+  private parseSingleRide(unparsedRide: Ride){
+    let parsedRide = unparsedRide;
+    let tempdate = new Date(unparsedRide.timestamp);
+    parsedRide.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
+    if(parsedRide.comment !== null){
+      parsedRide.comment.timestamp = new Date(parsedRide.comment.timestamp);  
+    }
+    return parsedRide;
   }
 
   private parseRides(unparsedRides: Ride[]){
     let parsedRides = unparsedRides;
     parsedRides.forEach(r => {
-      let tempdate = new Date(r.timestamp);
-      r.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
-      r.comment.timestamp = new Date(r.comment.timestamp);
+      r = this.parseSingleRide(r);
     });
     return parsedRides;
   }
@@ -168,6 +193,23 @@ export class CustomerComponent implements OnInit {
     this.ridesService.getAllMyRides().subscribe(
       (data: Ride[]) => {
         this.ridesHistory = this.parseRides(data);
+        let createdRide = this.ridesHistory.find(r => r.rideStatus === 'CREATED');
+        if(createdRide !== undefined){
+          this.rideForm = new FormGroup({
+            location: new FormGroup({
+              address: new FormGroup({
+                streetName: new FormControl(createdRide.startLocation.address.streetName),
+                streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
+                city: new FormControl(createdRide.startLocation.address.city),
+                postalCode: new FormControl(createdRide.startLocation.address.postalCode)
+              }),
+              longitude: new FormControl(createdRide.startLocation.longitude),
+              latitude: new FormControl(createdRide.startLocation.latitude)
+            }),
+            carType: new FormControl(createdRide.carType)
+          });
+          this.isRideRequestPending = true;
+        }
       }
     )
   }
@@ -178,14 +220,23 @@ export class CustomerComponent implements OnInit {
 
     let newComment = new Comment();
     newComment.description = comment.description;
-    newComment.timestamp = new Date();
-    this.ridesService.commentCancelledRide(newComment).subscribe();
+    this.ridesService.commentCancelledRide(newComment).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      }
+    );
   }
 
   addComment(comment: Comment){
     comment.id = comment.rideId;
-    comment.timestamp = new Date();
-    this.ridesService.addComment(comment).subscribe();
+    this.ridesService.addComment(comment).subscribe(
+      (data: Ride) => {
+        console.log(data);
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      }
+    );
   }
 
   rate(rideId, ratingIndex){
