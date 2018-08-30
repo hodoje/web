@@ -77,11 +77,15 @@ namespace Backend.Controllers
             if (_accessService.IsLoggedIn(hash))
             {
                 LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-                //if (user == null)
-                //{
-                //    return BadRequest();
-                //}
+                User user = new User();
+                if (loginModel.Role == "CUSTOMER" || loginModel.Role == "DISPATCHER")
+                {
+                    user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+                }
+                else if (loginModel.Role == "DRIVER")
+                {
+                    user = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
+                }
                 UserDto userDto = _iMapper.Map<User, UserDto>(user);
                 return Ok(userDto);
             }

@@ -52,42 +52,42 @@ namespace Backend.Controllers
             //};
             //_unitOfWork.UserRepository.Add(d);
 
-            Location dll = new Location
-            {
-                Address =
-                {
-                    City = "NSS",
-                    StreetName = "STRR",
-                    StreetNumber = "12345",
-                    PostalCode = "ABC12345"
-                },
-                Longitude = 7,
-                Latitude = 9
-            };
-            _unitOfWork.LocationRepository.Add(dll);
-            _unitOfWork.Complete();
+            //Location dll = new Location
+            //{
+            //    Address =
+            //    {
+            //        City = "NSS",
+            //        StreetName = "STRR",
+            //        StreetNumber = "12345",
+            //        PostalCode = "ABC12345"
+            //    },
+            //    Longitude = 7,
+            //    Latitude = 9
+            //};
+            //_unitOfWork.LocationRepository.Add(dll);
+            //_unitOfWork.Complete();
 
-            User cust = new User
-            {
-                Username = "custuser",
-                Password = "custpass",
-                Name = "custname",
-                Lastname = "custlastname",
-                Email = "email@email.com",
-                Gender = (int)Gender.FEMALE,
-                Role = (int)Role.CUSTOMER
-            };
+            //User cust = new User
+            //{
+            //    Username = "custuser",
+            //    Password = "custpass",
+            //    Name = "custname",
+            //    Lastname = "custlastname",
+            //    Email = "email@email.com",
+            //    Gender = (int)Gender.FEMALE,
+            //    Role = (int)Role.CUSTOMER
+            //};
 
-            _unitOfWork.UserRepository.Add(cust);
-            _unitOfWork.Complete();
+            //_unitOfWork.UserRepository.Add(cust);
+            //_unitOfWork.Complete();
 
             User dd = new User
             {
-                Username = "username",
-                Password = "password",
+                Username = "username123",
+                Password = "password123",
                 Name = "dimitrije",
                 Lastname = "nestorov",
-                DriverLocationId = dll.Id,
+                //DriverLocationId = dll.Id,
                 Email = "dimitrije@email.com",
                 Gender = (int)Gender.MALE,
                 IsBanned = false,
@@ -114,31 +114,32 @@ namespace Backend.Controllers
             _unitOfWork.UserRepository.Update(dd);
             _unitOfWork.Complete();
 
-            Ride r = new Ride
-            {
-                CarType = 1,
-                Comment = new Comment
-                {
-                    Description = "poruka",
-                    Rating = 3,
-                    Timestamp = DateTime.Now,
-                    User = cust
-                },
-                CommentId = null,
-                Customer = cust,
-                Driver = dd,
-                StartLocation = dll
-            };
+            //Ride r = new Ride
+            //{
+            //    CarType = 1,
+            //    Comment = new Comment
+            //    {
+            //        Description = "poruka",
+            //        Rating = 3,
+            //        Timestamp = DateTime.Now,
+            //        User = cust
+            //    },
+            //    CommentId = null,
+            //    Customer = cust,
+            //    Driver = dd,
+            //    StartLocation = dll
+            //};
 
-            _unitOfWork.RideRepository.Add(r);
-            _unitOfWork.Complete();
+            //_unitOfWork.RideRepository.Add(r);
+            //_unitOfWork.Complete();
 
         }
 
         public User GetDefault()
         {
-            User u = _unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
-            return u;
+            //User u = _unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
+            //return u;
+            return null;
         }
     }
 }

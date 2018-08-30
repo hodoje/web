@@ -13,7 +13,7 @@ namespace DomainEntities.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required(AllowEmptyStrings = true)]
         [StringLength(1000)]
         public string Description { get; set; }
         [Required]

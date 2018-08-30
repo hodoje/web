@@ -39,7 +39,8 @@ namespace Backend.Controllers
         public IHttpActionResult GetAllMyRides()
         {
             string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            if (_accessService.GetLoginData(hash, _unitOfWork).Data != null)
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
             {
                 LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
                 User user = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
@@ -54,6 +55,21 @@ namespace Backend.Controllers
                 List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
                 return Ok(allUserRidesDtos);
             }
+            //if (_accessService.GetLoginData(hash, _unitOfWork).Data != null)
+            //{
+            //    LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            //    User user = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+            //    List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComment(user.Id).ToList();
+            //    foreach (Ride r in allUserRides)
+            //    {
+            //        if (r.Comment == null)
+            //        {
+            //            r.Comment = new Comment();
+            //        }
+            //    }
+            //    List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
+            //    return Ok(allUserRidesDtos);
+            //}
             return BadRequest();
         }
 
@@ -96,7 +112,16 @@ namespace Backend.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
+            //Comment comment = new Comment();
+            //comment.Id = newRide.Id;
+            //_unitOfWork.CommentRepository.Add(comment);
+            //_unitOfWork.Complete();
+
+            //newRide.CommentId = comment.Id;
+            //_unitOfWork.RideRepository.Update(newRide);
+            //_unitOfWork.Complete();
+
             RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
 
             return CreatedAtRoute("DefaultApi", new { controller = "rides", id = newRideDto.Id }, newRideDto);
@@ -113,8 +138,8 @@ namespace Backend.Controllers
 
             LoginModel loginModel = _accessService.GetLoginData(changeRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-            Ride oldRide = _unitOfWork.RideRepository.Find(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
-            oldRide.StartLocation = _unitOfWork.LocationRepository.GetById(oldRide.StartLocationId);
+            Ride oldRide = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
+            //oldRide.StartLocation = _unitOfWork.LocationRepository.GetById(oldRide.StartLocationId);
             Ride updatedRide = new Ride()
             {
                 StartLocation = _iMapper.Map<LocationDto, Location>(changeRideRequestApiMessage.Data.Location),
@@ -135,7 +160,9 @@ namespace Backend.Controllers
             {
                 throw;
             }
-            return Ok();
+
+            RideDto oldRideDto = _iMapper.Map<Ride, RideDto>(oldRide);
+            return Ok(oldRideDto);
         }
 
         [HttpPost]
@@ -144,13 +171,14 @@ namespace Backend.Controllers
         {
             LoginModel loginModel = _accessService.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-            Ride oldRide = _unitOfWork.RideRepository.Find(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
+            Ride oldRide = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComment(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             if (oldRide != null)
             {
                 oldRide.RideStatus = (int)RideStatus.CANCELLED;
                 _unitOfWork.RideRepository.Update(oldRide);
                 _unitOfWork.Complete();
-                return Ok(oldRide);
+                RideDto oldRideDto = _iMapper.Map<Ride, RideDto>(oldRide);
+                return Ok(oldRideDto);
             }
             return BadRequest();
         }
@@ -167,16 +195,44 @@ namespace Backend.Controllers
             List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComment(user.Id).ToList();
             allUserRides = allUserRides.OrderByDescending(r => r.Timestamp).ToList(); //newest first
             Ride latestRide = allUserRides.FirstOrDefault(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CANCELLED);
+            if (latestRide != null)
+            {
+                // This check here is if something trips and comment for a latest cancelled ride is added multiple times
+                Comment comment;
+                if ((comment = _unitOfWork.CommentRepository.GetById(commentDto.Id)) == null)
+                {
+                    
+                    comment = _iMapper.Map<CommentDto, Comment>(commentDto);
+                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
+                    comment.Id = latestRide.Id;
+                    comment.UserId = user.Id;
+                    comment.Timestamp = DateTime.Now;
+                    _unitOfWork.CommentRepository.Add(comment);
+                    _unitOfWork.Complete();
+                }
+                else
+                {
+                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : commentDto.Description;
+                    comment.Timestamp = DateTime.Now;
+                    _unitOfWork.CommentRepository.Update(comment);
+                    _unitOfWork.Complete();
+                }
 
-            Comment comment = _iMapper.Map<CommentDto, Comment>(commentDto);
-            comment.Id = latestRide.Id;
-            comment.UserId = user.Id;
-            _unitOfWork.CommentRepository.Add(comment);
-            _unitOfWork.Complete();
+                latestRide.CommentId = comment.Id;
+                _unitOfWork.RideRepository.Update(latestRide);
+                _unitOfWork.Complete();
+            }
 
-            latestRide.CommentId = comment.Id;
-            _unitOfWork.RideRepository.Update(latestRide);
-            _unitOfWork.Complete();
+
+            //Comment comment = _iMapper.Map<CommentDto, Comment>(commentDto);
+            //comment.Id = latestRide.Id;
+            //comment.UserId = user.Id;
+            //_unitOfWork.CommentRepository.Add(comment);
+            //_unitOfWork.Complete();
+
+            //latestRide.CommentId = comment.Id;
+            //_unitOfWork.RideRepository.Update(latestRide);
+            //_unitOfWork.Complete();
 
             RideDto rideDto = _iMapper.Map<Ride, RideDto>(latestRide);
             return Ok(rideDto);
@@ -196,14 +252,16 @@ namespace Backend.Controllers
             if ((comment = _unitOfWork.CommentRepository.GetById(commentDto.Id)) == null)
             {
                 comment = _iMapper.Map<CommentDto, Comment>(commentDto);
+                comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
                 comment.UserId = user.Id;
+                comment.Timestamp = DateTime.Now;
                 _unitOfWork.CommentRepository.Add(comment);
                 _unitOfWork.Complete();
             }
             else
             {
-                comment.Description = commentDto.Description;
-                comment.Timestamp = commentDto.Timestamp.ToLocalTime();
+                comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : commentDto.Description;
+                comment.Timestamp = DateTime.Now;
                 _unitOfWork.CommentRepository.Update(comment);
                 _unitOfWork.Complete();
             }
