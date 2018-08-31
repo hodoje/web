@@ -2,7 +2,7 @@ export class Car{
   id: number;
   yearOfManufactoring: number;
   registrationNumber: string;
-  number: string;
+  taxiNumber: string;
   carType: string;
   driverId: number;
 }
