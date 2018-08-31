@@ -1,3 +1,5 @@
+using DomainEntities.Models;
+
 namespace Backend.DataAccess.Migrations
 {
     using System;
@@ -18,6 +20,20 @@ namespace Backend.DataAccess.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
+            User admin = new User
+            {
+                Id = 1,
+                Username = "adminadmin",
+                Password = "adminadmin",
+                Name = "nikolaadmin",
+                Lastname = "karaklicadmin",
+                Gender = (int) Gender.MALE,
+                Email = "admin@admin.com",
+                Role = (int)Role.DISPATCHER,
+                IsBanned = false
+            };
+            context.Users.AddOrUpdate(admin);
+            context.SaveChanges();
         }
     }
 }

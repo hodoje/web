@@ -20,20 +20,20 @@ namespace Backend.Controllers
         public DefaultController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            //Location dl = new Location
-            //{
-            //    Address =
-            //    {
-            //        City = "NS",
-            //        StreetName = "STR",
-            //        StreetNumber = "123",
-            //        PostalCode = "ABC123"
-            //    },
-            //    Longitude = 5,
-            //    Latitude = 7
-            //};
-            //_unitOfWork.LocationRepository.Add(dl);
-            //_unitOfWork.Complete();
+            Location dl = new Location
+            {
+                Address =
+                {
+                    City = "NS",
+                    StreetName = "STR",
+                    StreetNumber = "123",
+                    PostalCode = "ABC123"
+                },
+                Longitude = 5,
+                Latitude = 7
+            };
+            _unitOfWork.LocationRepository.Add(dl);
+            _unitOfWork.Complete();
 
             //User d = new User
             //{
@@ -87,7 +87,7 @@ namespace Backend.Controllers
                 Password = "password123",
                 Name = "dimitrije",
                 Lastname = "nestorov",
-                //DriverLocationId = dll.Id,
+                DriverLocationId = dl.Id,
                 Email = "dimitrije@email.com",
                 Gender = (int)Gender.MALE,
                 IsBanned = false,
