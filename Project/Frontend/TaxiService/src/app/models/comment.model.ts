@@ -1,5 +1,4 @@
 import { User } from "./user.model";
-import { Ride } from "./ride.model";
 
 export class Comment{
   id: number;
@@ -7,4 +6,6 @@ export class Comment{
   timestamp: Date;
   rideId: number;
   rating: number;
+  user: User;
+  userId: number;
 }

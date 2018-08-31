@@ -55,10 +55,10 @@ namespace Backend.DataAccess
                 .WithMany(d => d.DriverRides)
                 .HasForeignKey(r => r.DriverId);
             modelBuilder.Entity<Ride>()
-                .HasOptional(r => r.Comment)
-                .WithRequired(c => c.Ride);
-
-            //modelBuilder.Entity<Location>();
+                .HasMany(r => r.Comments)
+                .WithRequired(c => c.Ride)
+                .HasForeignKey(c => c.RideId)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Comment>()
                 .Property(c => c.Timestamp)

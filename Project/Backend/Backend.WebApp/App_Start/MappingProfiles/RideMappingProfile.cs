@@ -27,8 +27,8 @@ namespace Backend.App_Start.MappingProfiles
                     opts => opts.MapFrom(source => source.Dispatcher))
                 .ForMember(destination => destination.Driver,
                     opts => opts.MapFrom(source => source.Driver))
-                .ForMember(destination => destination.Comment,
-                    opts => opts.MapFrom(source => source.Comment));
+                .ForMember(destination => destination.Comments,
+                    opts => opts.MapFrom(source => source.Comments));
             CreateMap<RideDto, Ride>()
                 .ForMember(destination => destination.RideStatus,
                     opts => opts.MapFrom(source => Enum.GetValues(typeof(RideStatus)).Cast<RideStatus>().FirstOrDefault(rs => rs.ToString() == source.RideStatus)))
@@ -44,8 +44,8 @@ namespace Backend.App_Start.MappingProfiles
                     opts => opts.MapFrom(source => source.Dispatcher))
                 .ForMember(destination => destination.Driver,
                     opts => opts.MapFrom(source => source.Driver))
-                .ForMember(destination => destination.Comment,
-                    opts => opts.MapFrom(source => source.Comment));
+                .ForMember(destination => destination.Comments,
+                    opts => opts.MapFrom(source => source.Comments));
         }
     }
 }

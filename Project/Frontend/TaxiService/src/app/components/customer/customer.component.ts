@@ -104,6 +104,65 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  private parseSingleRide(unparsedRide: Ride){
+    let parsedRide = unparsedRide;
+    let tempdate = new Date(unparsedRide.timestamp);
+    parsedRide.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
+    if(parsedRide.comments.length > 0){
+      parsedRide.comments.forEach(c => {
+        c.timestamp = new Date(c.timestamp);  
+      })
+    }
+    return parsedRide;
+  }
+
+  private parseRides(unparsedRides: Ride[]){
+    let parsedRides = unparsedRides;
+    parsedRides.forEach(r => {
+      r = this.parseSingleRide(r);
+    });
+    return parsedRides;
+  }
+
+  private setCurrentUserCommentToBottom(commentsArray: Comment[]){
+    if(commentsArray.length > 1){
+      let commentToRemove = commentsArray.find(c => c.user.username === this.personalData.username);
+      let index = commentsArray.indexOf(commentToRemove);
+      commentsArray.splice(index, 1);
+      commentsArray.push(commentToRemove);
+    }
+    return commentsArray;
+  }
+
+  getAllMyRides(){
+    this.ridesService.getAllMyRides().subscribe(
+      (data: Ride[]) => {
+        this.ridesHistory = this.parseRides(data);
+        this.ridesHistory.forEach(r => {
+          r.comments = this.setCurrentUserCommentToBottom(r.comments);
+        });
+
+        let createdRide = this.ridesHistory.find(r => r.rideStatus === 'CREATED');
+        if(createdRide !== undefined){
+          this.rideForm = new FormGroup({
+            location: new FormGroup({
+              address: new FormGroup({
+                streetName: new FormControl(createdRide.startLocation.address.streetName),
+                streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
+                city: new FormControl(createdRide.startLocation.address.city),
+                postalCode: new FormControl(createdRide.startLocation.address.postalCode)
+              }),
+              longitude: new FormControl(createdRide.startLocation.longitude),
+              latitude: new FormControl(createdRide.startLocation.latitude)
+            }),
+            carType: new FormControl(createdRide.carType)
+          });
+          this.isRideRequestPending = true;
+        }
+      }
+    )
+  }
+
   changeMyData(registrationModel: RegistrationModel){
     let updatedUser = registrationModel as User;
     updatedUser.id = this.personalData.id;
@@ -138,7 +197,6 @@ export class CustomerComponent implements OnInit {
 
   changeARide(changeRideRequest: ChangeRideRequest){
     jQuery("#callARideModal").modal("toggle");
-    //this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = false;
 
     if(changeRideRequest.carType === null){
@@ -154,9 +212,7 @@ export class CustomerComponent implements OnInit {
   }
 
   toggleChangeRide(){
-    //this.isRideRequestPending = !this.isRideRequestPending;
     this.isRideChanging = true;
-    //jQuery("#callARideModal").modal("toggle");
   }
 
   cancelARide(){
@@ -169,58 +225,13 @@ export class CustomerComponent implements OnInit {
     );
     this.isRideRequestPending = false;
     this.isRideCancelled = true;
+    this.rideForm.reset();
   }
 
-  private parseSingleRide(unparsedRide: Ride){
-    let parsedRide = unparsedRide;
-    let tempdate = new Date(unparsedRide.timestamp);
-    parsedRide.timestamp = `${tempdate.toLocaleDateString()} ${tempdate.toLocaleTimeString()}`;
-    if(parsedRide.comment !== null){
-      parsedRide.comment.timestamp = new Date(parsedRide.comment.timestamp);  
-    }
-    return parsedRide;
-  }
-
-  private parseRides(unparsedRides: Ride[]){
-    let parsedRides = unparsedRides;
-    parsedRides.forEach(r => {
-      r = this.parseSingleRide(r);
-    });
-    return parsedRides;
-  }
-
-  getAllMyRides(){
-    this.ridesService.getAllMyRides().subscribe(
-      (data: Ride[]) => {
-        this.ridesHistory = this.parseRides(data);
-        let createdRide = this.ridesHistory.find(r => r.rideStatus === 'CREATED');
-        if(createdRide !== undefined){
-          this.rideForm = new FormGroup({
-            location: new FormGroup({
-              address: new FormGroup({
-                streetName: new FormControl(createdRide.startLocation.address.streetName),
-                streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
-                city: new FormControl(createdRide.startLocation.address.city),
-                postalCode: new FormControl(createdRide.startLocation.address.postalCode)
-              }),
-              longitude: new FormControl(createdRide.startLocation.longitude),
-              latitude: new FormControl(createdRide.startLocation.latitude)
-            }),
-            carType: new FormControl(createdRide.carType)
-          });
-          this.isRideRequestPending = true;
-        }
-      }
-    )
-  }
-
-  commentCancelledRide(comment){
+  commentCancelledRide(comment: Comment){
     jQuery("#commentModal").modal("toggle");
     this.isRideCancelled = !this.isRideCancelled;
-
-    let newComment = new Comment();
-    newComment.description = comment.description;
-    this.ridesService.commentCancelledRide(newComment).subscribe(
+    this.ridesService.commentCancelledRide(comment).subscribe(
       (data: Ride) => {
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
@@ -232,7 +243,6 @@ export class CustomerComponent implements OnInit {
     comment.id = comment.rideId;
     this.ridesService.addComment(comment).subscribe(
       (data: Ride) => {
-        console.log(data);
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
       }
@@ -248,12 +258,9 @@ export class CustomerComponent implements OnInit {
         this.ratingList[i] = false;
       }
     }
-    let comment = this.ridesHistory.filter(r => r.id === rideId)[0].comment;
+    let comment = this.ridesHistory.filter(r => r.id === rideId)[0].comments.filter(c => c.userId === this.personalData.id)[0];
     comment.rating = ratingIndex + 1;
-    this.ridesService.rateARide(comment).subscribe(
-      (data) => {
-      }
-    );
+    this.ridesService.rateARide(comment).subscribe();
   }
 
   refineRides(refineForm, typeOfButton){

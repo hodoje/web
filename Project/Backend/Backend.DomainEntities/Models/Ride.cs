@@ -13,6 +13,10 @@ namespace DomainEntities.Models
 {
     public class Ride
     {
+        public Ride()
+        {
+            Comments = new HashSet<Comment>();
+        }
         [Key]
         public int Id { get; set; }
         [Required]
@@ -34,7 +38,6 @@ namespace DomainEntities.Models
         public User Dispatcher { get; set; }
         public int? DriverId { get; set; }
         public User Driver { get; set; }
-        public int? CommentId { get; set; }
-        public Comment Comment { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

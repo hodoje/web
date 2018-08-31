@@ -11,6 +11,6 @@ export class Ride{
   dispatcher: User;
   driver: User;
   price: number;
-  comment: Comment;
+  comments: Comment[];
   rideStatus: string;
 }

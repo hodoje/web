@@ -20,20 +20,20 @@ namespace Backend.DataAccess.ModelRepositories
         }
 
         public RideRepository(DbContext context) : base(context) { }
-        public IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComment(int userId)
+        public IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComments(int userId)
         {
-            return _entities.Where(r => r.CustomerId == userId).Include(r => r.StartLocation).Include(r => r.Comment);
+            return _entities.Where(r => r.CustomerId == userId).Include(r => r.StartLocation).Include(r => r.Comments);
         }
 
-        public Ride GetRideByIdIncludeLocationAndComment(int id)
+        public Ride GetRideByIdIncludeLocationAndComments(int id)
         {
-            return _entities.Where(r => r.Id == id).Include(r => r.StartLocation).Include(r => r.Comment).FirstOrDefault();
+            return _entities.Where(r => r.Id == id).Include(r => r.StartLocation).Include(r => r.Comments).FirstOrDefault();
         }
 
-        public IEnumerable<Ride> FilterUserRidesIncludeLocationAndComment(Expression<Func<Ride, bool>> predicate)
+        public IEnumerable<Ride> FilterUserRidesIncludeLocationAndComments(Expression<Func<Ride, bool>> predicate)
         {
             List<Ride> filteredRides = new List<Ride>();
-            filteredRides = _entities.Where(predicate).Include(r => r.StartLocation).Include(r => r.Comment).ToList();
+            filteredRides = _entities.Where(predicate).Include(r => r.StartLocation).Include(r => r.Comments).ToList();
             return filteredRides;
         }
     }

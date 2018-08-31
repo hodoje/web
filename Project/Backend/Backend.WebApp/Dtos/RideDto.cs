@@ -20,7 +20,7 @@ namespace Backend.Dtos
         public UserDto Dispatcher { get; set; }
         public UserDto Driver { get; set; }
         public double Price { get; set; }
-        public CommentDto Comment { get; set; }
+        public List<CommentDto> Comments { get; set; }
         public string RideStatus { get; set; }
     }
 }

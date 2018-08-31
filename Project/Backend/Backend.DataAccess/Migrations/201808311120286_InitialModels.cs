@@ -49,7 +49,7 @@ namespace Backend.DataAccess.Migrations
                 "dbo.Comments",
                 c => new
                     {
-                        Id = c.Int(nullable: false),
+                        Id = c.Int(nullable: false, identity: true),
                         Description = c.String(nullable: false, maxLength: 1000),
                         Timestamp = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         UserId = c.Int(nullable: false),
@@ -57,10 +57,10 @@ namespace Backend.DataAccess.Migrations
                         Rating = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Rides", t => t.Id)
+                .ForeignKey("dbo.Rides", t => t.RideId)
                 .ForeignKey("dbo.Users", t => t.UserId)
-                .Index(t => t.Id)
-                .Index(t => t.UserId);
+                .Index(t => t.UserId)
+                .Index(t => t.RideId);
             
             CreateTable(
                 "dbo.Rides",
@@ -76,7 +76,6 @@ namespace Backend.DataAccess.Migrations
                         CustomerId = c.Int(),
                         DispatcherId = c.Int(),
                         DriverId = c.Int(),
-                        CommentId = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.CustomerId)
@@ -116,7 +115,7 @@ namespace Backend.DataAccess.Migrations
             DropForeignKey("dbo.Rides", "DispatcherId", "dbo.Users");
             DropForeignKey("dbo.Rides", "DestinationLocationId", "dbo.Locations");
             DropForeignKey("dbo.Rides", "CustomerId", "dbo.Users");
-            DropForeignKey("dbo.Comments", "Id", "dbo.Rides");
+            DropForeignKey("dbo.Comments", "RideId", "dbo.Rides");
             DropForeignKey("dbo.Cars", "Id", "dbo.Users");
             DropIndex("dbo.Rides", new[] { "DriverId" });
             DropIndex("dbo.Rides", new[] { "DispatcherId" });
@@ -124,8 +123,8 @@ namespace Backend.DataAccess.Migrations
             DropIndex("dbo.Rides", new[] { "DestinationLocationId" });
             DropIndex("dbo.Rides", new[] { "StartLocationId" });
             DropIndex("dbo.Rides", new[] { "Timestamp" });
+            DropIndex("dbo.Comments", new[] { "RideId" });
             DropIndex("dbo.Comments", new[] { "UserId" });
-            DropIndex("dbo.Comments", new[] { "Id" });
             DropIndex("dbo.Users", new[] { "DriverLocationId" });
             DropIndex("dbo.Users", new[] { "Username" });
             DropIndex("dbo.Cars", new[] { "Id" });

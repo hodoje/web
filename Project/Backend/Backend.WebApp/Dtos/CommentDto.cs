@@ -15,5 +15,7 @@ namespace Backend.Dtos
         public DateTime Timestamp { get; set; }
         public int RideId { get; set; }
         public int Rating { get; set; }
+        public UserDto User { get; set; }
+        public int UserId { get; set; }
     }
 }
