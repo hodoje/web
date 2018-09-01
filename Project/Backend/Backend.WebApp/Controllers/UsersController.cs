@@ -39,12 +39,13 @@ namespace Backend.Controllers
         // GET: api/Users
         [HttpGet]
         [ResponseType(typeof(IEnumerable<UserDto>))]
+        [Route("api/users/getAllUsers")]
         public IHttpActionResult GetUsers()
         {
             //LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
             //if (_loginRepository.IsLoggedIn(lm))
             //{
-            IEnumerable<User> users = _unitOfWork.UserRepository.GetAll();
+            IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
             if (users == null || users.Count() < 1)
             {
                 return NotFound();
@@ -90,6 +91,24 @@ namespace Backend.Controllers
                 return Ok(userDto);
             }
             return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("api/users/getAllDrivers")]
+        public IHttpActionResult GetAllDrivers()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            List<UserDto> driverDtoList = new List<UserDto>();
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                if (loginModel.Role == "DISPATCHER")
+                {
+                    driverDtoList = _iMapper.Map<List<User>, List<UserDto>>(_unitOfWork.UserRepository.GetAllDriversIncludeLocationAndCar().ToList());
+                }
+            }
+            return Ok(driverDtoList);
         }
 
         //PUT: api/Users/5
@@ -171,10 +190,14 @@ namespace Backend.Controllers
 
             try
             {
-                if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username) == null)
+                if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username).FirstOrDefault() == null)
                 {
                     _unitOfWork.UserRepository.Add(user);
                     _unitOfWork.Complete();
+                }
+                else
+                {
+                    return BadRequest();
                 }
             }
             catch (DbUpdateException)
@@ -184,7 +207,6 @@ namespace Backend.Controllers
                     return Conflict();
                 }
             }
-            
             _iMapper.Map<User, UserDto>(user, userDto);
 
             return CreatedAtRoute("DefaultApi", new { id = userDto.Id }, userDto);

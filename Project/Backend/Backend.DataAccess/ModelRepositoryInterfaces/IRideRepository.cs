@@ -11,8 +11,7 @@ namespace Backend.DataAccess.ModelRepositoryInterfaces
 {
     public interface IRideRepository : IRepository<Ride, int>
     {
-        IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComments(int userId);
-        Ride GetRideByIdIncludeLocationAndComments(int id);
-        IEnumerable<Ride> FilterUserRidesIncludeLocationAndComments(Expression<Func<Ride, bool>> predicate);
+        IEnumerable<Ride> FilterRidesIncludeAll(Expression<Func<Ride, bool>> predicate);
+        IEnumerable<Ride> GetAllRidesIncludeAll();
     }
 }

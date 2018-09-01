@@ -1,0 +1,20 @@
+.side-list{
+  height: 500px;
+  overflow-y: scroll;
+  padding: 1px;
+}
+
+textarea{
+  font-size: 14px;
+  padding: 5px;
+  resize: none;
+  background-color: lightgray;
+}
+
+.modal{
+  overflow-y: scroll;
+}
+
+.no-hover{
+  pointer-events: none;
+}

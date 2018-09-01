@@ -20,21 +20,32 @@ namespace Backend.DataAccess.ModelRepositories
         }
 
         public RideRepository(DbContext context) : base(context) { }
-        public IEnumerable<Ride> GetAllUserRidesIncludeLocationAndComments(int userId)
-        {
-            return _entities.Where(r => r.CustomerId == userId).Include(r => r.StartLocation).Include(r => r.Comments);
-        }
 
-        public Ride GetRideByIdIncludeLocationAndComments(int id)
-        {
-            return _entities.Where(r => r.Id == id).Include(r => r.StartLocation).Include(r => r.Comments).FirstOrDefault();
-        }
-
-        public IEnumerable<Ride> FilterUserRidesIncludeLocationAndComments(Expression<Func<Ride, bool>> predicate)
+        public IEnumerable<Ride> FilterRidesIncludeAll(Expression<Func<Ride, bool>> predicate)
         {
             List<Ride> filteredRides = new List<Ride>();
-            filteredRides = _entities.Where(predicate).Include(r => r.StartLocation).Include(r => r.Comments).ToList();
+            filteredRides = _entities.Where(predicate)
+                                     .Include(r => r.StartLocation)
+                                     .Include(r => r.DestinationLocation)
+                                     .Include(r => r.Comments)
+                                     .Include(r => r.Customer)
+                                     .Include(r => r.Driver)
+                                     .Include(r => r.Dispatcher)
+                                     .ToList();
             return filteredRides;
+        }
+
+        public IEnumerable<Ride> GetAllRidesIncludeAll()
+        {
+            List<Ride> allRides = new List<Ride>();
+            allRides = _entities.Include(r => r.StartLocation)
+                                .Include(r => r.DestinationLocation)
+                                .Include(r => r.Comments)
+                                .Include(r => r.Customer)
+                                .Include(r => r.Driver)
+                                .Include(r => r.Dispatcher)
+                                .ToList();
+            return allRides;
         }
     }
 }

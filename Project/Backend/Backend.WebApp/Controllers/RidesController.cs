@@ -34,6 +34,26 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Route("api/rides/getAllRides")]
+        [ResponseType(typeof(IEnumerable<RideDto>))]
+        public IHttpActionResult GetAllRides()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                List<Ride> allRides = _unitOfWork.RideRepository.GetAllRidesIncludeAll().ToList();
+                foreach (Ride r in allRides)
+                {
+                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
+                }
+                List<RideDto> allRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allRides);
+                return Ok(allRidesDtos);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
         [Route("api/rides/getAllMyRides")]
         [ResponseType(typeof(IEnumerable<RideDto>))]
         public IHttpActionResult GetAllMyRides()
@@ -43,14 +63,34 @@ namespace Backend.Controllers
             if (loginData != null)
             {
                 LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User user = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
-                List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComments(user.Id).ToList();
+                List<Ride> allUserRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Customer.Username == loginModel.Username).ToList();
                 foreach (Ride r in allUserRides)
                 {
                     r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
                 }
                 List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
                 return Ok(allUserRidesDtos);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("api/rides/getAllDispatcherRides")]
+        public IHttpActionResult GetAllDispatcherRides()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+                List<Ride> allDispatcherRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DispatcherId == dispatcher.Id).ToList();
+                foreach (Ride r in allDispatcherRides)
+                {
+                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
+                }
+                List<RideDto> allDispatcherRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDispatcherRides);
+                return Ok(allDispatcherRidesDtos);
             }
             return BadRequest();
         }
@@ -120,7 +160,7 @@ namespace Backend.Controllers
 
             LoginModel loginModel = _accessService.GetLoginData(changeRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-            Ride oldRide = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
+            Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             //oldRide.StartLocation = _unitOfWork.LocationRepository.GetById(oldRide.StartLocationId);
             Ride updatedRide = new Ride()
             {
@@ -153,7 +193,7 @@ namespace Backend.Controllers
         {
             LoginModel loginModel = _accessService.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-            Ride oldRide = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
+            Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             if (oldRide != null)
             {
                 oldRide.RideStatus = (int)RideStatus.CANCELLED;
@@ -174,7 +214,7 @@ namespace Backend.Controllers
             LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
-            List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComments(user.Id).ToList();
+            List<Ride> allUserRides = _unitOfWork.RideRepository.GetAllRidesIncludeAll().ToList();
             allUserRides = allUserRides.OrderByDescending(r => r.Timestamp).ToList(); //newest first
             Ride latestRide = allUserRides.FirstOrDefault(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CANCELLED);
             if (latestRide != null)
@@ -211,7 +251,7 @@ namespace Backend.Controllers
             LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
-            Ride ride = _unitOfWork.RideRepository.GetRideByIdIncludeLocationAndComments(commentDto.Id);
+            Ride ride = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == commentDto.RideId).FirstOrDefault();
             if (ride != null)
             {
                 Comment comment;
@@ -286,26 +326,26 @@ namespace Backend.Controllers
                     (refine.Search.ByDate.From == DateTime.MinValue && refine.Search.ByDate.To == DateTime.MinValue))
                     {
                         distinctList =
-                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id);
+                            (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id);
                     }
                     else
                     {
                         if (refine.Search.ByDate.From == null || refine.Search.ByDate.From == DateTime.MinValue)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Timestamp <= refine.Search.ByDate.To);
                         }
                         else if (refine.Search.ByDate.To == null || refine.Search.ByDate.To == DateTime.MinValue)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Timestamp >= refine.Search.ByDate.From);
                         }
                         else
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Timestamp >= refine.Search.ByDate.From &&
                                                                                                                      r.Timestamp <= refine.Search.ByDate.To);
                         }
@@ -318,26 +358,26 @@ namespace Backend.Controllers
                     if (refine.Search.ByRating.From == null && refine.Search.ByRating.To == null)
                     {
                         distinctList =
-                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id);
+                            (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id);
                     }
                     else
                     {
                         if (refine.Search.ByRating.From == null)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Comments.FirstOrDefault(c => c.UserId == r.CustomerId).Rating <= refine.Search.ByRating.To);
                         }
                         else if (refine.Search.ByRating.To == null)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Comments.FirstOrDefault(c => c.UserId == r.CustomerId).Rating >= refine.Search.ByRating.From);
                         }
                         else
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Comments.FirstOrDefault(c => c.UserId == r.CustomerId).Rating >= refine.Search.ByRating.From &&
                                                                                                                       r.Comments.FirstOrDefault(c => c.UserId == r.CustomerId).Rating <= refine.Search.ByRating.To);
                         }
@@ -350,26 +390,26 @@ namespace Backend.Controllers
                     if (refine.Search.ByPrice.From == null && refine.Search.ByPrice.To == null)
                     {
                         distinctList =
-                            (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id);
+                            (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id);
                     }
                     else
                     {
                         if (refine.Search.ByPrice.From == null)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Price <= refine.Search.ByPrice.To);
                         }
                         else if (refine.Search.ByRating.To == null)
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Price >= refine.Search.ByPrice.From);
                         }
                         else
                         {
                             distinctList =
-                                (List<Ride>)_unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id &&
+                                (List<Ride>)_unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id &&
                                                                                                                      r.Price >= refine.Search.ByPrice.From &&
                                                                                                                      r.Price <= refine.Search.ByPrice.To);
                         }
@@ -378,7 +418,7 @@ namespace Backend.Controllers
 
                 if (!shouldDateSearch && !shouldRatingSearch && !shouldRatingSearch)
                 {
-                    distinctList = _unitOfWork.RideRepository.GetAllUserRidesIncludeLocationAndComments(user.Id).ToList();
+                    distinctList = _unitOfWork.RideRepository.GetAllRidesIncludeAll().ToList();
                 }
 
                 distinctList = distinctList.GroupBy(r => r.Id).Select(group => group.FirstOrDefault()).ToList();
@@ -388,7 +428,7 @@ namespace Backend.Controllers
             else
             {
                 // FILTER
-                List<Ride> filteredList = _unitOfWork.RideRepository.FilterUserRidesIncludeLocationAndComments(r => r.CustomerId == user.Id && 
+                List<Ride> filteredList = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && 
                                                                                                                    ((RideStatus) r.RideStatus).ToString() == refine.Filter).ToList();
                 refinedRides = SortList(refine.Sort, filteredList);
             }
@@ -460,6 +500,102 @@ namespace Backend.Controllers
                 }
             }
             return sortedList;
+        }
+
+        [HttpPost]
+        [Route("api/rides/dispatcherRidesSearch")]
+        public IHttpActionResult DispatcherRidesSearch(DispatcherRidesSearch searchParams)
+        {
+            List<Ride> searchedRides = new List<Ride>();
+            if (String.IsNullOrWhiteSpace(searchParams.UserType))
+            {
+                searchedRides = _unitOfWork.RideRepository
+                    .GetAllRidesIncludeAll().ToList();
+            }
+            else if (searchParams.UserType == "CUSTOMER")
+            {
+                if (String.IsNullOrWhiteSpace(searchParams.Name) && String.IsNullOrWhiteSpace(searchParams.Lastname))
+                {
+                    searchedRides = _unitOfWork.RideRepository
+                        .GetAllRidesIncludeAll().ToList();
+                }
+                else
+                {
+                    if (!String.IsNullOrWhiteSpace(searchParams.Name) && String.IsNullOrWhiteSpace(searchParams.Lastname))
+                    {
+                        searchedRides = _unitOfWork.RideRepository
+                            .FilterRidesIncludeAll(r => r.Customer.Name == searchParams.Name).ToList();
+                    }
+                    else if (String.IsNullOrWhiteSpace(searchParams.Name) && !String.IsNullOrWhiteSpace(searchParams.Lastname))
+                    {
+                        searchedRides = _unitOfWork.RideRepository
+                            .FilterRidesIncludeAll(r => r.Customer.Lastname == searchParams.Lastname).ToList();
+                    }
+                    else
+                    {
+                        searchedRides = _unitOfWork.RideRepository
+                            .FilterRidesIncludeAll(r => r.Customer.Name == searchParams.Name && 
+                                                                                            r.Customer.Lastname == searchParams.Lastname).ToList();
+                    }
+                }
+            }
+            else if (searchParams.UserType == "DRIVER")
+            {
+                if (String.IsNullOrWhiteSpace(searchParams.Name) && String.IsNullOrWhiteSpace(searchParams.Lastname))
+                {
+                    searchedRides = _unitOfWork.RideRepository
+                        .GetAllRidesIncludeAll().ToList();
+                }
+                else
+                {
+                    if (!String.IsNullOrWhiteSpace(searchParams.Name) && String.IsNullOrWhiteSpace(searchParams.Lastname))
+                    {
+                        searchedRides = _unitOfWork.RideRepository
+                            .FilterRidesIncludeAll(r => r.Driver.Name == searchParams.Name).ToList();
+                    }
+                    else if (String.IsNullOrWhiteSpace(searchParams.Name) && !String.IsNullOrWhiteSpace(searchParams.Lastname))
+                    {
+                        searchedRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Driver.Lastname == searchParams.Lastname).ToList();
+                    }
+                    else
+                    {
+                        searchedRides = _unitOfWork.RideRepository
+                            .FilterRidesIncludeAll(r => r.Driver.Name == searchParams.Name &&
+                                                                                            r.Driver.Lastname == searchParams.Lastname).ToList();
+                    }
+                }
+            }
+            List<RideDto> searchedRidesDto = _iMapper.Map<List<Ride>, List<RideDto>>(searchedRides);
+            return Ok(searchedRidesDto);
+        }
+
+        [HttpPost]
+        [Route("api/rides/dispatcherFormRideRequest")]
+        public IHttpActionResult DispatcherFormRide(DispatcherFormRideRequestModel dispatcherFormRideRequest)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                Ride newRide = new Ride();
+                newRide.StartLocation = _iMapper.Map<LocationDto, Location>(dispatcherFormRideRequest.Location);
+                newRide.Timestamp = DateTime.Now;
+                newRide.RideStatus = (int)RideStatus.FORMED;
+                newRide.CarType = (int) CarType.PASSENGER;
+                newRide.DriverId = dispatcherFormRideRequest.DriverId;
+                newRide.DispatcherId = dispatcherFormRideRequest.DispatcherId;
+                _unitOfWork.RideRepository.Add(newRide);
+                _unitOfWork.Complete();
+
+                RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
+                return CreatedAtRoute("DefaultApi", new { controller = "rides", id = newRideDto.Id }, newRideDto);
+            }
+            return BadRequest();
         }
     }
 }

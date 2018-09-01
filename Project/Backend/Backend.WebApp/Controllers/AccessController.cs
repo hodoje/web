@@ -59,5 +59,45 @@ namespace Backend.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPost]
+        [Route("api/access/blockUser")]
+        public IHttpActionResult BlockUser()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            if (_accessService.IsAuthorized(hash))
+            {
+                string username = Request.Content.ReadAsStringAsync().Result;
+                if (_accessService.BlockUser(username, _unitOfWork))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            return Unauthorized();
+        }
+
+        [HttpPost]
+        [Route("api/access/unblockUser")]
+        public IHttpActionResult UnblockUser()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);            
+            if (_accessService.IsAuthorized(hash))
+            {
+                string username = Request.Content.ReadAsStringAsync().Result;
+                if (_accessService.UnblockUser(username, _unitOfWork))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            return Unauthorized();
+        }
     }
 }

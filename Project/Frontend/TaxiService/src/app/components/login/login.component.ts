@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { LoginService } from '../../services/login.service';
+import { AccessService } from '../../services/access.service';
 import { LoginModel } from '../../models/login.model';
 import { ApiMessage } from '../../models/apiMessage.model';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ export class LoginComponent{
   isOtherError: boolean;
   
   constructor(
-    private loginService: LoginService, 
+    private accessService: AccessService, 
     private router: Router, 
     private loginToNavbarService: LoginToNavbarService
   ) { }
@@ -27,7 +27,7 @@ export class LoginComponent{
     this.isBadLoginParams = false;
     this.apiRequest = new ApiMessage("null", loginModel);
 
-    this.loginService.login(this.apiRequest).subscribe(
+    this.accessService.login(this.apiRequest).subscribe(
       (data: ApiMessage) => {
         localStorage.setItem('userHash', data.key);
         localStorage.setItem('role', data.data.role);
@@ -50,7 +50,7 @@ export class LoginComponent{
 
   logout(){
     this.apiRequest = new ApiMessage(localStorage.userHash, null);
-    this.loginService.logout(this.apiRequest).subscribe(
+    this.accessService.logout(this.apiRequest).subscribe(
       (data: ApiMessage) => {
         if(localStorage.userHash === data.key){
           localStorage.userHash = null;

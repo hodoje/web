@@ -17,5 +17,6 @@ namespace Backend.DataAccess.ModelRepositoryInterfaces
         IEnumerable<User> GetAllCustomers();
         IEnumerable<User> GetAllDrivers();
         IEnumerable<User> GetAllDispatchers();
+        IEnumerable<User> GetAllDriversIncludeLocationAndCar();
     }
 }

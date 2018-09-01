@@ -6,56 +6,53 @@
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#callARideModal">
           Call a ride
-      </button>
+        </button>
       </div>
-      <div>
-        
         <!-- Modal -->
-        <div class="modal fade" id="callARideModal" tabindex="-1" role="dialog" aria-labelledby="callARideModalTitle" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="callARideModalTitle">Call a ride</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <form [formGroup]="rideForm">
-                  <div class="form-group" formGroupName="location">
-                    <h3>What's your location?</h3>
-                    <div formGroupName="address">
-                      <legend>Address</legend>
-                      <label for="streetName">Street Name</label>
-                      <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
-                      <label for="streetNumber">Street Number</label>
-                      <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
-                      <label for="city">City</label>
-                      <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
-                      <label for="postalCode">Postal Code</label>
-                      <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
-                    </div>
-                    <legend>Coordinates</legend>
-                    <label for="longitude">Longitude</label>
-                    <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
-                    <label for="latitude">Latitude</label>
-                    <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
+      <div class="modal fade" id="callARideModal" tabindex="-1" role="dialog" aria-labelledby="callARideModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="callARideModalTitle">Call a ride</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="rideForm">
+                <div class="form-group" formGroupName="location">
+                  <h3>What's your location?</h3>
+                  <div formGroupName="address">
+                    <legend>Address</legend>
+                    <label for="streetName">Street Name</label>
+                    <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
+                    <label for="streetNumber">Street Number</label>
+                    <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                    <label for="city">City</label>
+                    <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
+                    <label for="postalCode">Postal Code</label>
+                    <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
                   </div>
-                  <div class="form-group">
-                    <h3>What type of car would you like?</h3>
-                    <h6>If this field is left empty a random type of car will arrive.</h6>
-                    <select formControlName="carType" name="carType" class="form-control form-control-sm">
-                      <option>PASSENGER</option>
-                      <option>VAN</option>
-                    </select>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Call</button>
-                    <button *ngIf="isRideChanging" class="btn btn-primary" (click)="changeARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Change</button>
-                  </div>    
-                </form>
-              </div>
+                  <legend>Coordinates</legend>
+                  <label for="longitude">Longitude</label>
+                  <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
+                  <label for="latitude">Latitude</label>
+                  <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                  <h3>What type of car would you like?</h3>
+                  <h6>If this field is left empty a random type of car will arrive.</h6>
+                  <select formControlName="carType" name="carType" class="form-control form-control-sm">
+                    <option>PASSENGER</option>
+                    <option>VAN</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="callARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Call</button>
+                  <button *ngIf="isRideChanging" class="btn btn-primary" (click)="changeARide(rideForm.value)" type="button" [disabled]="!rideForm.valid">Change</button>
+                </div>    
+              </form>
             </div>
           </div>
         </div>
@@ -273,7 +270,7 @@
                     </div>
                   </div>
                   <div class="input-group">
-                    <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'FILTER')">
+                    <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides('FILTER')">
                       Filter &nbsp;<a class="fa fa-filter"></a>
                     </button>
                   </div>
@@ -309,7 +306,7 @@
                       </div>
                     </div>
                     <div class="input-group">
-                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'SORT')">
+                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides('SORT')">
                         Sort&nbsp;<a class="fa fa-sort"></a>
                       </button>
                     </div>                    
@@ -330,13 +327,13 @@
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="from">From</label>
                         </div>
-                        <input type="date" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="date" class="custom-select form-control form-control-sm" name="from" formControlName="from">
                       </div>
                       <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="to">To</label>
                         </div>
-                        <input type="date" class="form-control form-control-sm" name="to" formControlName="to">
+                        <input type="date" class="custom-select form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
                     <div class="card-header" formGroupName="byRating">
@@ -345,13 +342,13 @@
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="from">From</label>
                         </div>
-                        <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="number" class="custom-select form-control form-control-sm" name="from" formControlName="from">
                       </div>
                       <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="to">To</label>
                         </div>
-                        <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
+                        <input type="number" class="custom-select form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
                     <div class="card-header" formGroupName="byPrice">
@@ -360,17 +357,17 @@
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="from">From</label>
                         </div>
-                        <input type="number" class="form-control form-control-sm" name="from" formControlName="from">
+                        <input type="number" class="custom-select form-control form-control-sm" name="from" formControlName="from">
                       </div>
                       <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="to">To</label>
                         </div>
-                        <input type="number" class="form-control form-control-sm" name="to" formControlName="to">
+                        <input type="number" class="custom-select form-control form-control-sm" name="to" formControlName="to">
                       </div>
                     </div>
                     <div class="form-group">
-                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides(refineForm, 'SEARCH')">
+                      <button mdbBtn class="btn btn-primary" type="submit" (click)="refineRides('SEARCH')">
                         Search&nbsp;<a class="fa fa-search"></a>
                       </button>
                     </div>
@@ -384,13 +381,19 @@
     </div>
     <div class="col col-md-3">
       <h2>History</h2>
+      <div *ngIf="ridesHistory.length === 0 &&
+                 refineForm.filter === null && 
+                 refineForm.sort === null && 
+                 refineForm.search === null">
+        You haven't went on any ride yet.
+      </div>
       <div *ngIf="ridesHistory.length > 0" class="scrollable">
         <!-- <div class="card-body"> -->
           <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
             <input type="text" name="field" ngModel #field="ngModel"/>
             <input type="submit" value="Click me!"/>
           </form> -->
-            <table class="table">
+            <table class="table table-hover">
               <tr *ngFor="let ride of ridesHistory">
                 <td>
                   <!--Card-->

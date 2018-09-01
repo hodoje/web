@@ -73,7 +73,7 @@ export class CustomerComponent implements OnInit {
     })
   });
 
-  constructor(private userService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
+  constructor(private usersService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
     // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
     //   if(!this.isRideRequestPending){
     //     this.isRideRequestPending = true;
@@ -87,17 +87,17 @@ export class CustomerComponent implements OnInit {
     this.personalData = new User();
     this.ridesHistory = [];
     this.rideStatuses = [];
-    this.lastRefine = new RefineRidesModel();
     let rideStatusEnumKeys = Object.keys(RideStatus);
     for(var s of rideStatusEnumKeys){
       this.rideStatuses.push(s);
     }
+    this.lastRefine = new RefineRidesModel();
     this.getMyData();
     this.getAllMyRides();
   }
 
   getMyData(){
-    this.userService.getUserByUsername().subscribe(
+    this.usersService.getUserByUsername().subscribe(
     (data: User) =>{
       this.personalData = data;
       this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
@@ -171,7 +171,7 @@ export class CustomerComponent implements OnInit {
 
     let apiMessage = new ApiMessage(localStorage.userHash, updatedUser);
 
-    this.userService.put(updatedUser.id, apiMessage).subscribe(
+    this.usersService.put(updatedUser.id, apiMessage).subscribe(
       (data: string) => {
         localStorage.userHash = data;
         this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
@@ -263,27 +263,27 @@ export class CustomerComponent implements OnInit {
     this.ridesService.rateARide(comment).subscribe();
   }
 
-  refineRides(refineForm, typeOfButton){
+  refineRides(typeOfButton){
     if(typeOfButton == "FILTER"){
-      refineForm.value.search = null;
-      refineForm.controls.search.reset();
+      this.refineForm.value.search = null;
+      this.refineForm.controls.search.reset();
     }
     else if(typeOfButton == "SEARCH"){
-      refineForm.value.filter = null;
-      refineForm.controls.filter.reset();
+      this.refineForm.value.filter = null;
+      this.refineForm.controls.filter.reset();
     }
     else if(typeOfButton == "SORT"){
       if(this.lastRefine.filter !== null){
-        refineForm.value.search = null;
-        refineForm.controls.search.reset();
+        this.refineForm.value.search = null;
+        this.refineForm.controls.search.reset();
       }
       else{
-        refineForm.value.filter = null;
-        refineForm.controls.filter.reset();
+        this.refineForm.value.filter = null;
+        this.refineForm.controls.filter.reset();
       }
     }
-    this.lastRefine = refineForm.value;
-    this.ridesService.refine(refineForm.value).subscribe(
+    this.lastRefine = this.refineForm.value;
+    this.ridesService.refine(this.refineForm.value).subscribe(
       (data: Ride[]) =>{
         this.ridesHistory = this.parseRides(data);
       },

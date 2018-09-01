@@ -1,174 +1,594 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col col-md-4">
-      <h3>My personal data</h3>
-    </div>
-    <div class="col col-md-4">
-      <h3>Add a driver</h3>
-      <button class="btn btn-primary" (click)="toggleAddDriver()">Add a driver</button>
-      <div *ngIf="shouldAddDriver">
-        <form #f="ngForm" (ngSubmit)="addDriver(f.value)">
-          <table class="table table-sm table-hover">
-            <tbody>
-              <tr>
-                <td class="required">Username:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="8"
-                      maxlength="30"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="username" #username="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="username.touched && !username.valid">
-                      <div *ngIf="username.errors.required">Username is required.</div>
-                      <div *ngIf="username.errors.minlength">Username needs to be at least 8 characters long.</div>
-                      <div *ngIf="username.errors.maxlength">Username needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="username.errors.pattern">Username can contain only ASCII characters and numbers.</div>
-                    </div>
+    <div class="col col-md-3">
+      <h2>Form a ride</h2>
+      <div *ngIf="!isRideRequestPending">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#formARideModal">
+          New ride
+        </button>
+      </div>
+      <!-- Modal -->
+      <div class="modal fade" id="formARideModal" tabindex="-1" role="dialog" aria-labelledby="formARideModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="formARideModalTitle">Form a ride</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="rideForm">
+                <div class="form-group" formGroupName="location">
+                  <h3>Starting location</h3>
+                  <div formGroupName="address">
+                    <legend>Address</legend>
+                    <label for="streetName">Street Name</label>
+                    <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
+                    <label for="streetNumber">Street Number</label>
+                    <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                    <label for="city">City</label>
+                    <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
+                    <label for="postalCode">Postal Code</label>
+                    <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
                   </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Password:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="8"
-                      maxlength="30"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="password" #password="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
-                      <div *ngIf="password.errors.required">Password is required.</div>
-                      <div *ngIf="password.errors.minlength">Password needs to be at least 8 characters long.</div>
-                      <div *ngIf="password.errors.maxlength">Password needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="password.errors.pattern">Password can contain only ASCII characters and numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Name:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required
-                      minlength="3"
-                      maxlength="30"
-                      pattern="[a-zA-Z]*"
-                      type="text" name="name" #name="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="name.touched && !name.valid">
-                      <div *ngIf="name.errors.required">Name is required.</div>
-                      <div *ngIf="name.errors.minlength">Name needs to be at least 3 characters long.</div>
-                      <div *ngIf="name.errors.maxlength">Name needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="name.errors.pattern">Name can contain only ASCII characters.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Lastname:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="3"
-                      maxlength="30"
-                      pattern="[a-zA-Z]*"
-                      type="text" name="lastname" #lastname="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="lastname.touched && !lastname.valid">
-                      <div *ngIf="lastname.errors.required">Lastname is required.</div>
-                      <div *ngIf="lastname.errors.minlength">Lastname needs to be at least 3 characters long.</div>
-                      <div *ngIf="lastname.errors.maxlength">Lastname needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="lastname.errors.pattern">Lastname can contain only ASCII characters.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Email:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      maxlength="254"
-                      email 
-                      type="text" name="email" #email="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
-                      <div *ngIf="email.errors.required">Email is required.</div>
-                      <div *ngIf="email.errors.email">Email is not valid.</div>
-                      <div *ngIf="email.errors.maxlength">Email can be a maximum of 254 characters long.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Gender:</td>
-                <td>
-                  <div class="form-group">
-                    <select required name="gender" ngModel #gender="ngModel" class="form-control form-control-sm">
-                      <option>MALE</option>
-                      <option>FEMALE</option>
-                    </select>
-                    <div class="alert alert-danger" *ngIf="gender.touched && !gender.valid">
-                      <div *ngIf="gender.errors.required">Gender is required.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>NIDN:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      minlength="13"
-                      maxlength="13"
-                      pattern="[0-9]*"
-                      type="text" name="nationalIdentificationNumber" ngModel #nationalIdentificationNumber="ngModel" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="nationalIdentificationNumber.touched && !nationalIdentificationNumber.valid">
-                      <div *ngIf="nationalIdentificationNumber.errors.minlength || nationalIdentificationNumber.errors.maxlength">National identification number needs to be 13 digits long.</div>
-                      <div *ngIf="nationalIdentificationNumber.errors.pattern">National identification number can contain only numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Phone number:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      minlength="5"
-                      maxlength="10"
-                      pattern="[0-9]*"
-                      type="text" name="phoneNumber" #phoneNumber="ngModel" ngModel class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="phoneNumber.touched && !phoneNumber.valid">
-                      <div *ngIf="phoneNumber.errors.minlength">Phone number needs to be at least 5 digits long.</div>
-                      <div *ngIf="phoneNumber.errors.maxlength">Phone number needs to be maximum of 10 digits long.</div>
-                      <div *ngIf="phoneNumber.errors.pattern">Phone number can contain only numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <input [hidden]="!f.dirty && f.valid" class="btn btn-primary" type="submit" value="Add" [disabled]="!f.valid"/>
-        </form>
+                  <legend>Coordinates</legend>
+                  <label for="longitude">Longitude</label>
+                  <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
+                  <label for="latitude">Latitude</label>
+                  <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                  <h3>Car type</h3>
+                  <select formControlName="carType" name="carType" class="custom-select form-control form-control-sm">
+                    <option>PASSENGER</option>
+                    <option>VAN</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <h3>Driver</h3>
+                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
+                    <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver.name}} {{driver.lastname}}</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="formARide()" type="button" [disabled]="!rideForm.valid">Form</button>
+                </div>    
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col col-md-4">
-      <h3>Create a ride</h3>
+    <div class="col col-md-3">
+      <h2>Add a driver</h2>
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addADriverModal">
+        New driver
+      </button>
+        <!-- Modal -->
+      <div class="modal fade" id="addADriverModal" tabindex="-1" role="dialog" aria-labelledby="addADriverModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addADriverModalTitle">Add a new driver</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="driverForm">
+                <h3>Personal information</h3>
+                <label for="username">Username</label>
+                <input formControlName="username" class="form-control form-control-sm">
+                <label for="password">Password</label>
+                <input formControlName="password" class="form-control form-control-sm">
+                <label for="name">Name</label>
+                <input formControlName="name" class="form-control form-control-sm">
+                <label for="lastname">Lastname</label>
+                <input formControlName="lastname" class="form-control form-control-sm">
+                <label for="email">Email</label>
+                <input formControlName="email" class="form-control form-control-sm">
+                <label for="gender">Gender</label>
+                <select formControlName="gender" class="custom-select form-control form-control-sm">
+                  <option>MALE</option>
+                  <option>FEMALE</option>
+                </select>
+                <label for="nationalIdentificationNumber">NIDN</label>
+                <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
+                <label for="phoneNumber">Phone number</label>
+                <input formControlName="phoneNumber" class="form-control form-control-sm">
+                <br/>
+                <div class="form-group" formGroupName="car">
+                  <h3>Car information</h3>
+                  <label for="registrationNumber">Registration number</label>
+                  <input formControlName="registrationNumber" class="form-control form-control-sm">
+                  <label for="taxiNumber">Taxi number</label>
+                  <input formControlName="taxiNumber" class="form-control form-control-sm">
+                  <label for="yearOfManufactoring">Year of manufactoring</label>
+                  <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
+                  <label for="carType">Car type</label>
+                  <select formControlName="carType" class="custom-select form-control form-control-sm">
+                    <option>PASSENGER</option>
+                    <option>VAN</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit" [disabled]="!driverForm.valid" (click)="addDriver()">Add</button>
+                </div>    
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-3">
+      <h2>My personal data</h2>
+      <form #changeDataForm="ngForm" (ngSubmit)="changeMyData(changeDataForm.value)">
+        <table class="table table-sm table-hover">
+          <tbody>
+            <tr>
+              <td class="required">Username:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="8"
+                    maxlength="30"
+                    pattern="[a-zA-Z0-9]*"
+                    type="text" name="username" #username="ngModel" [(ngModel)]="personalData.username" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="username.touched && !username.valid">
+                    <div *ngIf="username.errors.required">Username is required.</div>
+                    <div *ngIf="username.errors.minlength">Username needs to be at least 8 characters long.</div>
+                    <div *ngIf="username.errors.maxlength">Username needs to be maximum of 30 characters long.</div>
+                    <div *ngIf="username.errors.pattern">Username can contain only ASCII characters and numbers.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="8"
+                    maxlength="30"
+                    pattern="[a-zA-Z0-9]*"
+                    type="text" name="password" #password="ngModel" [(ngModel)]="personalData.password" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
+                    <div *ngIf="password.errors.required">Password is required.</div>
+                    <div *ngIf="password.errors.minlength">Password needs to be at least 8 characters long.</div>
+                    <div *ngIf="password.errors.maxlength">Password needs to be maximum of 30 characters long.</div>
+                    <div *ngIf="password.errors.pattern">Password can contain only ASCII characters and numbers.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Name:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="3"
+                    maxlength="30"
+                    pattern="[a-zA-Z]*"
+                    type="text" name="name" #name="ngModel" [(ngModel)]="personalData.name" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="name.touched && !name.valid">
+                    <div *ngIf="name.errors.required">Name is required.</div>
+                    <div *ngIf="name.errors.minlength">Name needs to be at least 3 characters long.</div>
+                    <div *ngIf="name.errors.maxlength">Name needs to be maximum of 30 characters long.</div>
+                    <div *ngIf="name.errors.pattern">Name can contain only ASCII characters.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Lastname:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="3"
+                    maxlength="30"
+                    pattern="[a-zA-Z]*"
+                    type="text" name="lastname" #lastname="ngModel" [(ngModel)]="personalData.lastname" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="lastname.touched && !lastname.valid">
+                    <div *ngIf="lastname.errors.required">Lastname is required.</div>
+                    <div *ngIf="lastname.errors.minlength">Lastname needs to be at least 3 characters long.</div>
+                    <div *ngIf="lastname.errors.maxlength">Lastname needs to be maximum of 30 characters long.</div>
+                    <div *ngIf="lastname.errors.pattern">Lastname can contain only ASCII characters.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Email:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    maxlength="254"
+                    email type="text" name="email" #email="ngModel" [(ngModel)]="personalData.email" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
+                    <div *ngIf="email.errors.required">Email is required.</div>
+                    <div *ngIf="email.errors.email">Email is not valid.</div>
+                    <div *ngIf="email.errors.maxlength">Email can be a maximum of 254 characters long.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Gender:</td>
+              <td>
+                <div class="form-group">
+                  <select required name="gender" [(ngModel)]="personalData.gender" #gender="ngModel" class="form-control form-control-sm">
+                    <option selected>{{ personalData.gender }}</option>
+                    <option *ngIf="personalData.gender === 'FEMALE'">MALE</option>
+                    <option *ngIf="personalData.gender === 'MALE'">FEMALE</option>
+                  </select>
+                  <div class="alert alert-danger" *ngIf="gender.touched && !gender.valid">
+                    <div *ngIf="gender.errors.required">Gender is required.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>NIDN:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    minlength="13"
+                    maxlength="13"
+                    pattern="[0-9]*"
+                    type="text" name="nationalIdentificationNumber" [(ngModel)]="personalData.nationalIdentificationNumber" #nationalIdentificationNumber="ngModel" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="nationalIdentificationNumber.touched && !nationalIdentificationNumber.valid">
+                    <div *ngIf="nationalIdentificationNumber.errors.minlength || nationalIdentificationNumber.errors.maxlength">National identification number needs to be 13 digits long.</div>
+                    <div *ngIf="nationalIdentificationNumber.errors.pattern">National identification number can contain only numbers.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Phone number:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    minlength="5"
+                    maxlength="10"
+                    pattern="[0-9]*"
+                    type="text" name="phoneNumber" #phoneNumber="ngModel" [(ngModel)]="personalData.phoneNumber" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="phoneNumber.touched && !phoneNumber.valid">
+                    <div *ngIf="phoneNumber.errors.minlength">Phone number needs to be at least 5 digits long.</div>
+                    <div *ngIf="phoneNumber.errors.maxlength">Phone number needs to be maximum of 10 digits long.</div>
+                    <div *ngIf="phoneNumber.errors.pattern">Phone number can contain only numbers.</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input *ngIf="shouldDisplaySaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
+      </form>
+    </div>
+  <div class="col col-md-3">
+    <h2>My rides</h2>
+      <div *ngIf="myRides.length === 0">
+        You haven't formed or processed any rides yet.
+      </div>
+      <div *ngIf="myRides.length > 0" class="side-list">
+        <table class="table table-hover">
+          <tr *ngFor="let ride of allRides">
+            <td>
+              <!--Card-->
+              <div class="card">
+                <!--Card content-->
+                <div class="card-block">
+                  <div class="card-body">
+                    <!--Title-->
+                    <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
+                    <!--Text-->
+                    <span class="card-text">Price: </span>
+                    <span class="card-text">{{ride?.price}}</span>
+                    <br/>
+                    <span class="card-text">Street name: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
+                    <br/>
+                    <span class="card-text">Street number: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
+                    <br/>
+                    <span class="card-text">City: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
+                    <br/>
+                    <span class="card-text">Postal code: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
+                    <br/>
+                    <span class="card-text">Longitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.longitude}}</span>
+                    <br/>
+                    <span class="card-text">Latitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.latitude}}</span>
+                    <br/>
+                    <span class="card-text">Car type: </span>
+                    <span class="card-text">{{ride?.carType}}</span>
+                    <br/>
+                    <span class="card-text">Timestamp: </span>
+                    <span class="card-text">{{ride?.timestamp}}</span>
+                    <br/>
+                    <span class="card-text">Status: </span>
+                    <span class="card-text">{{ride?.rideStatus}}</span>
+                    <br/>
+                    <span class="card-text">Customer:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.customer?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.customer?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Driver:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.driver?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.driver?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Dispatcher:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
+                    <div *ngFor="let comment of ride?.comments">
+                      <br/>
+                      <span class="card-text">Rating: </span>
+                      <span>
+                          <a *ngFor="let rating of ratingList; let i = index">
+                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                          </a>
+                      </span>
+                      <br/>
+                      <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                        <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                        <textarea readonly="true" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
+                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                      </form>
+                      <br/>
+                    </div>
+                  </div>
+                </div>
+                <!--/.Card content-->
+              </div>
+              <!--/.Card-->
+            </td>
+          </tr>
+        </table>
+      <!-- </div> -->
     </div>
   </div>
+  </div>
   <div class="row">
-    <div class="col col-md-4">
-      <h3>Add a car for a driver</h3>
+    <div class="col col-md-3">
+      <h2>Add a car for a driver</h2>
     </div>
-    <div class="col col-md-4">
-      <h3>Add a car for a driver</h3>
+    <div class="col col-md-3">
+      <h2>Add a car for a driver</h2>
     </div>
-    <div class="col col-md-4">
-      <h3>Add a car for a driver</h3>
+    <div class="col col-md-3">
+        <h2>Rides</h2>
+        <div *ngIf="allRides.length === 0">
+          There are no rides in the system.
+        </div>
+        <div [formGroup]="dispatcherRidesSearchForm">
+          <button class="btn btn-primary refine" type="button" data-toggle="collapse" data-target="#searchByNameCollapse" aria-expanded="false" aria-controls="collapseExample">
+            Search by name:
+          </button>
+          <div class="collapse" id="searchByNameCollapse">
+            <div class="card">
+              <div class="card-body">
+                <div class="card-header">
+                  Type of user:
+                  <div class="input-group">
+                    <select formControlName="userType" class="custom-select form-control form-control-sm">
+                      <option>CUSTOMER</option>
+                      <option>DRIVER</option>
+                    </select>
+                  </div>
+                </div>
+                &nbsp;
+                <div class="card-header">
+                    <div class="input-group input-group-sm mb-3">
+                      <div class="input-group-prepend">
+                        <label class="input-group-text" for="name">Name</label>
+                      </div>
+                      <input type="text" name="name" formControlName="name" class="form-control form-control-sm">
+                    </div>
+                    <div class="input-group input-group-sm mb-3">
+                      <div class="input-group-prepend">
+                        <label class="input-group-text" for="lastname">Lastname</label>
+                      </div>
+                      <input type="text" name="lastname" formControlName="lastname" class="form-control form-control-sm">
+                    </div>
+                </div>
+                <div class="input-group">
+                  <button mdbBtn class="btn btn-primary" type="submit" (click)="searchRides()">
+                    Search&nbsp;<a class="fa fa-search"></a>
+                  </button>
+                </div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="allRides.length > 0" class="side-list">
+          <table class="table table-hover">
+            <tr *ngFor="let ride of allRides">
+              <td>
+                <!--Card-->
+                <div class="card">
+                  <!--Card content-->
+                  <div class="card-block">
+                    <div class="card-body">
+                      <!--Title-->
+                      <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
+                      <!--Text-->
+                      <span class="card-text">Price: </span>
+                      <span class="card-text">{{ride?.price}}</span>
+                      <br/>
+                      <span class="card-text">Street name: </span>
+                      <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
+                      <br/>
+                      <span class="card-text">Street number: </span>
+                      <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
+                      <br/>
+                      <span class="card-text">City: </span>
+                      <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
+                      <br/>
+                      <span class="card-text">Postal code: </span>
+                      <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
+                      <br/>
+                      <span class="card-text">Longitude: </span>
+                      <span class="card-text">{{ride?.startLocation?.longitude}}</span>
+                      <br/>
+                      <span class="card-text">Latitude: </span>
+                      <span class="card-text">{{ride?.startLocation?.latitude}}</span>
+                      <br/>
+                      <span class="card-text">Car type: </span>
+                      <span class="card-text">{{ride?.carType}}</span>
+                      <br/>
+                      <span class="card-text">Timestamp: </span>
+                      <span class="card-text">{{ride?.timestamp}}</span>
+                      <br/>
+                      <span class="card-text">Status: </span>
+                      <span class="card-text">{{ride?.rideStatus}}</span>
+                      <br/>
+                      <span class="card-text">Customer:</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                      <span class="card-text">{{ride?.customer?.name}}</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                      <span class="card-text">{{ride?.customer?.lastname}}</span>
+                      <br/>
+                      <span class="card-text">Driver:</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                      <span class="card-text">{{ride?.driver?.name}}</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                      <span class="card-text">{{ride?.driver?.lastname}}</span>
+                      <br/>
+                      <span class="card-text">Dispatcher:</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                      <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                      <br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                      <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
+                      <div *ngFor="let comment of ride?.comments">
+                        <br/>
+                        <span class="card-text">Rating: </span>
+                        <span>
+                            <a *ngFor="let rating of ratingList; let i = index" class="no-hover">
+                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                        </span>
+                        <br/>
+                        <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                          <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                          <textarea readonly="true" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
+                          <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                          <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                        </form>
+                        <br/>
+                      </div>
+                    </div>
+                  </div>
+                  <!--/.Card content-->
+                </div>
+                <!--/.Card-->
+              </td>
+            </tr>
+          </table>
+        <!-- </div> -->
+      </div>
+    </div>
+    <div class="col col-md-3">
+      <h2>Users</h2>
+      <div *ngIf="allUsers.length > 0" class="side-list">
+        <table class="table table-hover">
+          <tr *ngFor="let user of allUsers">
+            <td>
+              <!--Card-->
+              <div class="card">
+                <!--Card content-->
+                <div class="card-block">
+                  <div>
+                    <button *ngIf="user?.role === 'DISPATCHER'" class="btn btn-success btn-sm float-right" disabled >Admin</button>
+                    <button *ngIf="user?.role !== 'DISPATCHER' && !user?.isBanned" class="btn btn-danger btn-sm float-right" (click)="blockUser(user?.username)">Block</button>
+                    <button *ngIf="user?.role !== 'DISPATCHER' && user?.isBanned" class="btn btn-danger btn-sm float-right" (click)="unblockUser(user?.username)">Unblock</button>
+                  </div>
+                  <div class="card-body">
+                    <!--Title-->
+                    <h4 class="card-title">Personal data</h4>
+                    <!--Text-->
+                    <span class="card-text">Username: </span>
+                    <span class="card-text">{{user?.username}}</span>
+                    <br/>
+                    <span class="card-text">Password: </span>
+                    <span class="card-text">{{user?.password}}</span>
+                    <br/>
+                    <span class="card-text">Name: </span>
+                    <span class="card-text">{{user?.name}}</span>
+                    <br/>
+                    <span class="card-text">Lastname: </span>
+                    <span class="card-text">{{user?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Email: </span>
+                    <span class="card-text">{{user?.email}}</span>
+                    <br/>
+                    <span class="card-text">Gender: </span>
+                    <span class="card-text">{{user?.gender}}</span>
+                    <br/>
+                    <span class="card-text">NIDN: </span>
+                    <span class="card-text">{{user?.nationalIdentificationNumber}}</span>
+                    <br/>
+                    <span class="card-text">Phone number: </span>
+                    <span class="card-text">{{user?.phoneNumber}}</span>
+                    <br/>
+                    <span class="card-text">Role: </span>
+                    <span class="card-text">{{user?.role}}</span>
+                    <br/>
+                    <div *ngIf="user?.car !== null">
+                      <h4>Car data</h4>
+                      <span class="card-text">Registration number: </span>
+                      <span class="card-text">{{user?.car?.registrationNumber}}</span>
+                      <br/>
+                      <span class="card-text">Taxi number: </span>
+                      <span class="card-text">{{user?.car?.taxiNumber}}</span>
+                      <br/>
+                      <span class="card-text">Year of manufactoring: </span>
+                      <span class="card-text">{{user?.car?.yearOfManufactoring}}</span>
+                      <br/>
+                      <span class="card-text">Car type: </span>
+                      <span class="card-text">{{user?.car?.carType}}</span>
+                    </div>
+                  </div>
+                </div>
+                <!--/.Card content-->
+              </div>
+              <!--/.Card-->
+            </td>
+          </tr>
+        </table>
+        <!-- </div> -->
+      </div>
     </div>
   </div>
 </div>

@@ -1,91 +1,173 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col col-md-4">
-      <h3>My car data</h3>
-      <button class="btn btn-primary" (click)="getMyCarData()">Get my car data</button>
-      <div *ngIf="shouldDisplayCarData">
-        <form #changeCarDataForm="ngForm" (ngSubmit)="changeMyCarData(changeCarDataForm.value)">
-          <table class="table table-sm table-hover">
-            <tbody>
-              <tr>
-                <td>Car year of manufactoring:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="4"
-                      maxlength="4"
-                      pattern="[0-9]*"
-                      type="text" name="yearOfManufactoring" #yearOfManufactoring="ngModel" [(ngModel)]="carData.yearOfManufactoring" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="yearOfManufactoring.touched && !yearOfManufactoring.valid">
-                      <div *ngIf="yearOfManufactoring.errors.required && personalData.role === 'DRIVER'">Car year of manufactoring is required.</div>
-                      <div *ngIf="yearOfManufactoring.errors.minlength || yearOfManufactoring.errors.maxlength">Car year of manufactoring needs to be 4 digits long.</div>
-                      <div *ngIf="yearOfManufactoring.errors.pattern">Car year of manufactoring can contain only numbers.</div>
-                    </div>
+    <div class="col col-md-3">
+    <h2>My car data</h2>
+    <!-- <button class="btn btn-primary" (click)="getMyCarData()">Get my car data</button> -->
+      <form #changeCarDataForm="ngForm" (ngSubmit)="changeMyCarData(changeCarDataForm.value)">
+        <table class="table table-sm table-hover">
+          <tbody>
+            <tr>
+              <td>Taxi number:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="1"
+                    maxlength="10"
+                    pattern="[a-zA-Z0-9]*"
+                    type="text" name="taxiNumber" #taxiNumber="ngModel" [ngModel]="personalData?.car?.taxiNumber" (ngModelChange)="personalData.car.taxiNumber=$event" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="taxiNumber.touched && !taxiNumber.valid">
+                    <div *ngIf="taxiNumber.errors.minlength">Taxi number needs to be at least 1 digits long.</div>
+                    <div *ngIf="taxiNumber.errors.maxlength">Taxi number needs to be maximum of 10 digits long.</div>
+                    <div *ngIf="taxiNumber.errors.pattern">Taxi number can contain only numbers.</div>
                   </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Car registration number:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required
-                      minlength="5"
-                      maxlength="7"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="registrationNumber" #registrationNumber="ngModel" [(ngModel)]="carData.registrationNumber" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="registrationNumber.touched && !registrationNumber.valid">
-                      <div *ngIf="registrationNumber.errors.minlength">Registration number needs to be at least 5 characters long.</div>
-                      <div *ngIf="registrationNumber.errors.maxlength">Registration number needs to be maximum of 7 characters long.</div>
-                      <div *ngIf="registrationNumber.errors.pattern">Registration number can contain only ASCII characters and numbers.</div>
-                    </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Registration number:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="5"
+                    maxlength="7"
+                    pattern="[a-zA-Z0-9]*"
+                    type="text" name="registrationNumber" #registrationNumber="ngModel" [ngModel]="personalData?.car?.registrationNumber" (ngModelChange)="personalData.car.registrationNumber=$event" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="registrationNumber.touched && !registrationNumber.valid">
+                    <div *ngIf="registrationNumber.errors.minlength">Registration number needs to be at least 5 characters long.</div>
+                    <div *ngIf="registrationNumber.errors.maxlength">Registration number needs to be maximum of 7 characters long.</div>
+                    <div *ngIf="registrationNumber.errors.pattern">Registration number can contain only ASCII characters and numbers.</div>
                   </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Car taxi number:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required
-                      minlength="1"
-                      maxlength="10"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="taxiNumber" #taxiNumber="ngModel" [(ngModel)]="carData.taxiNumber" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="taxiNumber.touched && !taxiNumber.valid">
-                      <div *ngIf="taxiNumber.errors.minlength">Taxi number needs to be at least 1 digits long.</div>
-                      <div *ngIf="taxiNumber.errors.maxlength">Taxi number needs to be maximum of 10 digits long.</div>
-                      <div *ngIf="taxiNumber.errors.pattern">Taxi number can contain only numbers.</div>
-                    </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Year of manufactoring:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="4"
+                    maxlength="4"
+                    pattern="[0-9]*"
+                    type="text" name="yearOfManufactoring" #yearOfManufactoring="ngModel" [ngModel]="personalData?.car?.yearOfManufactoring" (ngModelChange)="personalData.car.yearOfManufactoring=$event" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="yearOfManufactoring.touched && !yearOfManufactoring.valid">
+                    <div *ngIf="yearOfManufactoring.errors.required && personalData.role === 'DRIVER'">Car year of manufactoring is required.</div>
+                    <div *ngIf="yearOfManufactoring.errors.minlength || yearOfManufactoring.errors.maxlength">Car year of manufactoring needs to be 4 digits long.</div>
+                    <div *ngIf="yearOfManufactoring.errors.pattern">Car year of manufactoring can contain only numbers.</div>
                   </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Car type:</td>
-                <td>
-                  <div class="form-group">
-                    <select required name="carType" [(ngModel)]="carData.carType" #carType="ngModel" class="form-control form-control-sm">
-                      <option selected>{{ carData.carType }}</option>
-                      <option *ngIf="carData.carType === 'PASSENGER'">VAN</option>
-                      <option *ngIf="carData.carType === 'VAN'">PASSENGER</option>
-                    </select>
-                    <div class="alert alert-danger" *ngIf="carData.touched && !carData.valid">
-                      <div *ngIf="carType.errors.required">Car type is required.</div>
-                    </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Type:</td>
+              <td>
+                <div class="form-group">
+                  <select required name="carType" #carType="ngModel" [ngModel]="personalData?.car?.carType" (ngModelChange)="personalData.car.carType=$event" class="form-control form-control-sm">
+                    <option selected>{{ personalData?.car?.carType }}</option>
+                    <option *ngIf="personalData?.car?.carType === 'PASSENGER'">VAN</option>
+                    <option *ngIf="personalData?.car?.carType === 'VAN'">PASSENGER</option>
+                  </select>
+                  <div class="alert alert-danger" *ngIf="carType.touched && !carType.valid">
+                    <div *ngIf="carType.errors.required">Car type is required.</div>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <input [hidden]="!changeCarDataForm.dirty && changeCarDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeCarDataForm.valid"/>
-        </form>
-      </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input *ngIf="shouldDisplayCarSaveChanges" [hidden]="!changeCarDataForm.dirty && changeCarDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeCarDataForm.valid"/>
+      </form>
     </div>
-    <div class="col col-md-4">
-      <h3>My personal data</h3>
-      <button class="btn btn-primary" (click)="getMyData()">Display my data</button>
-      <div *ngIf="shouldDisplayData">
+    <div class="col col-md-3">
+      <h2>My location</h2>
+      <form #changeLocationDataForm="ngForm" (ngSubmit)="changeMyLocationData(changeLocationDataForm.value)">
+        <table class="table table-sm table-hover">
+          <tbody>
+            <tr>
+              <td class="required">Street name:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="3"
+                    maxlength="30"
+                    pattern="[a-zA-Z]*"
+                    type="text" name="username" #streetName="ngModel" [ngModel]="personalData?.driverLocation?.address?.streetName" (ngModelChanges)="personalData.driverLocation.address.streetName=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Street number:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="1"
+                    maxlength="30"
+                    pattern="[0-9]*"
+                    type="text" name="streetNumber" #streetNumber="ngModel" [ngModel]="personalData?.driverLocation?.address?.streetNumber" (ngModelChanges)="personalData.driverLocation.address.streetNumber=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>City:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="3"
+                    maxlength="30"
+                    pattern="[a-zA-Z]*"
+                    type="text" name="city" #city="ngModel" [ngModel]="personalData?.driverLocation?.address?.city" (ngModelChanges)="personalData.driverLocation.address.city=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Postal code:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required 
+                    minlength="1"
+                    maxlength="30"
+                    pattern="[a-zA-Z0-9]*"
+                    type="text" name="postalCode" #postalCode="ngModel" [ngModel]="personalData?.driverLocation?.address?.postalCode" (ngModelChanges)="personalData.driverLocation.address.postalCode=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Longitude:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="1" 
+                    maxlength="5"
+                    email type="text" name="longitude" #longitude="ngModel" [ngModel]="personalData?.driverLocation?.longitude" (ngModelChanges)="personalData.driverLocation.longitude=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Latitude:</td>
+              <td>
+                <div class="form-group">
+                  <input 
+                    required
+                    minlength="1" 
+                    maxlength="4"
+                    email type="text" name="latitude" #latitude="ngModel" [ngModel]="personalData?.driverLocation?.latitude" (ngModelChanges)="personalData.driverLocation.latitude=$event" class="form-control form-control-sm">
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input *ngIf="shouldDisplayLocationSaveChanges" [hidden]="!changeLocationDataForm.dirty && changeLocationDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
+      </form>
+    </div>
+    <div class="col col-md-3">
+      <h2>My personal data</h2>
         <form #changeDataForm="ngForm" (ngSubmit)="changeMyData(changeDataForm.value)">
           <table class="table table-sm table-hover">
             <tbody>
@@ -172,8 +254,7 @@
                     <input 
                       required 
                       maxlength="254"
-                      email 
-                      type="text" name="email" #email="ngModel" [(ngModel)]="personalData.email" class="form-control form-control-sm">
+                      email type="text" name="email" #email="ngModel" [(ngModel)]="personalData.email" class="form-control form-control-sm">
                     <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
                       <div *ngIf="email.errors.required">Email is required.</div>
                       <div *ngIf="email.errors.email">Email is not valid.</div>
@@ -232,12 +313,82 @@
               </tr>
             </tbody>
           </table>
-          <input [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
-      </form>
-      </div>
+          <input *ngIf="shouldDisplayPersonalSaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
+        </form>
+      <!-- </div> -->
     </div>
-    <div class="col col-md-4">
-      <h3>My location</h3>
+    <div class="col col-md-3">
+      <h2>History</h2>
+      <div *ngIf="ridesHistory.length > 0" class="scrollable">
+        <!-- <div class="card-body"> -->
+          <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
+            <input type="text" name="field" ngModel #field="ngModel"/>
+            <input type="submit" value="Click me!"/>
+          </form> -->
+            <table class="table">
+              <tr *ngFor="let ride of ridesHistory">
+                <td>
+                  <!--Card-->
+                  <div class="card">
+                    <!--Card content-->
+                    <div class="card-block">
+                      <div class="card-body">
+                        <!--Title-->
+                        <h4 class="card-title">{{ride.startLocation.address.streetName}} {{ride.startLocation.address.streetNumber}}</h4>
+                        <!--Text-->
+                        <span class="card-text">Price: </span>
+                        <span class="card-text">{{ride.price}}</span>
+                        <br/>
+                        <span class="card-text">Street name: </span>
+                        <span class="card-text">{{ride.startLocation.address.streetName}}</span>
+                        <br/>
+                        <span class="card-text">Street number: </span>
+                        <span class="card-text">{{ride.startLocation.address.streetNumber}}</span>
+                        <br/>
+                        <span class="card-text">City: </span>
+                        <span class="card-text">{{ride.startLocation.address.city}}</span>
+                        <br/>
+                        <span class="card-text">Postal code: </span>
+                        <span class="card-text">{{ride.startLocation.address.postalCode}}</span>
+                        <br/>
+                        <span class="card-text">Longitude: </span>
+                        <span class="card-text">{{ride.startLocation.longitude}}</span>
+                        <br/>
+                        <span class="card-text">Latitude: </span>
+                        <span class="card-text">{{ride.startLocation.latitude}}</span>
+                        <br/>
+                        <span class="card-text">Car type: </span>
+                        <span class="card-text">{{ride.carType}}</span>
+                        <br/>
+                        <span class="card-text">Timestamp: </span>
+                        <span class="card-text">{{ride.timestamp}}</span>
+                        <br/>
+                        <span class="card-text">Status: </span>
+                        <span class="card-text">{{ride.rideStatus}}</span>
+                        <br/>
+                        <span class="card-text">Rating: </span>
+                        <span>
+                            <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
+                              <i [ngStyle]="{'color': (i < ride.comment.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                        </span>
+                        <br/>
+                        <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                          <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                          <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [(ngModel)]="ride.comment.description"></textarea>
+                          <span class="card-text float-left">{{ride.customer.username}} at {{ride.comment.timestamp.toLocaleDateString()}} {{ride.comment.timestamp.toLocaleTimeString()}}</span>
+                          <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                        </form>
+                      </div>
+                    </div>
+                    <!--/.Card content-->
+                  </div>
+                  <!--/.Card-->
+                </td>
+              </tr>
+            </table>
+        <!-- </div> -->
+      </div>
     </div>
   </div>
 </div>

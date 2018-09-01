@@ -1,0 +1,21 @@
+.scrollable{
+  height: 80%;
+  overflow-y: scroll;
+  position: fixed;
+  padding: 1px;
+}
+
+.modal{
+  overflow-y: scroll;
+}
+
+textarea{
+  font-size: 14px;
+  padding: 5px;
+  resize: none;
+  background-color: lightgray;
+}
+
+.star{
+  font-size: 20px;
+}

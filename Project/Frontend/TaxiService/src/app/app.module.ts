@@ -13,7 +13,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { LocationsService } from './services/locations.service';
 import { CarsService } from './services/cars.service';
 import { RidesService } from './services/rides.service';
-import { LoginService } from './services/login.service';
+import { AccessService } from './services/access.service';
 import { LoginToNavbarService } from './services/login-to-navbar.service';
 import { RegistrationService } from './services/registration.service';
 import { UsersService } from './services/users.service';
@@ -78,7 +78,7 @@ const Routes = [
     MDBBootstrapModule.forRoot()
   ],
   providers: [
-    LoginService,
+    AccessService,
     RegistrationService,
     UsersService,
     RidesService,

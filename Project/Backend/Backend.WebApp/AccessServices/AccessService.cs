@@ -5,6 +5,7 @@ using System.Web;
 using Backend.AccessServices;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
+using DomainEntities.Models;
 
 namespace Backend.AccessServices
 {
@@ -30,23 +31,27 @@ namespace Backend.AccessServices
             // This lock handles multiple fast same-parameter logins
             lock (lockk)
             {
-                if (unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username && u.Password == user.Data.Password).FirstOrDefault() != null)
+                User userToLogin;
+                if ((userToLogin = unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username && u.Password == user.Data.Password).FirstOrDefault()) != null)
                 {
-                    string hash = _hashGenerator.GenerateHash(user.Data);
-
-                    user.Data.Role = ((Role) unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
-
-                    if (!loggedUsers.ContainsKey(hash))
+                    if (!userToLogin.IsBanned)
                     {
-                        if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
+                        string hash = _hashGenerator.GenerateHash(user.Data);
+
+                        user.Data.Role = ((Role)unitOfWork.UserRepository.Find(u => u.Username == user.Data.Username).FirstOrDefault().Role).ToString();
+
+                        if (!loggedUsers.ContainsKey(hash))
                         {
-                            loggedUsers.Add(hash, user.Data);
+                            if (loggedUsers.Values.FirstOrDefault(u => u.Username == user.Data.Username) == null)
+                            {
+                                loggedUsers.Add(hash, user.Data);
 
-                            returnMessage = new ApiMessage<string, LoginModel>();
-                            returnMessage.Key = hash;
-                            returnMessage.Data = user.Data;
+                                returnMessage = new ApiMessage<string, LoginModel>();
+                                returnMessage.Key = hash;
+                                returnMessage.Data = user.Data;
 
-                            _cacheManager.Set(key, loggedUsers, 24);
+                                _cacheManager.Set(key, loggedUsers, 24);
+                            }
                         }
                     }
                 }
@@ -104,19 +109,55 @@ namespace Backend.AccessServices
             return extractedHash;
         }
 
-        public bool BlockUser(string username)
+        public bool BlockUser(string username, IUnitOfWork unitOfWork)
         {
-            throw new NotImplementedException();
+            User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
+            if (userToBlock != null)
+            {
+                if (!userToBlock.IsBanned)
+                {
+                    userToBlock.IsBanned = true;
+                    unitOfWork.UserRepository.Update(userToBlock);
+                    unitOfWork.Complete();
+                    Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
+                    LoginModel loginModelForLoggedUser = loggedUsers.Values.FirstOrDefault(lm => lm.Username == username);
+                    if (loginModelForLoggedUser != null)
+                    {
+                        string hash = loggedUsers.FirstOrDefault(pair => pair.Value == loginModelForLoggedUser).Key;
+                        bool isLoggedOut = Logout(hash);
+                    }
+                    return true;
+                }
+                return false;
+            }
+            return false;
         }
 
-        public bool UnblockUser(string username)
+        public bool UnblockUser(string username, IUnitOfWork unitOfWork)
         {
-            throw new NotImplementedException();
+            User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
+            if (userToBlock != null)
+            {
+                if (userToBlock.IsBanned)
+                {
+                    userToBlock.IsBanned = false;
+                    unitOfWork.UserRepository.Update(userToBlock);
+                    unitOfWork.Complete();
+                    return true;
+                }
+                return false;
+            }
+            return false;
         }
 
-        public bool IsAuthorized(string hash, LoginModel user)
+        public bool IsAuthorized(string hash)
         {
-            throw new NotImplementedException();
+            Dictionary<string, LoginModel> loggedUsers = _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Key, u => u.Value);
+            if (loggedUsers[hash].Role == Role.DISPATCHER.ToString())
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

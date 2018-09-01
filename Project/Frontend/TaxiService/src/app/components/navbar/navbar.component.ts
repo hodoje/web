@@ -1,5 +1,5 @@
 import { ApiMessage } from './../../models/apiMessage.model';
-import { LoginService } from './../../services/login.service';
+import { AccessService } from '../../services/access.service';
 import { Component, OnInit } from '@angular/core';
 import { LoginToNavbarService } from '../../services/login-to-navbar.service';
 
@@ -12,7 +12,7 @@ export class NavbarComponent implements OnInit{
   
   isLoggedIn = false;
 
-  constructor(private loginToNavbarService: LoginToNavbarService, private loginService: LoginService) { }
+  constructor(private loginToNavbarService: LoginToNavbarService, private accessService: AccessService) { }
 
   ngOnInit(){
     this.loginToNavbarService.change.subscribe(
@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit{
 
   logout(){
     let apiRequest = new ApiMessage(localStorage.userHash, null);
-    this.loginService.logout(apiRequest).subscribe(
+    this.accessService.logout(apiRequest).subscribe(
       (data: ApiMessage) => {
         if(localStorage.userHash === data.key){
           localStorage.userHash = null;

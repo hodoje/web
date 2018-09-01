@@ -191,6 +191,8 @@
     <Compile Include="AccessServices\HashGenerator.cs" />
     <Compile Include="Models\CancelRideRequestModel.cs" />
     <Compile Include="Models\ChangeRideRequestModel.cs" />
+    <Compile Include="Models\DispatcherFormRideRequestModel.cs" />
+    <Compile Include="Models\DispatcherRidesSearch.cs" />
     <Compile Include="Models\IApiMessage.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\RefineRidesModel.cs" />

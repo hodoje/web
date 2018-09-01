@@ -56,5 +56,10 @@ namespace Backend.DataAccess.ModelRepositories
         {
             return _entities.Where(u => u.Role == (int) Role.DISPATCHER).ToList();
         }
+
+        public IEnumerable<User> GetAllDriversIncludeLocationAndCar()
+        {
+            return _entities.Where(u => u.Role == (int) Role.DRIVER).Include(u => u.Car).Include(u => u.DriverLocation).ToList();
+        }
     }
 }
