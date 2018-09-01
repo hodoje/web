@@ -1,3 +1,4 @@
+import { DispatcherProcessRideRequest } from './../models/dispatcherProcessRideRequest';
 import { DispatcherFormRideRequest } from './../models/dispatcherFormRideRequest';
 import { RefineRidesModel } from './../models/refine.model';
 import { ApiMessage } from './../models/apiMessage.model';
@@ -30,6 +31,13 @@ export class RidesService extends GenericService {
     headers = headers.append('Access-Control-Allow-Credentials', 'true');
     headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
     return this.httpClient.get('http://localhost:3737/api/rides/getAllRides', {'headers' : headers});
+  }
+
+  getAllPendingRides(){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.get('http://localhost:3737/api/rides/getAllPendingRides', {'headers': headers});
   }
 
   getAllDispatcherRides(){
@@ -94,6 +102,13 @@ export class RidesService extends GenericService {
     let headers = new HttpHeaders();
     headers = headers.append('Access-Control-Allow-Credentials', 'true');
     headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
-    return this.httpClient.post('http://localhost:3737/api/rides/dispatcherFormRideRequest', dispatcherFormRideRequest, {'headers': headers});
+    return this.httpClient.post('http://localhost:3737/api/rides/dispatcherFormRide', dispatcherFormRideRequest, {'headers': headers});
+  }
+
+  processARide(dispatcherProcessRideRequest: DispatcherProcessRideRequest){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/dispatcherProcessRide', dispatcherProcessRideRequest, {'headers': headers});
   }
 }

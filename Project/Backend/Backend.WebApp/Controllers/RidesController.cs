@@ -95,6 +95,27 @@ namespace Backend.Controllers
             return BadRequest();
         }
 
+        [HttpGet]
+        [Route("api/rides/getAllPendingRides")]
+        public IHttpActionResult GetAllPendingRides()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+                List<Ride> allPendingRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.RideStatus == (int)RideStatus.CREATED).ToList();
+                foreach (Ride r in allPendingRides)
+                {
+                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
+                }
+                List<RideDto> allPendingRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allPendingRides);
+                return Ok(allPendingRidesDtos);
+            }
+            return BadRequest();
+        }
+
         [HttpPost]
         [Route("api/rides/rideRequest")]
         public IHttpActionResult RequestRide(ApiMessage<string, RideRequestModel> rideRequestApiMessage)
@@ -134,15 +155,6 @@ namespace Backend.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            //Comment comment = new Comment();
-            //comment.Id = newRide.Id;
-            //_unitOfWork.CommentRepository.Add(comment);
-            //_unitOfWork.Complete();
-
-            //newRide.CommentId = comment.Id;
-            //_unitOfWork.RideRepository.Update(newRide);
-            //_unitOfWork.Complete();
 
             RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
 
@@ -570,7 +582,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        [Route("api/rides/dispatcherFormRideRequest")]
+        [Route("api/rides/dispatcherFormRide")]
         public IHttpActionResult DispatcherFormRide(DispatcherFormRideRequestModel dispatcherFormRideRequest)
         {
             if(!ModelState.IsValid)
@@ -594,6 +606,31 @@ namespace Backend.Controllers
 
                 RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
                 return CreatedAtRoute("DefaultApi", new { controller = "rides", id = newRideDto.Id }, newRideDto);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("api/rides/dispatcherProcessRide")]
+        public IHttpActionResult DispatcherProcessRide(ProcessRideRequestModel rideProcessRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideProcessRequest.RideId).FirstOrDefault();
+                rideToProcess.RideStatus = (int)RideStatus.PROCESSED;
+                rideToProcess.DriverId = rideProcessRequest.DriverId;
+                rideToProcess.DispatcherId = rideProcessRequest.DispatcherId;
+                _unitOfWork.RideRepository.Update(rideToProcess);
+                _unitOfWork.Complete();
+
+                return StatusCode(HttpStatusCode.NoContent);
             }
             return BadRequest();
         }

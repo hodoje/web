@@ -144,19 +144,23 @@ export class CustomerComponent implements OnInit {
 
         let createdRide = this.ridesHistory.find(r => r.rideStatus === 'CREATED');
         if(createdRide !== undefined){
-          this.rideForm = new FormGroup({
-            location: new FormGroup({
-              address: new FormGroup({
-                streetName: new FormControl(createdRide.startLocation.address.streetName),
-                streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
-                city: new FormControl(createdRide.startLocation.address.city),
-                postalCode: new FormControl(createdRide.startLocation.address.postalCode)
-              }),
-              longitude: new FormControl(createdRide.startLocation.longitude),
-              latitude: new FormControl(createdRide.startLocation.latitude)
-            }),
-            carType: new FormControl(createdRide.carType)
+          this.rideForm.patchValue({
+            location: createdRide.startLocation,
+            carType: createdRide.carType
           });
+          // this.rideForm = new FormGroup({
+          //   location: new FormGroup({
+          //     address: new FormGroup({
+          //       streetName: new FormControl(createdRide.startLocation.address.streetName),
+          //       streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
+          //       city: new FormControl(createdRide.startLocation.address.city),
+          //       postalCode: new FormControl(createdRide.startLocation.address.postalCode)
+          //     }),
+          //     longitude: new FormControl(createdRide.startLocation.longitude),
+          //     latitude: new FormControl(createdRide.startLocation.latitude)
+          //   }),
+          //   carType: new FormControl(createdRide.carType)
+          // });
           this.isRideRequestPending = true;
         }
       }

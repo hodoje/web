@@ -9,6 +9,7 @@ import { Car } from '../../models/car.model';
 import { Location } from './../../models/location.model';
 import { Ride } from '../../models/ride.model';
 import { FormGroup, FormControl } from '@angular/forms';
+import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
 
 declare var jQuery: any;
 
@@ -23,7 +24,8 @@ export class DispatcherComponent implements OnInit {
   allDrivers: User[];
   allRides: Ride[];
   allUsers: User[];
-  myRides: Ride[];
+  dispatcherRides: Ride[];
+  pendingRides: Ride[];
   ratingList = [false, false, false, false, false];
 
   rideForm = new FormGroup({
@@ -58,6 +60,10 @@ export class DispatcherComponent implements OnInit {
     })
   });
 
+  processARideForm = new FormGroup({
+    driverId: new FormControl()
+  });
+
   dispatcherRidesSearchForm = new FormGroup({
     userType: new FormControl(),
     name: new FormControl(),
@@ -72,12 +78,14 @@ export class DispatcherComponent implements OnInit {
     this.allDrivers = [];
     this.allRides = [];
     this.allUsers = [];
-    this.myRides = [];
+    this.pendingRides = [];
+    this.dispatcherRides = [];
     this.getMyData();
     this.getAllRides();
     this.getAllUsers();
     this.getAllDrivers();
     this.getAllDispatcherRides();
+    this.getAllPendingRides();
   }
 
   getMyData(){
@@ -115,10 +123,18 @@ export class DispatcherComponent implements OnInit {
     );
   }
 
+  getAllPendingRides(){
+    this.ridesService.getAllPendingRides().subscribe(
+      (data: Ride[]) => {
+        this.pendingRides = this.parseRides(data);
+      }
+    );
+  }
+
   getAllDispatcherRides(){
     this.ridesService.getAllDispatcherRides().subscribe(
       (data: Ride[]) => {
-        this.myRides = this.parseRides(data);
+        this.dispatcherRides = this.parseRides(data);
       }
     );
   }
@@ -184,10 +200,29 @@ export class DispatcherComponent implements OnInit {
     formRideRequest.dispatcherId = this.personalData.id;
     this.ridesService.formARide(formRideRequest).subscribe(
       () => {
-        jQuery("#addADriverModal").modal("toggle");
+        jQuery("#formARideModal").modal("toggle");
         this.rideForm.reset();
         this.getAllRides();
         this.getAllDispatcherRides();
+      }
+    );
+  }
+
+  startProcessingARide(rideId){
+    let selectedRide = this.pendingRides.find(r => r.id === rideId);
+  }
+
+  processARide(rideId){
+    jQuery("#processARideModal").modal("toggle");
+    let processARideRequest = new DispatcherProcessRideRequest();
+    processARideRequest = this.processARideForm.value;
+    processARideRequest.dispatcherId = this.personalData.id;
+    processARideRequest.rideId = rideId;
+    this.ridesService.processARide(processARideRequest).subscribe(
+      () => {
+        this.getAllRides();
+        this.getAllDispatcherRides();
+        this.getAllPendingRides();
       }
     );
   }

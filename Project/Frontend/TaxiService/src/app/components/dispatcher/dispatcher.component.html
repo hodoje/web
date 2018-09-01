@@ -1,6 +1,161 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col col-md-3">
+      <h2>Pending rides</h2>
+      <div *ngIf="pendingRides.length === 0">
+        There are no pending rides yet.
+      </div>
+      <div *ngIf="pendingRides.length > 0" class="side-list">
+        <table class="table table-hover">
+          <tr *ngFor="let ride of pendingRides">
+            <td>
+              <!--Card-->
+              <div class="card">
+                <!--Card content-->
+                <div class="card-block">
+                    <!-- Button trigger modal -->
+                  <button type="button" (click)="startProcessingARide(ride.id)" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#processARideModal">
+                    Process
+                  </button>
+                  <!-- Modal -->
+                  <div class="modal fade" id="processARideModal" tabindex="-1" role="dialog" aria-labelledby="processARideModalTitle" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="processARideModalTitle">Process a ride</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form [formGroup]="processARideForm">
+                            <div class="form-group">
+                              <h3>Starting location</h3>
+                              <div>
+                                <legend>Address</legend>
+                                <label for="streetName">Street Name</label>
+                                <input disabled [value]="ride?.startLocation?.address?.streetName" type="text" name="streetName" class="form-control form-control-sm">
+                                <label for="streetNumber">Street Number</label>
+                                <input disabled [value]="ride?.startLocation?.address?.streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                                <label for="city">City</label>
+                                <input disabled [value]="ride?.startLocation?.address?.city" type="text" name="city" class="form-control form-control-sm">
+                                <label for="postalCode">Postal Code</label>
+                                <input disabled [value]="ride?.startLocation?.address?.postalCode" type="text" name="postalCode" class="form-control form-control-sm">
+                              </div>
+                              <legend>Coordinates</legend>
+                              <label for="longitude">Longitude</label>
+                              <input disabled [value]="ride?.startLocation?.longitude" type="text" name="longitude" class="form-control form-control-sm">
+                              <label for="latitude">Latitude</label>
+                              <input disabled [value]="ride?.startLocation?.latitude" type="text" name="latitude" class="form-control form-control-sm">
+                            </div>
+                            <div class="form-group">
+                              <h3>Car type</h3>
+                              <select disabled [value]="ride?.carType" name="carType" class="custom-select form-control form-control-sm">
+                                <option>PASSENGER</option>
+                                <option>VAN</option>
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <h3>Driver</h3>
+                              <select required formControlName="driverId" class="custom-select form-control form-control-sm">
+                                <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver.name}} {{driver.lastname}}</option>
+                              </select>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button class="btn btn-primary" (click)="processARide(ride?.id)" [disabled]="!processARideForm.valid" type="button">Process</button>
+                            </div>    
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <!--Title-->
+                    <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
+                    <!--Text-->
+                    <span class="card-text">Price: </span>
+                    <span class="card-text">{{ride?.price}}</span>
+                    <br/>
+                    <span class="card-text">Street name: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
+                    <br/>
+                    <span class="card-text">Street number: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
+                    <br/>
+                    <span class="card-text">City: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
+                    <br/>
+                    <span class="card-text">Postal code: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
+                    <br/>
+                    <span class="card-text">Longitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.longitude}}</span>
+                    <br/>
+                    <span class="card-text">Latitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.latitude}}</span>
+                    <br/>
+                    <span class="card-text">Car type: </span>
+                    <span class="card-text">{{ride?.carType}}</span>
+                    <br/>
+                    <span class="card-text">Timestamp: </span>
+                    <span class="card-text">{{ride?.timestamp}}</span>
+                    <br/>
+                    <span class="card-text">Status: </span>
+                    <span class="card-text">{{ride?.rideStatus}}</span>
+                    <br/>
+                    <span class="card-text">Customer:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.customer?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.customer?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Driver:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.driver?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.driver?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Dispatcher:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
+                    <div *ngFor="let comment of ride?.comments">
+                      <br/>
+                      <span class="card-text">Rating: </span>
+                      <span>
+                          <a *ngFor="let rating of ratingList; let i = index">
+                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                          </a>
+                      </span>
+                      <br/>
+                      <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                        <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                        <textarea readonly="true" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
+                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                      </form>
+                      <br/>
+                    </div>
+                  </div>
+                </div>
+                <!--/.Card content-->
+              </div>
+              <!--/.Card-->
+            </td>
+          </tr>
+        </table>
+        <!-- </div> -->
+      </div>
+    </div>
+    <div class="col col-md-3">
       <h2>Form a ride</h2>
       <div *ngIf="!isRideRequestPending">
         <!-- Button trigger modal -->
@@ -48,76 +203,13 @@
                 </div>
                 <div class="form-group">
                   <h3>Driver</h3>
-                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
+                  <select required formControlName="driverId" class="custom-select form-control form-control-sm">
                     <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver.name}} {{driver.lastname}}</option>
                   </select>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   <button *ngIf="!isRideChanging" class="btn btn-primary" (click)="formARide()" type="button" [disabled]="!rideForm.valid">Form</button>
-                </div>    
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col col-md-3">
-      <h2>Add a driver</h2>
-      <!-- Button trigger modal -->
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addADriverModal">
-        New driver
-      </button>
-        <!-- Modal -->
-      <div class="modal fade" id="addADriverModal" tabindex="-1" role="dialog" aria-labelledby="addADriverModalTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addADriverModalTitle">Add a new driver</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form [formGroup]="driverForm">
-                <h3>Personal information</h3>
-                <label for="username">Username</label>
-                <input formControlName="username" class="form-control form-control-sm">
-                <label for="password">Password</label>
-                <input formControlName="password" class="form-control form-control-sm">
-                <label for="name">Name</label>
-                <input formControlName="name" class="form-control form-control-sm">
-                <label for="lastname">Lastname</label>
-                <input formControlName="lastname" class="form-control form-control-sm">
-                <label for="email">Email</label>
-                <input formControlName="email" class="form-control form-control-sm">
-                <label for="gender">Gender</label>
-                <select formControlName="gender" class="custom-select form-control form-control-sm">
-                  <option>MALE</option>
-                  <option>FEMALE</option>
-                </select>
-                <label for="nationalIdentificationNumber">NIDN</label>
-                <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
-                <label for="phoneNumber">Phone number</label>
-                <input formControlName="phoneNumber" class="form-control form-control-sm">
-                <br/>
-                <div class="form-group" formGroupName="car">
-                  <h3>Car information</h3>
-                  <label for="registrationNumber">Registration number</label>
-                  <input formControlName="registrationNumber" class="form-control form-control-sm">
-                  <label for="taxiNumber">Taxi number</label>
-                  <input formControlName="taxiNumber" class="form-control form-control-sm">
-                  <label for="yearOfManufactoring">Year of manufactoring</label>
-                  <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
-                  <label for="carType">Car type</label>
-                  <select formControlName="carType" class="custom-select form-control form-control-sm">
-                    <option>PASSENGER</option>
-                    <option>VAN</option>
-                  </select>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button class="btn btn-primary" type="submit" [disabled]="!driverForm.valid" (click)="addDriver()">Add</button>
                 </div>    
               </form>
             </div>
@@ -275,14 +367,14 @@
         <input *ngIf="shouldDisplaySaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
       </form>
     </div>
-  <div class="col col-md-3">
-    <h2>My rides</h2>
-      <div *ngIf="myRides.length === 0">
+    <div class="col col-md-3">
+      <h2>My rides</h2>
+      <div *ngIf="dispatcherRides.length === 0">
         You haven't formed or processed any rides yet.
       </div>
-      <div *ngIf="myRides.length > 0" class="side-list">
+      <div *ngIf="dispatcherRides.length > 0" class="side-list">
         <table class="table table-hover">
-          <tr *ngFor="let ride of myRides">
+          <tr *ngFor="let ride of dispatcherRides">
             <td>
               <!--Card-->
               <div class="card">
@@ -370,16 +462,76 @@
             </td>
           </tr>
         </table>
-      <!-- </div> -->
+        <!-- </div> -->
+      </div>
     </div>
-  </div>
   </div>
   <div class="row">
     <div class="col col-md-3">
       <h2>Add a car for a driver</h2>
     </div>
     <div class="col col-md-3">
-      <h2>Add a car for a driver</h2>
+      <h2>Add a driver</h2>
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addADriverModal">
+        New driver
+      </button>
+        <!-- Modal -->
+      <div class="modal fade" id="addADriverModal" tabindex="-1" role="dialog" aria-labelledby="addADriverModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addADriverModalTitle">Add a new driver</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="driverForm">
+                <h3>Personal information</h3>
+                <label for="username">Username</label>
+                <input formControlName="username" class="form-control form-control-sm">
+                <label for="password">Password</label>
+                <input formControlName="password" class="form-control form-control-sm">
+                <label for="name">Name</label>
+                <input formControlName="name" class="form-control form-control-sm">
+                <label for="lastname">Lastname</label>
+                <input formControlName="lastname" class="form-control form-control-sm">
+                <label for="email">Email</label>
+                <input formControlName="email" class="form-control form-control-sm">
+                <label for="gender">Gender</label>
+                <select formControlName="gender" class="custom-select form-control form-control-sm">
+                  <option>MALE</option>
+                  <option>FEMALE</option>
+                </select>
+                <label for="nationalIdentificationNumber">NIDN</label>
+                <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
+                <label for="phoneNumber">Phone number</label>
+                <input formControlName="phoneNumber" class="form-control form-control-sm">
+                <br/>
+                <div class="form-group" formGroupName="car">
+                  <h3>Car information</h3>
+                  <label for="registrationNumber">Registration number</label>
+                  <input formControlName="registrationNumber" class="form-control form-control-sm">
+                  <label for="taxiNumber">Taxi number</label>
+                  <input formControlName="taxiNumber" class="form-control form-control-sm">
+                  <label for="yearOfManufactoring">Year of manufactoring</label>
+                  <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
+                  <label for="carType">Car type</label>
+                  <select formControlName="carType" class="custom-select form-control form-control-sm">
+                    <option>PASSENGER</option>
+                    <option>VAN</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit" [disabled]="!driverForm.valid" (click)="addDriver()">Add</button>
+                </div>    
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col col-md-3">
         <h2>Rides</h2>

@@ -195,6 +195,7 @@
     <Compile Include="Models\DispatcherRidesSearch.cs" />
     <Compile Include="Models\IApiMessage.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\ProcessRideRequestModel.cs" />
     <Compile Include="Models\RefineRidesModel.cs" />
     <Compile Include="Models\RideRequestModel.cs" />
     <Compile Include="Models\SearchRidesModel.cs" />
