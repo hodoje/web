@@ -282,7 +282,7 @@
       </div>
       <div *ngIf="myRides.length > 0" class="side-list">
         <table class="table table-hover">
-          <tr *ngFor="let ride of allRides">
+          <tr *ngFor="let ride of myRides">
             <td>
               <!--Card-->
               <div class="card">
@@ -388,7 +388,7 @@
         </div>
         <div [formGroup]="dispatcherRidesSearchForm">
           <button class="btn btn-primary refine" type="button" data-toggle="collapse" data-target="#searchByNameCollapse" aria-expanded="false" aria-controls="collapseExample">
-            Search by name:
+            Search by name
           </button>
           <div class="collapse" id="searchByNameCollapse">
             <div class="card">
