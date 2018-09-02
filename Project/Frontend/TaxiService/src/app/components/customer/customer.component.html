@@ -433,22 +433,41 @@
                         <br/>
                         <span class="card-text">Status: </span>
                         <span class="card-text">{{ride?.rideStatus}}</span>
-                        <div *ngFor="let comment of ride?.comments">
+                        <div *ngIf="ride?.comments.length === 0">
                           <br/>
-                          <span class="card-text">Rating: </span>
-                          <span>
-                              <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
-                                <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                              </a>
-                          </span>
+                            <span class="card-text">Rating: </span>
+                            <span>
+                                <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
+                                  <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                                </a>
+                            </span>
+                            <br/>
+                            <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                              <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                              <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" ngModel></textarea>
+                              <!-- <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span> -->
+                              <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                            </form>
                           <br/>
-                          <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
-                            <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                            <textarea [disabled]="comment?.user?.username !== personalData?.username" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
-                            <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
-                            <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                          </form>
-                          <br/>
+                        </div>
+                        <div *ngIf="ride?.comments.length > 0">
+                          <div *ngFor="let comment of ride?.comments">
+                            <br/>
+                            <span class="card-text">Rating: </span>
+                            <span>
+                                <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
+                                  <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                                </a>
+                            </span>
+                            <br/>
+                            <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
+                              <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
+                              <textarea [disabled]="comment?.user?.username !== personalData?.username" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
+                              <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                              <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
+                            </form>
+                            <br/>
+                          </div>
                         </div>
                       </div>
                     </div>

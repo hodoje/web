@@ -262,9 +262,24 @@ export class CustomerComponent implements OnInit {
         this.ratingList[i] = false;
       }
     }
-    let comment = this.ridesHistory.filter(r => r.id === rideId)[0].comments.filter(c => c.userId === this.personalData.id)[0];
-    comment.rating = ratingIndex + 1;
-    this.ridesService.rateARide(comment).subscribe();
+    let rideToComment = this.ridesHistory.find(r => r.id === rideId);
+    if(rideToComment.comments.length === 0){
+      let comment = new Comment();
+      comment.rating = ratingIndex + 1;
+      comment.rideId = rideId;
+      comment.userId = this.personalData.id;
+      this.ridesService.addComment(comment).subscribe(
+        (data: Ride) => {
+          var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+        }
+      );
+    }
+    else{
+      let comment = rideToComment.comments.find(c => c.userId === this.personalData.id);  
+      comment.rating = ratingIndex + 1;
+      this.ridesService.rateARide(comment).subscribe();  
+    }
   }
 
   refineRides(typeOfButton){
