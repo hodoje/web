@@ -1,12 +1,7 @@
-.scrollable{
-  height: 80%;
+.side-list{
+  height: 600px;
   overflow-y: scroll;
-  position: fixed;
   padding: 1px;
-}
-
-.modal{
-  overflow-y: scroll;
 }
 
 textarea{
@@ -16,6 +11,10 @@ textarea{
   background-color: lightgray;
 }
 
-.star{
-  font-size: 20px;
+.modal{
+  overflow-y: scroll;
+}
+
+.no-hover{
+  pointer-events: none;
 }

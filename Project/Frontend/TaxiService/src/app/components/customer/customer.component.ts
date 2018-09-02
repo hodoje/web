@@ -37,6 +37,17 @@ export class CustomerComponent implements OnInit {
   ratingList = [false, false, false, false, false];
   lastRefine: RefineRidesModel;
 
+  personalDataForm = new FormGroup({
+    username: new FormControl(),
+    password: new FormControl(),
+    name: new FormControl(),
+    lastname: new FormControl(),
+    email: new FormControl(),
+    gender: new FormControl(),
+    nationalIdentificationNumber: new FormControl(),
+    phoneNumber: new FormControl()
+  });
+
   rideForm = new FormGroup({
     location: new FormGroup({
       address: new FormGroup({
@@ -96,10 +107,24 @@ export class CustomerComponent implements OnInit {
     this.getAllMyRides();
   }
 
+  get pdForm(){
+    return this.personalDataForm.controls;
+  }
+
   getMyData(){
     this.usersService.getUserByUsername().subscribe(
     (data: User) =>{
       this.personalData = data;
+      this.personalDataForm.patchValue({
+        username: data.username,
+        password: data.password,
+        name: data.name,
+        lastname: data.lastname,
+        email: data.email,
+        gender: data.gender,
+        nationalIdentificationNumber: data.nationalIdentificationNumber,
+        phoneNumber: data.phoneNumber
+      });
       this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
     });
   }
@@ -167,8 +192,9 @@ export class CustomerComponent implements OnInit {
     )
   }
 
-  changeMyData(registrationModel: RegistrationModel){
-    let updatedUser = registrationModel as User;
+  changeMyData(){
+    let updatedUser = new User();
+    updatedUser = this.personalDataForm.value;
     updatedUser.id = this.personalData.id;
     updatedUser.isBanned = this.personalData.isBanned;
     updatedUser.role = this.personalData.role;

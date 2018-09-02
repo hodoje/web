@@ -96,6 +96,28 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Route("api/rides/getAllDriverRides")]
+        public IHttpActionResult GetAllDriverRides()
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User driver = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+                List<Ride> allDriverRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DriverId == driver.Id).ToList();
+                foreach (Ride r in allDriverRides)
+                {
+                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
+                }
+                List<RideDto> allDriverRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDriverRides);
+                return Ok(allDriverRidesDtos);
+            }
+            return BadRequest();
+        }
+        
+
+        [HttpGet]
         [Route("api/rides/getAllPendingRides")]
         public IHttpActionResult GetAllPendingRides()
         {

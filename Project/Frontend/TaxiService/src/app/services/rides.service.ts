@@ -47,6 +47,13 @@ export class RidesService extends GenericService {
     return this.httpClient.get('http://localhost:3737/api/rides/getAllDispatcherRides', {'headers' : headers});
   }
 
+  getAllDriverRides(){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.get('http://localhost:3737/api/rides/getAllDriverRides', {'headers': headers});
+  }
+
   requestRide(rideRequestData: RideRequest){
     let apiMessage = new ApiMessage(localStorage.userHash, rideRequestData);
     return this.httpClient.post('http://localhost:3737/api/rides/rideRequest', apiMessage);

@@ -97,158 +97,119 @@
     </div>
     <div class="col col-md-3">
       <h2>My personal data</h2>
-      <!-- <br/> -->
-      <!-- <button class="btn btn-primary" (click)="getMyData()">Display my data</button> -->
-      <!-- <div *ngIf="shouldDisplayData"> -->
-      <!-- <div class="card-body"> -->
-        <form #changeDataForm="ngForm" (ngSubmit)="changeMyData(changeDataForm.value)">
-          <table class="table table-sm table-hover">
-            <tbody>
-              <tr>
-                <td class="required">Username:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="8"
-                      maxlength="30"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="username" #username="ngModel" [(ngModel)]="personalData.username" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="username.touched && !username.valid">
-                      <div *ngIf="username.errors.required">Username is required.</div>
-                      <div *ngIf="username.errors.minlength">Username needs to be at least 8 characters long.</div>
-                      <div *ngIf="username.errors.maxlength">Username needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="username.errors.pattern">Username can contain only ASCII characters and numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Password:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="8"
-                      maxlength="30"
-                      pattern="[a-zA-Z0-9]*"
-                      type="text" name="password" #password="ngModel" [(ngModel)]="personalData.password" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
-                      <div *ngIf="password.errors.required">Password is required.</div>
-                      <div *ngIf="password.errors.minlength">Password needs to be at least 8 characters long.</div>
-                      <div *ngIf="password.errors.maxlength">Password needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="password.errors.pattern">Password can contain only ASCII characters and numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Name:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required
-                      minlength="3"
-                      maxlength="30"
-                      pattern="[a-zA-Z]*"
-                      type="text" name="name" #name="ngModel" [(ngModel)]="personalData.name" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="name.touched && !name.valid">
-                      <div *ngIf="name.errors.required">Name is required.</div>
-                      <div *ngIf="name.errors.minlength">Name needs to be at least 3 characters long.</div>
-                      <div *ngIf="name.errors.maxlength">Name needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="name.errors.pattern">Name can contain only ASCII characters.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Lastname:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      minlength="3"
-                      maxlength="30"
-                      pattern="[a-zA-Z]*"
-                      type="text" name="lastname" #lastname="ngModel" [(ngModel)]="personalData.lastname" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="lastname.touched && !lastname.valid">
-                      <div *ngIf="lastname.errors.required">Lastname is required.</div>
-                      <div *ngIf="lastname.errors.minlength">Lastname needs to be at least 3 characters long.</div>
-                      <div *ngIf="lastname.errors.maxlength">Lastname needs to be maximum of 30 characters long.</div>
-                      <div *ngIf="lastname.errors.pattern">Lastname can contain only ASCII characters.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Email:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      required 
-                      maxlength="254"
-                      email type="text" name="email" #email="ngModel" [(ngModel)]="personalData.email" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
-                      <div *ngIf="email.errors.required">Email is required.</div>
-                      <div *ngIf="email.errors.email">Email is not valid.</div>
-                      <div *ngIf="email.errors.maxlength">Email can be a maximum of 254 characters long.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Gender:</td>
-                <td>
-                  <div class="form-group">
-                    <select required name="gender" [(ngModel)]="personalData.gender" #gender="ngModel" class="form-control form-control-sm">
-                      <option selected>{{ personalData.gender }}</option>
-                      <option *ngIf="personalData.gender === 'FEMALE'">MALE</option>
-                      <option *ngIf="personalData.gender === 'MALE'">FEMALE</option>
-                    </select>
-                    <div class="alert alert-danger" *ngIf="gender.touched && !gender.valid">
-                      <div *ngIf="gender.errors.required">Gender is required.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>NIDN:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      minlength="13"
-                      maxlength="13"
-                      pattern="[0-9]*"
-                      type="text" name="nationalIdentificationNumber" [(ngModel)]="personalData.nationalIdentificationNumber" #nationalIdentificationNumber="ngModel" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="nationalIdentificationNumber.touched && !nationalIdentificationNumber.valid">
-                      <div *ngIf="nationalIdentificationNumber.errors.minlength || nationalIdentificationNumber.errors.maxlength">National identification number needs to be 13 digits long.</div>
-                      <div *ngIf="nationalIdentificationNumber.errors.pattern">National identification number can contain only numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Phone number:</td>
-                <td>
-                  <div class="form-group">
-                    <input 
-                      minlength="5"
-                      maxlength="10"
-                      pattern="[0-9]*"
-                      type="text" name="phoneNumber" #phoneNumber="ngModel" [(ngModel)]="personalData.phoneNumber" class="form-control form-control-sm">
-                    <div class="alert alert-danger" *ngIf="phoneNumber.touched && !phoneNumber.valid">
-                      <div *ngIf="phoneNumber.errors.minlength">Phone number needs to be at least 5 digits long.</div>
-                      <div *ngIf="phoneNumber.errors.maxlength">Phone number needs to be maximum of 10 digits long.</div>
-                      <div *ngIf="phoneNumber.errors.pattern">Phone number can contain only numbers.</div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <input *ngIf="shouldDisplaySaveChanges" [hidden]="!changeDataForm.dirty && changeDataForm.valid" class="btn btn-primary" type="submit" value="Save changes" [disabled]="!changeDataForm.valid"/>
-        </form>
-      <!-- </div> -->
+      <form [formGroup]="personalDataForm">
+        <table class="table table-sm table-hover">
+          <tr>
+            <td>Username:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="username" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.username.touched && !pdForm.username.valid">
+                  <div *ngIf="pdForm.username.errors.required">Username is required.</div>
+                  <div *ngIf="pdForm.username.errors.minlength">Username needs to be at least 8 characters long.</div>
+                  <div *ngIf="pdForm.username.errors.maxlength">Username needs to be maximum of 30 characters long.</div>
+                  <div *ngIf="pdForm.username.errors.pattern">Username can contain only ASCII characters and numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="password" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.password.touched && !pdForm.password.valid">
+                  <div *ngIf="pdForm.password.errors.required">Password is required.</div>
+                  <div *ngIf="pdForm.password.errors.minlength">Password needs to be at least 8 characters long.</div>
+                  <div *ngIf="pdForm.password.errors.maxlength">Password needs to be maximum of 30 characters long.</div>
+                  <div *ngIf="pdForm.password.errors.pattern">Password can contain only ASCII characters and numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Name:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="name" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.name.touched && !pdForm.name.valid">
+                  <div *ngIf="pdForm.name.errors.required">Name is required.</div>
+                  <div *ngIf="pdForm.name.errors.minlength">Name needs to be at least 3 characters long.</div>
+                  <div *ngIf="pdForm.name.errors.maxlength">Name needs to be maximum of 30 characters long.</div>
+                  <div *ngIf="pdForm.name.errors.pattern">Name can contain only ASCII characters.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Lastname:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="lastname" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.lastname.touched && !pdForm.lastname.valid">
+                  <div *ngIf="pdForm.lastname.errors.required">Lastname is required.</div>
+                  <div *ngIf="pdForm.lastname.errors.minlength">Lastname needs to be at least 3 characters long.</div>
+                  <div *ngIf="pdForm.lastname.errors.maxlength">Lastname needs to be maximum of 30 characters long.</div>
+                  <div *ngIf="pdForm.lastname.errors.pattern">Lastname can contain only ASCII characters.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Email:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="email" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.email.touched && !pdForm.email.valid">
+                  <div *ngIf="pdForm.email.errors.required">Email is required.</div>
+                  <div *ngIf="pdForm.email.errors.email">Email is not valid.</div>
+                  <div *ngIf="pdForm.email.errors.maxlength">Email can be a maximum of 254 characters long.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Gender:</td>
+            <td>
+              <div class="form-group">
+                <select formControlName="gender" class="custom-select form-control form-control-sm">
+                  <option>MALE</option>
+                  <option>FEMALE</option>
+                </select>
+                <div class="alert alert-danger" *ngIf="pdForm.gender.touched && !pdForm.gender.valid">
+                  <div *ngIf="pdForm.gender.errors.required">Gender is required.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>NIDN:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.nationalIdentificationNumber.touched && !pdForm.nationalIdentificationNumber.valid">
+                  <div *ngIf="pdForm.nationalIdentificationNumber.errors.minlength || pdForm.nationalIdentificationNumber.errors.maxlength">National identification number needs to be 13 digits long.</div>
+                  <div *ngIf="pdForm.nationalIdentificationNumber.errors.pattern">National identification number can contain only numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Phone number:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="phoneNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="pdForm.phoneNumber.touched && !pdForm.phoneNumber.valid">
+                  <div *ngIf="pdForm.phoneNumber.errors.minlength">Phone number needs to be at least 5 digits long.</div>
+                  <div *ngIf="pdForm.phoneNumber.errors.maxlength">Phone number needs to be maximum of 10 digits long.</div>
+                  <div *ngIf="pdForm.phoneNumber.errors.pattern">Phone number can contain only numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <button *ngIf="shouldDisplaySaveChanges" [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
+      </form>
     </div>
     <div class="col col-md-3">
       <div class="tools">
@@ -387,7 +348,7 @@
                  refineForm.search === null">
         You haven't went on any ride yet.
       </div>
-      <div *ngIf="ridesHistory.length > 0" class="scrollable">
+      <div *ngIf="ridesHistory.length > 0" class="side-list">
         <!-- <div class="card-body"> -->
           <!-- <form #f="ngForm" (ngSubmit)="useHub(f.value)">
             <input type="text" name="field" ngModel #field="ngModel"/>
@@ -433,18 +394,41 @@
                         <br/>
                         <span class="card-text">Status: </span>
                         <span class="card-text">{{ride?.rideStatus}}</span>
+                        <br/><span class="card-text">Customer:</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                        <span class="card-text">{{ride?.customer?.name}}</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                        <span class="card-text">{{ride?.customer?.lastname}}</span>
+                        <br/>
+                        <span class="card-text">Driver:</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                        <span class="card-text">{{ride?.driver?.name}}</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                        <span class="card-text">{{ride?.driver?.lastname}}</span>
+                        <br/>
+                        <span class="card-text">Dispatcher:</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                        <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                        <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
                         <div *ngIf="ride?.comments.length === 0">
                           <br/>
                             <span class="card-text">Rating: </span>
                             <span>
-                                <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
+                                <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': ride?.rideStatus === 'CREATED'}" (click)="ride?.rideStatus !== 'CREATED' ? rate(ride.id, i) : false">
                                   <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
                                 </a>
                             </span>
                             <br/>
                             <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
                               <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                              <textarea type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" ngModel></textarea>
+                              <textarea readonly="ride?.rideStatus === 'CREATED'" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" ngModel></textarea>
                               <!-- <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span> -->
                               <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
                             </form>

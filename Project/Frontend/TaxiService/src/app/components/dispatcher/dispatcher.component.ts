@@ -10,6 +10,7 @@ import { Location } from './../../models/location.model';
 import { Ride } from '../../models/ride.model';
 import { FormGroup, FormControl } from '@angular/forms';
 import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
+import { ApiMessage } from '../../models/apiMessage.model';
 
 declare var jQuery: any;
 
@@ -27,6 +28,18 @@ export class DispatcherComponent implements OnInit {
   dispatcherRides: Ride[];
   pendingRides: Ride[];
   ratingList = [false, false, false, false, false];
+  shouldDisplaySaveChanges = false;
+
+  personalDataForm = new FormGroup({
+    username: new FormControl(),
+    password: new FormControl(),
+    name: new FormControl(),
+    lastname: new FormControl(),
+    email: new FormControl(),
+    gender: new FormControl(),
+    nationalIdentificationNumber: new FormControl(),
+    phoneNumber: new FormControl()
+  });
 
   rideForm = new FormGroup({
     location: new FormGroup({
@@ -88,11 +101,46 @@ export class DispatcherComponent implements OnInit {
     this.getAllPendingRides();
   }
 
+  get pdForm(){
+    return this.personalDataForm.controls;
+  }
+
   getMyData(){
     this.usersService.getUserByUsername().subscribe(
     (data: User) =>{
       this.personalData = data;
+      this.personalDataForm.patchValue({
+        username: data.username,
+        password: data.password,
+        name: data.name,
+        lastname: data.lastname,
+        email: data.email,
+        gender: data.gender,
+        nationalIdentificationNumber: data.nationalIdentificationNumber,
+        phoneNumber: data.phoneNumber
+      });
+      this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
     });
+  }
+
+  changeMyData(){
+    let updatedUser = new User();
+    updatedUser =  this.personalDataForm.value;
+    updatedUser.id = this.personalData.id;
+    updatedUser.isBanned = this.personalData.isBanned;
+    updatedUser.role = this.personalData.role;
+
+    let apiMessage = new ApiMessage(localStorage.userHash, updatedUser);
+
+    this.usersService.put(updatedUser.id, apiMessage).subscribe(
+      (data: string) => {
+        localStorage.userHash = data;
+        this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   private parseSingleRide(unparsedRide: Ride){
