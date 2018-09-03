@@ -29,7 +29,6 @@ export class CustomerComponent implements OnInit {
 
   personalData: User;
   ridesHistory: Ride[];
-  shouldDisplaySaveChanges = false;
   rideStatuses: string[];
   isRideRequestPending = false;
   isRideChanging = false;
@@ -125,7 +124,7 @@ export class CustomerComponent implements OnInit {
         nationalIdentificationNumber: data.nationalIdentificationNumber,
         phoneNumber: data.phoneNumber
       });
-      this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+      this.personalDataForm.markAsPristine();
     });
   }
 
@@ -204,7 +203,7 @@ export class CustomerComponent implements OnInit {
     this.usersService.put(updatedUser.id, apiMessage).subscribe(
       (data: string) => {
         localStorage.userHash = data;
-        this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+        this.personalDataForm.markAsPristine();
       },
       error => {
         console.log(error);

@@ -211,7 +211,10 @@
       </div>
     </div>
     <div class="col col-md-3">
-      <h2>My location</h2>
+      <div>
+        <h2 class="loc-btn">My location</h2>
+        <button class="loc-btn btn-sm btn btn-primary">Get my location</button>
+      </div>
       <form [formGroup]="locationDataForm">
         <table class="table table-sm table-hover">
           <tbody formGroupName="address">
@@ -265,7 +268,7 @@
             </td>
           </tr>
         </table>
-        <button *ngIf="shouldDisplayLocationSaveChanges" (click)="changeLocationData()" [hidden]="!locationDataForm.dirty && locationDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!locationDataForm.valid">Save changes</button>
+        <button (click)="changeLocationData()" [hidden]="!locationDataForm.dirty && locationDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!locationDataForm.valid">Save changes</button>
       </form>
     </div>
     <div class="col col-md-3">
@@ -483,7 +486,7 @@
             </td>
           </tr>
         </table>
-        <button *ngIf="shouldDisplayPersonalSaveChanges" [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
+        <button [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
       </form>
     </div>
     <div class="col col-md-3">
@@ -545,7 +548,7 @@
             </td>
           </tr>
         </table>
-        <button *ngIf="shouldDisplayCarSaveChanges" (click)="changeCarData()" [hidden]="!carDataForm.dirty && carDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!carDataForm.valid">Save changes</button>
+        <button (click)="changeCarData()" [hidden]="!carDataForm.dirty && carDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!carDataForm.valid">Save changes</button>
       </form>
     </div>
   </div>

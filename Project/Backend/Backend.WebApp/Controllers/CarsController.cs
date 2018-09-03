@@ -58,6 +58,7 @@ namespace Backend.Controllers
         // PUT: api/Cars/5
         [HttpPut]
         [ResponseType(typeof(void))]
+        [Route("api/cars/updateCar/{id}")]
         public IHttpActionResult PutCar(int id, CarDto carDto)
         {
             if (!ModelState.IsValid)

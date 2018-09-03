@@ -21,9 +21,6 @@ import { RideStatus } from '../../models/rideStatus';
 export class DriverComponent implements OnInit {
 
   personalData: User;
-  shouldDisplayPersonalSaveChanges = false;
-  shouldDisplayCarSaveChanges = false;
-  shouldDisplayLocationSaveChanges = false;
   driverRides: Ride[];
   pendingRides: Ride[];
   takenRide: Ride;
@@ -134,13 +131,19 @@ export class DriverComponent implements OnInit {
       this.carDataForm.patchValue({
         taxiNumber: data.car.taxiNumber,
         registrationNumber: data.car.registrationNumber,
-        yearOfManufactoring: data.car.yearOfManufactoring;
+        yearOfManufactoring: data.car.yearOfManufactoring,
         carType: data.car.carType
       });
 
-      this.shouldDisplayPersonalSaveChanges = !this.shouldDisplayPersonalSaveChanges;
-      this.shouldDisplayCarSaveChanges = !this.shouldDisplayCarSaveChanges;
-      this.shouldDisplayLocationSaveChanges = !this.shouldDisplayLocationSaveChanges;
+      this.locationDataForm.patchValue({
+        address: data.driverLocation.address,
+        longitude: data.driverLocation.longitude,
+        latitude: data.driverLocation.latitude
+      });
+
+      this.personalDataForm.markAsPristine();
+      this.carDataForm.markAsPristine();
+      this.locationDataForm.markAsPristine();
     });
   }
 
@@ -156,7 +159,7 @@ export class DriverComponent implements OnInit {
     this.usersService.put(updatedUser.id, apiMessage).subscribe(
       (data: string) => {
         localStorage.userHash = data;
-        this.shouldDisplayPersonalSaveChanges = !this.shouldDisplayPersonalSaveChanges;
+        this.personalDataForm.markAsPristine();
       },
       error => {
         console.log(error);
@@ -169,11 +172,38 @@ export class DriverComponent implements OnInit {
     updatedCar = this.carDataForm.value;
     updatedCar.id = this.personalData.car.id;
     updatedCar.driverId = this.personalData.id;
-    
+    this.carsService.updateCar(updatedCar).subscribe(
+      () => {
+        this.carDataForm.patchValue({
+          taxiNumber: updatedCar.taxiNumber,
+          registrationNumber: updatedCar.registrationNumber,
+          yearOfManufactoring: updatedCar.yearOfManufactoring,
+          carType: updatedCar.carType
+        });
+        this.carDataForm.markAsPristine();
+      }
+    );
   }
 
   changeLocationData(){
-    console.log(this.locationDataForm);
+    let updatedLocation = new Location();
+    updatedLocation = this.locationDataForm.value;
+    if(this.personalData.driverLocationId === null || this.personalData.driverLocationId === undefined){
+      updatedLocation.id = -1;
+    }
+    else{
+      updatedLocation.id = this.personalData.driverLocationId;
+    }
+    this.locationsService.addOrupdateDriverLocation(updatedLocation).subscribe(
+      (data: Location) => {
+        this.locationDataForm.patchValue({
+          address: data.address,
+          longitude: data.longitude,
+          latitude: data.latitude
+        });
+        this.locationDataForm.markAsPristine();
+      }
+    );
   }
 
   private parseSingleRide(unparsedRide: Ride){

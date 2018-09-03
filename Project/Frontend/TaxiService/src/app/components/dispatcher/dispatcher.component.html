@@ -334,7 +334,7 @@
             </td>
           </tr>
         </table>
-        <button *ngIf="shouldDisplaySaveChanges" [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
+        <button [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
       </form>
     </div>
     <div class="col col-md-3">

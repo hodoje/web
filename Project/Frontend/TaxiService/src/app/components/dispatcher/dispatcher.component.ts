@@ -28,7 +28,6 @@ export class DispatcherComponent implements OnInit {
   dispatcherRides: Ride[];
   pendingRides: Ride[];
   ratingList = [false, false, false, false, false];
-  shouldDisplaySaveChanges = false;
 
   personalDataForm = new FormGroup({
     username: new FormControl(),
@@ -119,7 +118,7 @@ export class DispatcherComponent implements OnInit {
         nationalIdentificationNumber: data.nationalIdentificationNumber,
         phoneNumber: data.phoneNumber
       });
-      this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+      this.personalDataForm.markAsPristine();
     });
   }
 
@@ -135,7 +134,7 @@ export class DispatcherComponent implements OnInit {
     this.usersService.put(updatedUser.id, apiMessage).subscribe(
       (data: string) => {
         localStorage.userHash = data;
-        this.shouldDisplaySaveChanges = !this.shouldDisplaySaveChanges;
+        this.personalDataForm.markAsPristine();
       },
       error => {
         console.log(error);
