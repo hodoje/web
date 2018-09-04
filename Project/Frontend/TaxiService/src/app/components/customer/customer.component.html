@@ -69,7 +69,7 @@
           </div>
           <!--/.Card content-->
           <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#callARideModal">Change</button>
-          <button class="btn btn-primary" type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal" (click)="cancelARide()">Cancel</button>
+          <button [disabled]="pendingRide?.rideStatus !== 'CREATED'" class="btn btn-primary" type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal" (click)="cancelARide()">Cancel</button>
         </div>
       </div>
       <div *ngIf="isRideCancelled">
@@ -111,7 +111,7 @@
                   <div class="form-group">
                     <span class="card-text">Rating: </span>
                     <span>
-                      <a *ngFor="let rating of ratingList; let i = index" (click)="saveSuccessfulRideRating(i)">
+                      <a *ngFor="let rating of ratingList; let i = index" (click)="rateSuccessfulRideRating(i)">
                         <i [ngStyle]="{'color': (i < successfulRideRating) ? 'red' : 'grey'}" class="fa fa-star"></i>
                       </a>
                     </span>
@@ -121,7 +121,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Nope</button>
-                    <button class="btn btn-primary" (click)="callARide(rideForm.value)" type="button">Finish</button>
+                    <button class="btn btn-primary" (click)="commentSuccessfulRide()" type="button">Finish</button>
                   </div>    
                 </form>
               </div>
@@ -463,14 +463,18 @@
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
                     <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
-                        <span class="card-text">Rating: </span>
-                        <span>
-                          <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': comment?.userId !== personalData?.id}" (click)="comment?.userId === personalData?.id ? rate(ride.id, i) : false">
-                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                          </a>
-                        </span>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
-                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <div>
+                          <br/>
+                          <span class="card-text">Rating: </span>
+                          <span>
+                            <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': comment?.userId !== personalData?.id}" (click)="comment?.userId === personalData?.id ? rate(ride.id, i) : false">
+                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                          </span>
+                          <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                          <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                          <br/>
+                        </div>
                       </div>
                     </div>
                   </div>

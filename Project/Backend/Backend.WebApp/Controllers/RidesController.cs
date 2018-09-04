@@ -305,10 +305,10 @@ namespace Backend.Controllers
                     _unitOfWork.CommentRepository.Update(comment);
                     _unitOfWork.Complete();
                 }
+                RideDto rideDto = _iMapper.Map<Ride, RideDto>(ride);
+                return Ok(rideDto);
             }
-
-            RideDto rideDto = _iMapper.Map<Ride, RideDto>(ride);
-            return Ok(rideDto);
+            return BadRequest();
         }
 
         [HttpPost]

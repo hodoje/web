@@ -36,7 +36,9 @@ export class CustomerComponent implements OnInit {
   ratingList = [false, false, false, false, false];
   lastRefine: RefineRidesModel;
   pendingRide: Ride;
-
+  successfulRideRating: number;
+  latestSuccessfulRide: Ride;
+  
   personalDataForm = new FormGroup({
     username: new FormControl(),
     password: new FormControl(),
@@ -88,24 +90,6 @@ export class CustomerComponent implements OnInit {
     commentDescription: new FormControl()
   });
 
-  successfulRideRating: number;
-
-  rateSuccessfulRideRating(starIndex){
-    this.successfulRideRating = starIndex + 1;
-  }
-
-  commentSuccessfulRide(){
-    let comment = new Comment();
-    comment.rating = this.successfulRideRating;
-    comment.description = this.successfulRideForm.value.commentDescription;
-    this.ridesService.addComment(comment).subscribe(
-      (data: Ride) => {
-        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
-        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
-        this.successfulRideRating = 0;
-    });
-  }
-
   constructor(private usersService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
     // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
     //   if(!this.isRideRequestPending){
@@ -154,10 +138,42 @@ export class CustomerComponent implements OnInit {
     return parsedRides;
   }
 
+  // Only for xx.yy.zzzz aa:bb:cc type of dates
+  private parseToJsonDateString(unparsedDate: string){
+    let year = unparsedDate.substr(6, 4);
+    let month = unparsedDate.substr(0, 2);
+    let day = unparsedDate.substr(3,2);
+    let time = unparsedDate.substring(13);
+    return `${month}/${day}/${year} ${time}`;
+  }
+
   private checkIfTwoMinutesPassed(timestamp: string){
-    let past = new Date("4.9.2018. 06:53:00").getTime();
+    if(timestamp.indexOf('/') === -1){
+      timestamp = this.parseToJsonDateString(timestamp);
+    }
+    let past = new Date(timestamp).getTime();
     let twoMins = 1000 * 60 * 2;
-    return (Date.now() - past < twoMins) ? false : true;
+    let now = Date.now();
+    return (now - past < twoMins) ? false : true;
+  }
+
+  rateSuccessfulRideRating(starIndex){
+    this.successfulRideRating = starIndex + 1;
+  }
+
+  commentSuccessfulRide(){
+    let comment = new Comment();
+    comment.rideId = this.latestSuccessfulRide.id;
+    comment.rating = this.successfulRideRating;
+    comment.description = this.successfulRideForm.value.commentDescription;
+    this.ridesService.addComment(comment).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+        this.latestSuccessfulRide = null;
+        this.successfulRideRating = 0;
+        jQuery('#successfulRideModal').modal('toggle');
+    });
   }
 
   getMyData(){
@@ -197,9 +213,11 @@ export class CustomerComponent implements OnInit {
         else{
           let successfulRides = this.ridesHistory.filter(r => r.rideStatus === RideStatus.SUCCESSFUL);
           let sortedRides = successfulRides.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-          let latestRide = sortedRides.pop();
-          if(this.checkIfTwoMinutesPassed(latestRide.timestamp)){
-            jQuery('#successfulRideModal').modal('toggle');
+          this.latestSuccessfulRide = sortedRides.pop();
+          if(this.latestSuccessfulRide !== undefined){
+            if(!this.checkIfTwoMinutesPassed(this.latestSuccessfulRide.timestamp)){
+              jQuery('#successfulRideModal').modal('toggle');
+            }
           }
         }
       }

@@ -154,14 +154,18 @@
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
                     <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
-                        <span class="card-text">Rating: </span>
-                        <span>
-                          <a *ngFor="let rating of ratingList; let i = index">
-                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                          </a>
-                        </span>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
-                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <div>
+                          <br/>
+                          <span class="card-text">Rating: </span>
+                          <span>
+                            <a *ngFor="let rating of ratingList; let i = index">
+                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                          </span>
+                          <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                          <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                          <br/>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -434,14 +438,18 @@
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
                     <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
-                        <span class="card-text">Rating: </span>
-                        <span>
-                            <a *ngFor="let rating of ratingList; let i = index">
-                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                            </a>
-                        </span>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
-                        <span class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <div>
+                          <br/>
+                          <span class="card-text">Rating: </span>
+                          <span>
+                              <a *ngFor="let rating of ratingList; let i = index">
+                                <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                              </a>
+                          </span>
+                          <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                          <span class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                          <br/>
+                        </div>
                       </div>                        
                     </div>
                   </div>
@@ -644,14 +652,18 @@
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
                     <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
-                        <span class="card-text">Rating: </span>
-                        <span>
-                            <a *ngFor="let rating of ratingList; let i = index">
-                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                            </a>
-                        </span>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
-                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                        <div>
+                          <br/>
+                          <span class="card-text">Rating: </span>
+                          <span>
+                              <a *ngFor="let rating of ratingList; let i = index">
+                                <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                              </a>
+                          </span>
+                          <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                          <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                          <br/>
+                        </div>
                       </div>
                     </div>
                   </div>
