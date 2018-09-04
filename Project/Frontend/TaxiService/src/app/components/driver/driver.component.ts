@@ -1,3 +1,4 @@
+import { Comment } from './../../models/comment.model';
 import { LocationsService } from './../../services/locations.service';
 import { RidesService } from './../../services/rides.service';
 import { CarsService } from './../../services/cars.service';
@@ -12,6 +13,9 @@ import { Car } from '../../models/car.model';
 import { Ride } from '../../models/ride.model';
 import { FormGroup, FormControl } from '@angular/forms';
 import { RideStatus } from '../../models/rideStatus';
+import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
+
+declare var jQuery: any;
 
 @Component({
   selector: 'driver',
@@ -82,8 +86,41 @@ export class DriverComponent implements OnInit {
     })
   });
 
-  takeOverARideForm = new FormGroup({
-    driverId: new FormControl()
+  successfulRideForm = new FormGroup({
+    destinationLocation: new FormGroup({
+      address: new FormGroup({
+        streetName: new FormControl(),
+        streetNumber: new FormControl(),
+        city: new FormControl(),
+        postalCode: new FormControl()
+      }),
+      longitude: new FormControl(),
+      latitude: new FormControl()
+    }),
+    price: new FormControl(),
+    commentDescription: new FormControl()
+  });
+
+  failedRideForm = new FormGroup({
+    commentDescription: new FormControl()
+  });
+
+  acceptedRideForm = new FormGroup({
+    // location: new FormGroup({
+    //   address: new FormGroup({
+    //     streetName: new FormControl(),
+    //     streetNumber: new FormControl(),
+    //     city: new FormControl(),
+    //     postalCode: new FormControl()
+    //   }),
+    //   longitude: new FormControl(),
+    //   latitude: new FormControl()
+    // }),
+    // carType: new FormControl(),
+    // driverId: new FormControl(),
+    price: new FormControl(),
+    // rating: new FormControl(),
+    commentDescription: new FormControl()
   });
 
   constructor(private usersService: UsersService, 
@@ -135,12 +172,14 @@ export class DriverComponent implements OnInit {
         carType: data.car.carType
       });
 
-      this.locationDataForm.patchValue({
-        address: data.driverLocation.address,
-        longitude: data.driverLocation.longitude,
-        latitude: data.driverLocation.latitude
-      });
-
+      if(data.driverLocation !== null){
+        this.locationDataForm.patchValue({
+          address: data.driverLocation.address,
+          longitude: data.driverLocation.longitude,
+          latitude: data.driverLocation.latitude
+        });
+      }
+      
       this.personalDataForm.markAsPristine();
       this.carDataForm.markAsPristine();
       this.locationDataForm.markAsPristine();
@@ -195,11 +234,11 @@ export class DriverComponent implements OnInit {
       updatedLocation.id = this.personalData.driverLocationId;
     }
     this.locationsService.addOrupdateDriverLocation(updatedLocation).subscribe(
-      (data: Location) => {
+      () => {
         this.locationDataForm.patchValue({
-          address: data.address,
-          longitude: data.longitude,
-          latitude: data.latitude
+          address: updatedLocation.address,
+          longitude: updatedLocation.longitude,
+          latitude: updatedLocation.latitude
         });
         this.locationDataForm.markAsPristine();
       }
@@ -226,10 +265,24 @@ export class DriverComponent implements OnInit {
     return parsedRides;
   }
 
+  private setCurrentUserCommentToBottom(commentsArray: Comment[]){
+    if(commentsArray.length > 1){
+      let commentToRemove = commentsArray.find(c => c.user.username === this.personalData.username);
+      let index = commentsArray.indexOf(commentToRemove);
+      commentsArray.splice(index, 1);
+      commentsArray.push(commentToRemove);
+    }
+    return commentsArray;
+  }
+
   getAllDriverRides(){
     this.ridesService.getAllDriverRides().subscribe(
       (data: Ride[]) => {
         this.driverRides = this.parseRides(data);
+        this.driverRides.forEach(r => {
+          r.comments = this.setCurrentUserCommentToBottom(r.comments);
+        });
+        this.takenRide = this.driverRides.find(r => r.rideStatus === 'ACCEPTED' && r.driver.id === this.personalData.id);
       }
     );
   }
@@ -238,7 +291,6 @@ export class DriverComponent implements OnInit {
     this.ridesService.getAllPendingRides().subscribe(
       (data: Ride[]) => {
         this.pendingRides = this.parseRides(data);
-        this.takenRide = this.pendingRides.find(r => r.rideStatus === 'ACCEPTED' && r.driver.id === this.personalData.id);
       }
     );
   }
@@ -246,10 +298,56 @@ export class DriverComponent implements OnInit {
   takeOverARide(rideId){
     let rideToTakeOver = this.pendingRides.find(r => r.id === rideId);
     let rideToTakeOverIndex = this.pendingRides.indexOf(rideToTakeOver);
-    //this.pendingRides.splice(rideToTakeOverIndex, 1);
-    this.takenRide = rideToTakeOver;
-    this.takenRide.rideStatus = RideStatus.ACCEPTED;
-    console.log(this.takenRide);
+    this.pendingRides.splice(rideToTakeOverIndex, 1);
+    
+    // Using the same model as dispatcher process because we're sending the same data
+    let driverTakeOverRequest = new DispatcherProcessRideRequest();
+    driverTakeOverRequest.driverId = this.personalData.id;
+    driverTakeOverRequest.rideId = rideId;
+    this.ridesService.driverTakeOverRide(driverTakeOverRequest).subscribe(
+      (data: Ride) => {
+        this.takenRide = this.parseSingleRide(data);
+      }
+    );
+  }
+
+  finishSuccessfulRide(){
+    let sRideValue = this.successfulRideForm.value;
+    let ride = new Ride();
+    ride.id = this.takenRide.id;
+    ride.destinationLocation = sRideValue.destinationLocation;
+    ride.price = sRideValue.price;
+
+    if(sRideValue.commentDescription !== null){
+      let comment = new Comment();
+      comment.description = sRideValue.commentDescription;
+      ride.comments = [];
+      ride.comments.push(comment);
+    }
+    this.ridesService.finishSuccessfulRide(ride).subscribe(
+      (data: Ride) => {
+        let takenRideToUpdate = this.pendingRides.find(r => r.id === this.takenRide.id);
+        let takenRideToUpdateIndex = this.pendingRides.indexOf(takenRideToUpdate);
+        this.driverRides[takenRideToUpdateIndex] = this.parseSingleRide(data);
+        this.takenRide = null;
+        jQuery("#successfulRideModal").modal("toggle");
+      }
+    );
+  }
+
+  finishFailedRide(){
+    let driverComment = new Comment();
+    driverComment.rideId = this.takenRide.id;
+    driverComment.description = this.failedRideForm.value.commentDescription;
+    this.ridesService.finishFailedRide(driverComment).subscribe(
+      (data: Ride) => {
+        let takenRideToUpdate = this.pendingRides.find(r => r.id === this.takenRide.id);
+        let takenRideToUpdateIndex = this.pendingRides.indexOf(takenRideToUpdate);
+        this.driverRides[takenRideToUpdateIndex] = this.parseSingleRide(data);
+        this.takenRide = null;
+        jQuery("#failedRideModal").modal("toggle");
+      }
+    );
   }
 
   // commentCancelledRide(comment){
@@ -262,28 +360,44 @@ export class DriverComponent implements OnInit {
   //   this.ridesService.commentCancelledRide(newComment).subscribe();
   // }
 
-  // addComment(comment: Comment){
-  //   comment.id = comment.rideId;
-  //   comment.timestamp = new Date();
-  //   this.ridesService.addComment(comment).subscribe();
-  // }
+  addComment(comment: Comment){
+    comment.id = comment.rideId;
+    this.ridesService.addComment(comment).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.driverRides.findIndex(r => r.id === data.id);
+        this.driverRides[rideIndex] = this.parseSingleRide(data);
+      }
+    );
+  }
 
-  // rate(rideId, ratingIndex){
-  //   for(var i in this.ratingList){
-  //     if(i <= ratingIndex){
-  //       this.ratingList[i] = true;
-  //     }
-  //     else{
-  //       this.ratingList[i] = false;
-  //     }
-  //   }
-  //   let comment = this.ridesHistory.filter(r => r.id === rideId)[0].comment;
-  //   comment.rating = ratingIndex + 1;
-  //   this.ridesService.rateARide(comment).subscribe(
-  //     (data) => {
-  //     }
-  //   );
-  // }
+  rate(rideId, ratingIndex){
+    for(var i in this.ratingList){
+      if(i <= ratingIndex){
+        this.ratingList[i] = true;
+      }
+      else{
+        this.ratingList[i] = false;
+      }
+    }
+    let rideToComment = this.driverRides.find(r => r.id === rideId);
+    if(rideToComment.comments.length === 0){
+      let comment = new Comment();
+      comment.rating = ratingIndex + 1;
+      comment.rideId = rideId;
+      comment.userId = this.personalData.id;
+      this.ridesService.addComment(comment).subscribe(
+        (data: Ride) => {
+          var rideIndex = this.driverRides.findIndex(r => r.id === data.id);
+        this.driverRides[rideIndex] = this.parseSingleRide(data);
+        }
+      );
+    }
+    else{
+      let comment = rideToComment.comments.find(c => c.userId === this.personalData.id);  
+      comment.rating = ratingIndex + 1;
+      this.ridesService.rateARide(comment).subscribe();  
+    }
+  }
 
   // useHub(input){
   //   this.notificationService.broadcastMessage(input.field);

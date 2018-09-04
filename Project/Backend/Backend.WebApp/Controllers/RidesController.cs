@@ -293,14 +293,14 @@ namespace Backend.Controllers
                 {
                     comment = _iMapper.Map<CommentDto, Comment>(commentDto);
                     comment.UserId = user.Id;
-                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
+                    comment.Description = (String.IsNullOrWhiteSpace(commentDto.Description)) ? "" : comment.Description;
                     comment.Timestamp = DateTime.Now;
                     ride.Comments.Add(comment);
                     _unitOfWork.Complete();
                 }
                 else
                 {
-                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : commentDto.Description;
+                    comment.Description = (String.IsNullOrWhiteSpace(commentDto.Description)) ? "" : commentDto.Description;
                     comment.Timestamp = DateTime.Now;
                     _unitOfWork.CommentRepository.Update(comment);
                     _unitOfWork.Complete();
@@ -655,6 +655,116 @@ namespace Backend.Controllers
                 return StatusCode(HttpStatusCode.NoContent);
             }
             return BadRequest();
+        }
+
+        // Using the same model as Process because we're sending the same data
+        [HttpPost]
+        [Route("api/rides/driverTakeOverRide")]
+        public IHttpActionResult DriverTakeOverRide(ProcessRideRequestModel driverTakeOverRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
+            if (loginData != null)
+            {
+                Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverTakeOverRequest.RideId).FirstOrDefault();
+                rideToProcess.RideStatus = (int)RideStatus.ACCEPTED;
+                rideToProcess.DriverId = driverTakeOverRequest.DriverId;
+                _unitOfWork.RideRepository.Update(rideToProcess);
+                _unitOfWork.Complete();
+
+                rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideToProcess.Id).FirstOrDefault();
+                RideDto takenRide = _iMapper.Map<Ride, RideDto>(rideToProcess);
+                return Ok(takenRide);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("api/rides/finishFailedRide")]
+        public IHttpActionResult FinishFailedRide(CommentDto driverCommentDto)
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+
+            if (_accessService.IsLoggedIn(hash))
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+                Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverCommentDto.RideId).FirstOrDefault();
+                if (rideToUpdate != null)
+                {
+                    rideToUpdate.RideStatus = (int) RideStatus.FAILED;
+
+                    Comment comment;
+                    if ((comment = rideToUpdate.Comments.FirstOrDefault(c => c.UserId == user.Id)) == null)
+                    {
+                        comment = _iMapper.Map<CommentDto, Comment>(driverCommentDto);
+                        comment.UserId = user.Id;
+                        comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : comment.Description;
+                        comment.Timestamp = DateTime.Now;
+                        rideToUpdate.Comments.Add(comment);
+                        _unitOfWork.Complete();
+                    }
+                    else
+                    {
+                        comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : driverCommentDto.Description;
+                        comment.Timestamp = DateTime.Now;
+                        _unitOfWork.CommentRepository.Update(comment);
+                        _unitOfWork.Complete();
+                    }
+
+                    RideDto rideToUpdateDto = _iMapper.Map<Ride, RideDto>(rideToUpdate);
+                    return Ok(rideToUpdateDto);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
+        [HttpPost]
+        [Route("api/rides/finishSuccessfulRide")]
+        public IHttpActionResult FinishSuccessfulRide(RideDto successfulRideDto)
+        {
+            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+
+            if (_accessService.IsLoggedIn(hash))
+            {
+                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+                Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == successfulRideDto.Id).FirstOrDefault();
+
+                if (rideToUpdate != null)
+                {
+                    Ride successfulRide = _iMapper.Map<RideDto, Ride>(successfulRideDto);
+                    rideToUpdate.RideStatus = (int) RideStatus.SUCCESSFUL;
+                    rideToUpdate.Price = successfulRide.Price;
+                    rideToUpdate.DestinationLocation = successfulRide.DestinationLocation;
+
+                    Comment comment = successfulRide.Comments.FirstOrDefault();
+                    comment.UserId = user.Id;
+                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
+                    comment.Timestamp = DateTime.Now;
+
+                    rideToUpdate.Comments.Add(comment);
+
+                    _unitOfWork.RideRepository.Update(rideToUpdate);
+                    _unitOfWork.Complete();
+
+                    return Ok(rideToUpdate);
+                }
+                return BadRequest();
+            }
+            return Unauthorized();
         }
     }
 }

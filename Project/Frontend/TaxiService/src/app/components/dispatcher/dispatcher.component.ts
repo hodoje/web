@@ -104,6 +104,14 @@ export class DispatcherComponent implements OnInit {
     return this.personalDataForm.controls;
   }
 
+  get passengerDrivers(){
+    return this.allDrivers.filter(d => d.car.carType === 'PASSENGER');
+  }
+
+  get vanDrivers(){
+    return this.allDrivers.filter(d => d.car.carType === 'VAN');
+  }
+
   getMyData(){
     this.usersService.getUserByUsername().subscribe(
     (data: User) =>{

@@ -1,3 +1,4 @@
+import { Comment } from './../models/comment.model';
 import { DispatcherProcessRideRequest } from './../models/dispatcherProcessRideRequest';
 import { DispatcherFormRideRequest } from './../models/dispatcherFormRideRequest';
 import { RefineRidesModel } from './../models/refine.model';
@@ -8,7 +9,7 @@ import { GenericService } from './generic.service';
 import { RideRequest } from '../models/rideRequest';
 import { ChangeRideRequest } from '../models/changeRideRequest';
 import { CancelRideRequest } from '../models/cancelRideRequest';
-import { Comment } from '../models/comment.model';
+import { Ride } from '../models/ride.model';
 
 @Injectable({
   providedIn: 'root'
@@ -117,5 +118,27 @@ export class RidesService extends GenericService {
     headers = headers.append('Access-Control-Allow-Credentials', 'true');
     headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
     return this.httpClient.post('http://localhost:3737/api/rides/dispatcherProcessRide', dispatcherProcessRideRequest, {'headers': headers});
+  }
+
+  // Using the same model as above because we're sending the same data
+  driverTakeOverRide(driverTakeOverRequest: DispatcherProcessRideRequest){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/driverTakeOverRide', driverTakeOverRequest, {'headers': headers});
+  }
+
+  finishFailedRide(driverComment: Comment){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/finishFailedRide', driverComment, {'headers': headers});
+  }
+
+  finishSuccessfulRide(successfulRide: Ride){
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/finishSuccessfulRide', successfulRide, {'headers': headers});
   }
 }

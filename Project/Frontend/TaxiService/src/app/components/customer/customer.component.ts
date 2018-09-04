@@ -35,6 +35,7 @@ export class CustomerComponent implements OnInit {
   isRideCancelled = false;
   ratingList = [false, false, false, false, false];
   lastRefine: RefineRidesModel;
+  pendingRide: Ride;
 
   personalDataForm = new FormGroup({
     username: new FormControl(),
@@ -83,6 +84,28 @@ export class CustomerComponent implements OnInit {
     })
   });
 
+  successfulRideForm = new FormGroup({    
+    commentDescription: new FormControl()
+  });
+
+  successfulRideRating: number;
+
+  rateSuccessfulRideRating(starIndex){
+    this.successfulRideRating = starIndex + 1;
+  }
+
+  commentSuccessfulRide(){
+    let comment = new Comment();
+    comment.rating = this.successfulRideRating;
+    comment.description = this.successfulRideForm.value.commentDescription;
+    this.ridesService.addComment(comment).subscribe(
+      (data: Ride) => {
+        var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
+        this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+        this.successfulRideRating = 0;
+    });
+  }
+
   constructor(private usersService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
     // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
     //   if(!this.isRideRequestPending){
@@ -97,6 +120,7 @@ export class CustomerComponent implements OnInit {
     this.personalData = new User();
     this.ridesHistory = [];
     this.rideStatuses = [];
+    this.pendingRide = new Ride();
     let rideStatusEnumKeys = Object.keys(RideStatus);
     for(var s of rideStatusEnumKeys){
       this.rideStatuses.push(s);
@@ -108,24 +132,6 @@ export class CustomerComponent implements OnInit {
 
   get pdForm(){
     return this.personalDataForm.controls;
-  }
-
-  getMyData(){
-    this.usersService.getUserByUsername().subscribe(
-    (data: User) =>{
-      this.personalData = data;
-      this.personalDataForm.patchValue({
-        username: data.username,
-        password: data.password,
-        name: data.name,
-        lastname: data.lastname,
-        email: data.email,
-        gender: data.gender,
-        nationalIdentificationNumber: data.nationalIdentificationNumber,
-        phoneNumber: data.phoneNumber
-      });
-      this.personalDataForm.markAsPristine();
-    });
   }
 
   private parseSingleRide(unparsedRide: Ride){
@@ -148,44 +154,53 @@ export class CustomerComponent implements OnInit {
     return parsedRides;
   }
 
-  private setCurrentUserCommentToBottom(commentsArray: Comment[]){
-    if(commentsArray.length > 1){
-      let commentToRemove = commentsArray.find(c => c.user.username === this.personalData.username);
-      let index = commentsArray.indexOf(commentToRemove);
-      commentsArray.splice(index, 1);
-      commentsArray.push(commentToRemove);
-    }
-    return commentsArray;
+  private checkIfTwoMinutesPassed(timestamp: string){
+    let past = new Date("4.9.2018. 06:53:00").getTime();
+    let twoMins = 1000 * 60 * 2;
+    return (Date.now() - past < twoMins) ? false : true;
+  }
+
+  getMyData(){
+    this.usersService.getUserByUsername().subscribe(
+    (data: User) =>{
+      this.personalData = data;
+      this.personalDataForm.patchValue({
+        username: data.username,
+        password: data.password,
+        name: data.name,
+        lastname: data.lastname,
+        email: data.email,
+        gender: data.gender,
+        nationalIdentificationNumber: data.nationalIdentificationNumber,
+        phoneNumber: data.phoneNumber
+      });
+      this.personalDataForm.markAsPristine();
+    });
   }
 
   getAllMyRides(){
     this.ridesService.getAllMyRides().subscribe(
       (data: Ride[]) => {
         this.ridesHistory = this.parseRides(data);
-        this.ridesHistory.forEach(r => {
-          r.comments = this.setCurrentUserCommentToBottom(r.comments);
-        });
 
-        let createdRide = this.ridesHistory.find(r => r.rideStatus === 'CREATED');
+        let createdRide = this.ridesHistory.find(r => r.rideStatus === RideStatus.CREATED ||
+                                                      r.rideStatus === RideStatus.ACCEPTED || 
+                                                      r.rideStatus === RideStatus.PROCESSED);
         if(createdRide !== undefined){
           this.rideForm.patchValue({
             location: createdRide.startLocation,
             carType: createdRide.carType
           });
-          // this.rideForm = new FormGroup({
-          //   location: new FormGroup({
-          //     address: new FormGroup({
-          //       streetName: new FormControl(createdRide.startLocation.address.streetName),
-          //       streetNumber: new FormControl(createdRide.startLocation.address.streetNumber),
-          //       city: new FormControl(createdRide.startLocation.address.city),
-          //       postalCode: new FormControl(createdRide.startLocation.address.postalCode)
-          //     }),
-          //     longitude: new FormControl(createdRide.startLocation.longitude),
-          //     latitude: new FormControl(createdRide.startLocation.latitude)
-          //   }),
-          //   carType: new FormControl(createdRide.carType)
-          // });
           this.isRideRequestPending = true;
+          this.pendingRide = createdRide;
+        }
+        else{
+          let successfulRides = this.ridesHistory.filter(r => r.rideStatus === RideStatus.SUCCESSFUL);
+          let sortedRides = successfulRides.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+          let latestRide = sortedRides.pop();
+          if(this.checkIfTwoMinutesPassed(latestRide.timestamp)){
+            jQuery('#successfulRideModal').modal('toggle');
+          }
         }
       }
     )
@@ -219,6 +234,7 @@ export class CustomerComponent implements OnInit {
     }
     this.ridesService.requestRide(rideRequest).subscribe(
       (data: Ride) =>{
+        this.pendingRide = this.parseSingleRide(data);
         this.ridesHistory.push(this.parseSingleRide(data));
     });
     this.isRideRequestPending = true;

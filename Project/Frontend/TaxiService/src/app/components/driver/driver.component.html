@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col col-md-3">
+    <div class="col col-md-4">
       <h2>Pending rides</h2>
       <div *ngIf="pendingRides.length === 0">
         There are no pending rides yet.
@@ -25,7 +25,7 @@
                     <h4 class="card-title">{{ride?.startLocation?.address?.streetName}} {{ride?.startLocation?.address?.streetNumber}}</h4>
                     <!--Text-->
                     <span class="card-text">Price: </span>
-                    <span class="card-text">{{ride?.price}}</span>
+                    <span class="card-text">{{ride?.price}} $</span>
                     <br/>
                     <span class="card-text">Street name: </span>
                     <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
@@ -105,25 +105,163 @@
         <!-- </div> -->
       </div>
     </div>
-    <div class="col col-md-3">
+    <div class="col col-md-4">
       <h2>Taken ride</h2>
-      <div *ngIf="takenRide === undefined">
+      <div *ngIf="takenRide === null || takenRide === undefined">
         You haven't taken over a ride yet.
       </div>
-      <div *ngIf="takenRide !== undefined">
+      <div *ngIf="takenRide !== null && takenRide !== undefined">
         <table class="table table-hover">
           <tr>
             <td>
               <div class="card">
                 <div class="card-header">
-                    <div class="card-header-tabs">
-                      <button type="button"  (click)="failedRide(ride.id)" class="btn btn-danger btn-sm float-right">
-                          FAILED
-                        </button>
-                      <button type="button" (click)="successfulRide(ride.id)" class="btn btn-success btn-sm float-right">
-                        SUCCESSFUL
-                      </button>
+                  <div class="card-header-tabs">
+                    <button type="button" class="btn btn-danger btn-sm float-right" data-toggle="modal" data-target="#failedRideModal">
+                      FAILED
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#successfulRideModal">
+                      SUCCESSFUL
+                    </button>
+                    <div name="failedRide">
+                      <div class="modal fade" id="failedRideModal" tabindex="-1" role="dialog" aria-labelledby="failedRideModalTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="failedRideModalTitle">Failed ride</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form [formGroup]="failedRideForm">
+                                <div class="form-group">
+                                  <h3>Starting location</h3>
+                                  <div>
+                                    <legend>Address</legend>
+                                    <label for="streetName">Street Name</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.streetName" type="text" name="streetName" class="form-control form-control-sm">
+                                    <label for="streetNumber">Street Number</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                                    <label for="city">City</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.city" type="text" name="city" class="form-control form-control-sm">
+                                    <label for="postalCode">Postal Code</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.postalCode" type="text" name="postalCode" class="form-control form-control-sm">
+                                  </div>
+                                  <legend>Coordinates</legend>
+                                  <label for="longitude">Longitude</label>
+                                  <input disabled [value]="takenRide?.startLocation?.longitude" type="text" name="longitude" class="form-control form-control-sm">
+                                  <label for="latitude">Latitude</label>
+                                  <input disabled [value]="takenRide?.startLocation?.latitude" type="text" name="latitude" class="form-control form-control-sm">
+                                </div>
+                                <div class="form-group">
+                                  <h3>Car type</h3>
+                                  <select disabled [value]="takenRide?.carType" name="carType" class="custom-select form-control form-control-sm">
+                                    <option>PASSENGER</option>
+                                    <option>VAN</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <h3>Driver</h3>
+                                  <select disabled class="custom-select form-control form-control-sm">
+                                    <option [value]="personalData?.id">{{personalData?.name}} {{personalData?.lastname}}</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <span><mark>*</mark></span><textarea required formControlName="commentDescription" type="text" class="form-control form-control-lg" placeholder="What went wrong?" name="description"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button class="btn btn-primary" (click)="finishFailedRide()" [disabled]="!failedRideForm.valid" type="button">Finish</button>
+                                </div>    
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+                    <div name="successfulRide">
+                      <div class="modal fade" id="successfulRideModal" tabindex="-1" role="dialog" aria-labelledby="successfulRideModalTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="successfulRideModalTitle">Successful ride</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form [formGroup]="successfulRideForm">
+                                <div class="form-group">
+                                  <h3>Starting location</h3>
+                                  <div>
+                                    <legend>Address</legend>
+                                    <label for="streetName">Street Name</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.streetName" type="text" name="streetName" class="form-control form-control-sm">
+                                    <label for="streetNumber">Street Number</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                                    <label for="city">City</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.city" type="text" name="city" class="form-control form-control-sm">
+                                    <label for="postalCode">Postal Code</label>
+                                    <input disabled [value]="takenRide?.startLocation?.address?.postalCode" type="text" name="postalCode" class="form-control form-control-sm">
+                                  </div>
+                                  <legend>Coordinates</legend>
+                                  <label for="longitude">Longitude</label>
+                                  <input disabled [value]="takenRide?.startLocation?.longitude" type="text" name="longitude" class="form-control form-control-sm">
+                                  <label for="latitude">Latitude</label>
+                                  <input disabled [value]="takenRide?.startLocation?.latitude" type="text" name="latitude" class="form-control form-control-sm">
+                                </div>
+                                <div class="form-group required" formGroupName="destinationLocation">
+                                  <h3>Destination location</h3>
+                                  <div formGroupName="address">
+                                    <legend>Address</legend>
+                                    <label for="streetName">Street Name</label>
+                                    <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
+                                    <label for="streetNumber">Street Number</label>
+                                    <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                                    <label for="city">City</label>
+                                    <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
+                                    <label for="postalCode">Postal Code</label>
+                                    <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
+                                  </div>
+                                  <legend>Coordinates</legend>
+                                  <label for="longitude">Longitude</label>
+                                  <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
+                                  <label for="latitude">Latitude</label>
+                                  <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
+                                </div>
+                                <div class="form-group">
+                                  <h3>Car type</h3>
+                                  <select disabled [value]="takenRide?.carType" name="carType" class="custom-select form-control form-control-sm">
+                                    <option>PASSENGER</option>
+                                    <option>VAN</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <h3>Driver</h3>
+                                  <select disabled class="custom-select form-control form-control-sm">
+                                    <option [value]="personalData?.id">{{personalData?.name}} {{personalData?.lastname}}</option>
+                                  </select>
+                                </div>
+                                <div class="form-group required">
+                                  <label for="price">Price</label>
+                                  <input required formControlName="price" type="text" class="form-control form-control-sm">
+                                </div>
+                                <div class="form-group">
+                                  <span>[Optional]</span>
+                                  <textarea formControlName="commentDescription" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button class="btn btn-primary" (click)="finishSuccessfulRide()" [disabled]="!successfulRideForm.valid" type="button">Finish</button>
+                                </div>    
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <!--Card content-->
                 <div class="card-block">
@@ -132,7 +270,7 @@
                     <h4 class="card-title">{{takenRide?.startLocation?.address?.streetName}} {{takenRide?.startLocation?.address?.streetNumber}}</h4>
                     <!--Text-->
                     <span class="card-text">Price: </span>
-                    <span class="card-text">{{takenRide?.price}}</span>
+                    <span class="card-text">{{takenRide?.price}} $</span>
                     <br/>
                     <span class="card-text">Street name: </span>
                     <span class="card-text">{{takenRide?.startLocation?.address?.streetName}}</span>
@@ -163,6 +301,9 @@
                     <br/>
                     <span class="card-text">Customer:</span>
                     <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{takenRide?.customer?.username}}</span>
+                    <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
                     <span class="card-text">{{takenRide?.customer?.name}}</span>
                     <br/>
@@ -170,6 +311,9 @@
                     <span class="card-text">{{takenRide?.customer?.lastname}}</span>
                     <br/>
                     <span class="card-text">Driver:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{takenRide?.driver?.username}}</span>
                     <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
                     <span class="card-text">{{takenRide?.driver?.name}}</span>
@@ -179,28 +323,14 @@
                     <br/>
                     <span class="card-text">Dispatcher:</span>
                     <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{takenRide?.dispatcher?.username}}</span>
+                    <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
                     <span class="card-text">{{takenRide?.dispatcher?.name}}</span>
                     <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
                     <span class="card-text">{{takenRide?.dispatcher?.lastname}}</span>
-                    <div *ngFor="let comment of takenRide?.comments">
-                      <br/>
-                      <span class="card-text">Rating: </span>
-                      <span>
-                          <a *ngFor="let rating of ratingList; let i = index">
-                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                          </a>
-                      </span>
-                      <br/>
-                      <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
-                        <input type="text" hidden name="rideId" [(ngModel)]="takenRide.id" #rideId="ngModel"/>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
-                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
-                        <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                      </form>
-                      <br/>
-                    </div>
                   </div>
                 </div>
                 <!--/.Card content-->
@@ -210,10 +340,10 @@
         </table>
       </div>
     </div>
-    <div class="col col-md-3">
+    <div class="col col-md-4">
       <div>
         <h2 class="loc-btn">My location</h2>
-        <button class="loc-btn btn-sm btn btn-primary">Get my location</button>
+        <button class="loc-btn btn btn-sm btn-primary">Get my location</button>
       </div>
       <form [formGroup]="locationDataForm">
         <table class="table table-sm table-hover">
@@ -271,109 +401,71 @@
         <button (click)="changeLocationData()" [hidden]="!locationDataForm.dirty && locationDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!locationDataForm.valid">Save changes</button>
       </form>
     </div>
-    <div class="col col-md-3">
-      <h2>My rides</h2>
-      <div *ngIf="driverRides.length === 0">
-        You haven't took any rides yet.
-      </div>
-      <div *ngIf="driverRides.length > 0" class="side-list">
-        <table class="table">
-          <tr *ngFor="let ride of driverRides">
+  </div>
+  <div class="row">
+    <div class="col col-md-4">
+      <h2>My car data</h2>
+      <form [formGroup]="carDataForm">
+        <table class="table table-sm table-hover">
+          <tr>
+            <td>Taxi number:</td>
             <td>
-              <!--Card-->
-              <div class="card">
-                <!--Card content-->
-                <div class="card-block">
-                  <div class="card-body">
-                    <!--Title-->
-                    <h4 class="card-title">{{ride?.startLocation?.address?.streetName}} {{ride?.startLocation?.address?.streetNumber}}</h4>
-                    <!--Text-->
-                    <span class="card-text">Price: </span>
-                    <span class="card-text">{{ride?.price}}</span>
-                    <br/>
-                    <span class="card-text">Street name: </span>
-                    <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
-                    <br/>
-                    <span class="card-text">Street number: </span>
-                    <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
-                    <br/>
-                    <span class="card-text">City: </span>
-                    <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
-                    <br/>
-                    <span class="card-text">Postal code: </span>
-                    <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
-                    <br/>
-                    <span class="card-text">Longitude: </span>
-                    <span class="card-text">{{ride?.startLocation?.longitude}}</span>
-                    <br/>
-                    <span class="card-text">Latitude: </span>
-                    <span class="card-text">{{ride?.startLocation?.latitude}}</span>
-                    <br/>
-                    <span class="card-text">Car type: </span>
-                    <span class="card-text">{{ride?.carType}}</span>
-                    <br/>
-                    <span class="card-text">Timestamp: </span>
-                    <span class="card-text">{{ride?.timestamp}}</span>
-                    <br/>
-                    <span class="card-text">Status: </span>
-                    <span class="card-text">{{ride?.rideStatus}}</span>
-                    <br/>
-                    <span class="card-text">Customer:</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                    <span class="card-text">{{ride?.customer?.name}}</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                    <span class="card-text">{{ride?.customer?.lastname}}</span>
-                    <br/>
-                    <span class="card-text">Driver:</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                    <span class="card-text">{{ride?.driver?.name}}</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                    <span class="card-text">{{ride?.driver?.lastname}}</span>
-                    <br/>
-                    <span class="card-text">Dispatcher:</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                    <span class="card-text">{{ride?.dispatcher?.name}}</span>
-                    <br/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                    <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
-                    <div *ngFor="let comment of ride?.comments">
-                      <br/>
-                      <span class="card-text">Rating: </span>
-                      <span>
-                          <a *ngFor="let rating of ratingList; let i = index">
-                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                          </a>
-                      </span>
-                      <br/>
-                      <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
-                        <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                        <textarea readonly="true" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
-                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
-                        <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                      </form>
-                      <br/>
-                    </div>
-                  </div>
+              <div class="form-group">
+                <input formControlName="taxiNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="cdForm.taxiNumber.touched && !cdForm.taxiNumber.valid">
+                  <div *ngIf="cdForm.taxiNumber.errors.minlength">Taxi number needs to be at least 1 digits long.</div>
+                  <div *ngIf="cdForm.taxiNumber.errors.maxlength">Taxi number needs to be maximum of 10 digits long.</div>
+                  <div *ngIf="cdForm.taxiNumber.errors.pattern">Taxi number can contain only numbers.</div>
                 </div>
-                <!--/.Card content-->
               </div>
-              <!--/.Card-->
+            </td>
+          </tr>
+          <tr>
+            <td>Registration number:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="registrationNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="cdForm.registrationNumber.touched && !cdForm.registrationNumber.valid">
+                  <div *ngIf="cdForm.registrationNumber.errors.minlength">Registration number needs to be at least 5 characters long.</div>
+                  <div *ngIf="cdForm.registrationNumber.errors.maxlength">Registration number needs to be maximum of 7 characters long.</div>
+                  <div *ngIf="cdForm.registrationNumber.errors.pattern">Registration number can contain only ASCII characters and numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Year of manufactoring:</td>
+            <td>
+              <div class="form-group">
+                <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="cdForm.yearOfManufactoring.touched && !cdForm.yearOfManufactoring.valid">
+                  <div *ngIf="cdForm.yearOfManufactoring.errors.required && personalData.role === 'DRIVER'">Car year of manufactoring is required.</div>
+                  <div *ngIf="cdForm.yearOfManufactoring.errors.minlength || cdForm.yearOfManufactoring.errors.maxlength">Car year of manufactoring needs to be 4 digits long.</div>
+                  <div *ngIf="cdForm.yearOfManufactoring.errors.pattern">Car year of manufactoring can contain only numbers.</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Type:</td>
+            <td>
+              <div class="form-group">
+                <select formControlName="carType" class="form-control form-control-sm">
+                  <option selected>{{ personalData?.car?.carType }}</option>
+                  <option *ngIf="personalData?.car?.carType === 'PASSENGER'">VAN</option>
+                  <option *ngIf="personalData?.car?.carType === 'VAN'">PASSENGER</option>
+                </select>
+                <div class="alert alert-danger" *ngIf="cdForm.carType.touched && !cdForm.carType.valid">
+                  <div *ngIf="cdForm.carType.errors.required">Car type is required.</div>
+                </div>
+              </div>
             </td>
           </tr>
         </table>
-        <!-- </div> -->
-      </div>
+        <button (click)="changeCarData()" [hidden]="!carDataForm.dirty && carDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!carDataForm.valid">Save changes</button>
+      </form>
     </div>
-  </div>
-  <div class="row">
-    <div class="col col-md-3"></div>
-    <div class="col col-md-3"></div>
-    <div class="col col-md-3">
+    <div class="col col-md-4">
       <h2>My personal data</h2>
       <form [formGroup]="personalDataForm">
         <table class="table table-sm table-hover">
@@ -489,67 +581,106 @@
         <button [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
       </form>
     </div>
-    <div class="col col-md-3">
-      <h2>My car data</h2>
-      <form [formGroup]="carDataForm">
-        <table class="table table-sm table-hover">
-          <tr>
-            <td>Taxi number:</td>
+    <div class="col col-md-4">
+      <h2>My rides</h2>
+      <div *ngIf="driverRides.length === 0">
+        You haven't took any rides yet.
+      </div>
+      <div *ngIf="driverRides.length > 0" class="side-list">
+        <table class="table">
+          <tr *ngFor="let ride of driverRides">
             <td>
-              <div class="form-group">
-                <input formControlName="taxiNumber" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="cdForm.taxiNumber.touched && !cdForm.taxiNumber.valid">
-                  <div *ngIf="cdForm.taxiNumber.errors.minlength">Taxi number needs to be at least 1 digits long.</div>
-                  <div *ngIf="cdForm.taxiNumber.errors.maxlength">Taxi number needs to be maximum of 10 digits long.</div>
-                  <div *ngIf="cdForm.taxiNumber.errors.pattern">Taxi number can contain only numbers.</div>
+              <!--Card-->
+              <div class="card">
+                <!--Card content-->
+                <div class="card-block">
+                  <div class="card-body">
+                    <!--Title-->
+                    <h4 class="card-title">{{ride?.startLocation?.address?.streetName}} {{ride?.startLocation?.address?.streetNumber}}</h4>
+                    <!--Text-->
+                    <span class="card-text">Price: </span>
+                    <span class="card-text">{{ride?.price}} $</span>
+                    <br/>
+                    <span class="card-text">Street name: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
+                    <br/>
+                    <span class="card-text">Street number: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
+                    <br/>
+                    <span class="card-text">City: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
+                    <br/>
+                    <span class="card-text">Postal code: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
+                    <br/>
+                    <span class="card-text">Longitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.longitude}}</span>
+                    <br/>
+                    <span class="card-text">Latitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.latitude}}</span>
+                    <br/>
+                    <span class="card-text">Car type: </span>
+                    <span class="card-text">{{ride?.carType}}</span>
+                    <br/>
+                    <span class="card-text">Timestamp: </span>
+                    <span class="card-text">{{ride?.timestamp}}</span>
+                    <br/>
+                    <span class="card-text">Status: </span>
+                    <span class="card-text">{{ride?.rideStatus}}</span>
+                    <br/>
+                    <span class="card-text">Customer:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.customer?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.customer?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.customer?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Driver:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.driver?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.driver?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.driver?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Dispatcher:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.dispatcher?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
+                    <div *ngIf="ride?.comments.length > 0">
+                      <div *ngFor="let comment of ride?.comments">
+                        <span class="card-text">Rating: </span>
+                        <span>
+                            <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': comment?.userId !== personalData?.id}" (click)="comment?.userId === personalData?.id ? rate(ride.id, i) : false">
+                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
+                        </span>
+                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <!--/.Card content-->
               </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Registration number:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="registrationNumber" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="cdForm.registrationNumber.touched && !cdForm.registrationNumber.valid">
-                  <div *ngIf="cdForm.registrationNumber.errors.minlength">Registration number needs to be at least 5 characters long.</div>
-                  <div *ngIf="cdForm.registrationNumber.errors.maxlength">Registration number needs to be maximum of 7 characters long.</div>
-                  <div *ngIf="cdForm.registrationNumber.errors.pattern">Registration number can contain only ASCII characters and numbers.</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Year of manufactoring:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="cdForm.yearOfManufactoring.touched && !cdForm.yearOfManufactoring.valid">
-                  <div *ngIf="cdForm.yearOfManufactoring.errors.required && personalData.role === 'DRIVER'">Car year of manufactoring is required.</div>
-                  <div *ngIf="cdForm.yearOfManufactoring.errors.minlength || cdForm.yearOfManufactoring.errors.maxlength">Car year of manufactoring needs to be 4 digits long.</div>
-                  <div *ngIf="cdForm.yearOfManufactoring.errors.pattern">Car year of manufactoring can contain only numbers.</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Type:</td>
-            <td>
-              <div class="form-group">
-                <select formControlName="carType" class="form-control form-control-sm">
-                  <option selected>{{ personalData?.car?.carType }}</option>
-                  <option *ngIf="personalData?.car?.carType === 'PASSENGER'">VAN</option>
-                  <option *ngIf="personalData?.car?.carType === 'VAN'">PASSENGER</option>
-                </select>
-                <div class="alert alert-danger" *ngIf="cdForm.carType.touched && !cdForm.carType.valid">
-                  <div *ngIf="cdForm.carType.errors.required">Car type is required.</div>
-                </div>
-              </div>
+              <!--/.Card-->
             </td>
           </tr>
         </table>
-        <button (click)="changeCarData()" [hidden]="!carDataForm.dirty && carDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!carDataForm.valid">Save changes</button>
-      </form>
+      </div>
     </div>
   </div>
 </div>

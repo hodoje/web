@@ -64,7 +64,8 @@
               <!--Title-->
               <h4 class="card-title">Ride request sent</h4>
               <!--Text-->
-              <p class="card-text">Pending...</p>
+              <p *ngIf="pendingRide?.rideStatus === 'CREATED'" class="card-text">Pending...</p>
+              <p *ngIf="pendingRide?.rideStatus !== 'CREATED'" class="card-text">STATUS: {{pendingRide?.rideStatus}}</p>
           </div>
           <!--/.Card content-->
           <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#callARideModal">Change</button>
@@ -87,6 +88,40 @@
                   <div class="modal-footer">
                     <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
                     <button type="submit" class="btn btn-primary">Comment</button>
+                  </div>    
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Ride finished successfully-->
+      <div>
+        <div class="modal fade" id="successfulRideModal" tabindex="-1" role="dialog" aria-labelledby="successfulRideModalTitle" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 style="vertical-align: middle" class="modal-title" id="successfulRideModalTitle">You've reached your destination!</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="successfulRideForm">
+                  <div class="form-group">
+                    <span class="card-text">Rating: </span>
+                    <span>
+                      <a *ngFor="let rating of ratingList; let i = index" (click)="saveSuccessfulRideRating(i)">
+                        <i [ngStyle]="{'color': (i < successfulRideRating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                      </a>
+                    </span>
+                  </div>
+                  <div class="form-group">
+                    <textarea formControlName="commentDescription" type="text" class="form-control form-control-lg" placeholder="Anything on your mind?" name="description"></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Nope</button>
+                    <button class="btn btn-primary" (click)="callARide(rideForm.value)" type="button">Finish</button>
                   </div>    
                 </form>
               </div>
@@ -354,114 +389,98 @@
             <input type="text" name="field" ngModel #field="ngModel"/>
             <input type="submit" value="Click me!"/>
           </form> -->
-            <table class="table table-hover">
-              <tr *ngFor="let ride of ridesHistory">
-                <td>
-                  <!--Card-->
-                  <div class="card">
-                    <!--Card content-->
-                    <div class="card-block">
-                      <div class="card-body">
-                        <!--Title-->
-                        <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
-                        <!--Text-->
-                        <span class="card-text">Price: </span>
-                        <span class="card-text">{{ride?.price}}</span>
-                        <br/>
-                        <span class="card-text">Street name: </span>
-                        <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
-                        <br/>
-                        <span class="card-text">Street number: </span>
-                        <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
-                        <br/>
-                        <span class="card-text">City: </span>
-                        <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
-                        <br/>
-                        <span class="card-text">Postal code: </span>
-                        <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
-                        <br/>
-                        <span class="card-text">Longitude: </span>
-                        <span class="card-text">{{ride?.startLocation?.longitude}}</span>
-                        <br/>
-                        <span class="card-text">Latitude: </span>
-                        <span class="card-text">{{ride?.startLocation?.latitude}}</span>
-                        <br/>
-                        <span class="card-text">Car type: </span>
-                        <span class="card-text">{{ride?.carType}}</span>
-                        <br/>
-                        <span class="card-text">Timestamp: </span>
-                        <span class="card-text">{{ride?.timestamp}}</span>
-                        <br/>
-                        <span class="card-text">Status: </span>
-                        <span class="card-text">{{ride?.rideStatus}}</span>
-                        <br/><span class="card-text">Customer:</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                        <span class="card-text">{{ride?.customer?.name}}</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                        <span class="card-text">{{ride?.customer?.lastname}}</span>
-                        <br/>
-                        <span class="card-text">Driver:</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                        <span class="card-text">{{ride?.driver?.name}}</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                        <span class="card-text">{{ride?.driver?.lastname}}</span>
-                        <br/>
-                        <span class="card-text">Dispatcher:</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
-                        <span class="card-text">{{ride?.dispatcher?.name}}</span>
-                        <br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
-                        <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
-                        <div *ngIf="ride?.comments.length === 0">
-                          <br/>
-                            <span class="card-text">Rating: </span>
-                            <span>
-                                <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': ride?.rideStatus === 'CREATED'}" (click)="ride?.rideStatus !== 'CREATED' ? rate(ride.id, i) : false">
-                                  <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                                </a>
-                            </span>
-                            <br/>
-                            <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
-                              <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                              <textarea readonly="ride?.rideStatus === 'CREATED'" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" ngModel></textarea>
-                              <!-- <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span> -->
-                              <input type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                            </form>
-                          <br/>
-                        </div>
-                        <div *ngIf="ride?.comments.length > 0">
-                          <div *ngFor="let comment of ride?.comments">
-                            <br/>
-                            <span class="card-text">Rating: </span>
-                            <span>
-                                <a *ngFor="let rating of ratingList; let i = index" (click)="rate(ride.id, i)">
-                                  <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                                </a>
-                            </span>
-                            <br/>
-                            <form #addCommentForm="ngForm" (ngSubmit)="addComment(addCommentForm.value)">
-                              <input type="text" hidden name="rideId" [(ngModel)]="ride.id" #rideId="ngModel"/>
-                              <textarea [disabled]="comment?.user?.username !== personalData?.username" type="text" class="form-control form-control-lg" placeholder="Leave a comment..." name="description" #description="ngModel" [ngModel]="comment?.description" (ngModelChange)="comment.description=$event"></textarea>
-                              <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
-                              <input *ngIf="comment?.user?.username === personalData?.username" type="submit" value="Comment" [disabled]="description.pristine" class="btn btn-primary btn-sm float-right"/>
-                            </form>
-                            <br/>
-                          </div>
-                        </div>
+        <table class="table table-hover">
+          <tr *ngFor="let ride of ridesHistory">
+            <td>
+              <!--Card-->
+              <div class="card">
+                <!--Card content-->
+                <div class="card-block">
+                  <div class="card-body">
+                    <!--Title-->
+                    <h4 class="card-title">{{ride.startLocation?.address?.streetName}} {{ride.startLocation?.address?.streetNumber}}</h4>
+                    <!--Text-->
+                    <span class="card-text">Price: </span>
+                    <span class="card-text">{{ride?.price}} $</span>
+                    <br/>
+                    <span class="card-text">Street name: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetName}}</span>
+                    <br/>
+                    <span class="card-text">Street number: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.streetNumber}}</span>
+                    <br/>
+                    <span class="card-text">City: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.city}}</span>
+                    <br/>
+                    <span class="card-text">Postal code: </span>
+                    <span class="card-text">{{ride?.startLocation?.address?.postalCode}}</span>
+                    <br/>
+                    <span class="card-text">Longitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.longitude}}</span>
+                    <br/>
+                    <span class="card-text">Latitude: </span>
+                    <span class="card-text">{{ride?.startLocation?.latitude}}</span>
+                    <br/>
+                    <span class="card-text">Car type: </span>
+                    <span class="card-text">{{ride?.carType}}</span>
+                    <br/>
+                    <span class="card-text">Timestamp: </span>
+                    <span class="card-text">{{ride?.timestamp}}</span>
+                    <br/>
+                    <span class="card-text">Status: </span>
+                    <span class="card-text">{{ride?.rideStatus}}</span>
+                    <br/><span class="card-text">Customer:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.customer?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.customer?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.customer?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Driver:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.driver?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.driver?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.driver?.lastname}}</span>
+                    <br/>
+                    <span class="card-text">Dispatcher:</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Username: </span>
+                    <span class="card-text">{{ride?.dispatcher?.username}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Name: </span>
+                    <span class="card-text">{{ride?.dispatcher?.name}}</span>
+                    <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
+                    <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
+                    <div *ngIf="ride?.comments.length > 0">
+                      <div *ngFor="let comment of ride?.comments">
+                        <span class="card-text">Rating: </span>
+                        <span>
+                          <a *ngFor="let rating of ratingList; let i = index" [ngClass]="{'no-hover': comment?.userId !== personalData?.id}" (click)="comment?.userId === personalData?.id ? rate(ride.id, i) : false">
+                            <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                          </a>
+                        </span>
+                        <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
+                        <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>
                       </div>
                     </div>
-                    <!--/.Card content-->
                   </div>
-                  <!--/.Card-->
-                </td>
-              </tr>
-            </table>
-        <!-- </div> -->
+                </div>
+                <!--/.Card content-->
+              </div>
+              <!--/.Card-->
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>

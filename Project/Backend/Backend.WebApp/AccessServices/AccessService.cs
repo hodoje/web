@@ -63,12 +63,15 @@ namespace Backend.AccessServices
         {
             bool result = false;
             Dictionary<string, LoginModel> loggedUsers = (Dictionary<string, LoginModel>)_cacheManager.Get("LoggedUsers");
-            if (loggedUsers.ContainsKey(hash))
+            if (!String.IsNullOrWhiteSpace(hash))
             {
-                loggedUsers.Remove(hash);
-                result = true;
+                if (loggedUsers.ContainsKey(hash))
+                {
+                    loggedUsers.Remove(hash);
+                    result = true;
+                }
+                _cacheManager.Set(key, loggedUsers, 24);
             }
-            _cacheManager.Set(key, loggedUsers, 24);
             return result;
         }
 

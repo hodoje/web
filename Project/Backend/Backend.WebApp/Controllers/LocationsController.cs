@@ -154,7 +154,7 @@ namespace Backend.Controllers
                     _unitOfWork.Complete();
 
                     LocationDto newLocationDto = _iMapper.Map<Location, LocationDto>(newOrUpdatedLocation);
-                    return CreatedAtRoute("DefaultApi", new { id = newLocationDto.Id }, newLocationDto);
+                    return Ok(newLocationDto);
                 }
                 else
                 {
