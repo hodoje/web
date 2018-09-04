@@ -35,7 +35,7 @@ const Routes = [
     component: HomeComponent
   },
   {
-    path: "content",
+    path: "profile",
     component: ContentComponent,
     canActivate: [ContentGuard]
   },
