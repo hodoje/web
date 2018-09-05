@@ -188,6 +188,16 @@ namespace Backend.Controllers
 
             User user = _iMapper.Map<UserDto, User>(userDto);
 
+            if (user.Car.CarType == (int) CarType.DEFAULT)
+            {
+                return BadRequest("Driver's car cannot have car type of DEFAULT");
+            }
+
+            if (String.IsNullOrWhiteSpace(user.Car.RegistrationNumber))
+            {
+                return BadRequest("Driver's car needs to have a registration number.");
+            }
+
             try
             {
                 if (_unitOfWork.UserRepository.Find(u => u.Username == user.Username).FirstOrDefault() == null)
@@ -197,7 +207,7 @@ namespace Backend.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest("Driver with this username already exist.");
                 }
             }
             catch (DbUpdateException)
@@ -205,6 +215,10 @@ namespace Backend.Controllers
                 if (UserExists(user.Id))
                 {
                     return Conflict();
+                }
+                else
+                {
+                    return BadRequest("Unable to add a driver.");
                 }
             }
             _iMapper.Map<User, UserDto>(user, userDto);

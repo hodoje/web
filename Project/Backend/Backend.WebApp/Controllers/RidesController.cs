@@ -620,7 +620,7 @@ namespace Backend.Controllers
                 newRide.StartLocation = _iMapper.Map<LocationDto, Location>(dispatcherFormRideRequest.Location);
                 newRide.Timestamp = DateTime.Now;
                 newRide.RideStatus = (int)RideStatus.FORMED;
-                newRide.CarType = (int) CarType.PASSENGER;
+                newRide.CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == dispatcherFormRideRequest.CarType);
                 newRide.DriverId = dispatcherFormRideRequest.DriverId;
                 newRide.DispatcherId = dispatcherFormRideRequest.DispatcherId;
                 _unitOfWork.RideRepository.Add(newRide);
@@ -735,6 +735,21 @@ namespace Backend.Controllers
         [Route("api/rides/finishSuccessfulRide")]
         public IHttpActionResult FinishSuccessfulRide(RideDto successfulRideDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (successfulRideDto.Price == 0.0)
+            {
+                return BadRequest();
+            }
+
+            if (successfulRideDto.DestinationLocation == null)
+            {
+                return BadRequest();
+            }
+
             string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
 
             if (_accessService.IsLoggedIn(hash))
