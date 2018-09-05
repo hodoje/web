@@ -453,7 +453,7 @@ export class DriverComponent implements OnInit {
         this.driverRides.forEach(r => {
           r.comments = this.setCurrentUserCommentToBottom(r.comments);
         });
-        this.takenRide = this.driverRides.find(r => r.rideStatus === 'ACCEPTED' && r.driver.id === this.personalData.id);
+        this.takenRide = this.driverRides.find(r => (r.rideStatus === 'ACCEPTED' || r.rideStatus === 'PROCESSED') && r.driver.id === this.personalData.id);
       },
       (error) => {
         if(error.status == 401){

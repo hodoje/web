@@ -257,7 +257,12 @@ export class DispatcherComponent implements OnInit {
   }
 
   getClosestDrivers(){
-    let longitude = this.processARideForm.value;
+    let longitude = this.rideInProcess.location.longitude;
+    let latitude = this.rideInProcess.location.latitude;
+
+    this.allDrivers.sort((a, b) => {
+      (Math.abs(a.location.longitude - longitude) - Math.abs(a.location.latitude - latitude)) + (Math.abs(b.location.longitude - longitude) - Math.abs(b.location.latitude - latitude))
+    });
   }
 
   getMyData(){

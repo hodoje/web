@@ -13,7 +13,7 @@
               <div class="card">
                 <div class="card-header">
                   <div class="card-header-tabs">
-                    <button type="button" (click)="takeOverARide(ride.id)" class="btn btn-primary btn-sm float-right">
+                    <button *ngIf="takenRide === undefined || takenRide === null" type="button" (click)="takeOverARide(ride.id)" class="btn btn-primary btn-sm float-right">
                       Take over
                     </button>
                   </div>
@@ -231,52 +231,52 @@
                                     <legend>Address</legend>
                                     <label for="streetName">Street Name</label>
                                     <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
-                                    <div class="alert alert-danger" *ngIf="ssForm.location.get('address').get('streetName').touched && !ssForm.location.get('address').get('streetName').valid">
-                                      <div *ngIf="ssForm.location.get('address').get('streetName').errors.required">Street name is required.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetName').errors.minlength">Street name needs to be at least {{ssForm.location.get('address').get('streetName').errors.minlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetName').errors.maxlength">Street name needs to be maximum of {{ssForm.location.get('address').get('streetName').errors.maxlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetName').errors.pattern">Street name needs to contain only ASCII characters.</div>
+                                    <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('address').get('streetName').touched && !ssForm.destinationLocation.get('address').get('streetName').valid">
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetName').errors.required">Street name is required.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetName').errors.minlength">Street name needs to be at least {{ssForm.destinationLocation.get('address').get('streetName').errors.minlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetName').errors.maxlength">Street name needs to be maximum of {{ssForm.destinationLocation.get('address').get('streetName').errors.maxlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetName').errors.pattern">Street name needs to contain only ASCII characters.</div>
                                     </div>
                                     <label for="streetNumber">Street Number</label>
                                     <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
-                                    <div class="alert alert-danger" *ngIf="ssForm.location.get('address').get('streetNumber').touched && !ssForm.location.get('address').get('streetNumber').valid">
-                                      <div *ngIf="ssForm.location.get('address').get('streetNumber').errors.required">Street number is required.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetNumber').errors.minlength">Street number needs to be at least {{ssForm.location.get('address').get('streetNumber').errors.minlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetNumber').errors.maxlength">Street number needs to be maximum of {{ssForm.location.get('address').get('streetNumber').errors.maxlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('streetNumber').errors.pattern">Street number needs to contain only digits.</div>
+                                    <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('address').get('streetNumber').touched && !ssForm.destinationLocation.get('address').get('streetNumber').valid">
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetNumber').errors.required">Street number is required.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetNumber').errors.minlength">Street number needs to be at least {{ssForm.destinationLocation.get('address').get('streetNumber').errors.minlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetNumber').errors.maxlength">Street number needs to be maximum of {{ssForm.destinationLocation.get('address').get('streetNumber').errors.maxlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('streetNumber').errors.pattern">Street number needs to contain only digits.</div>
                                     </div>
                                     <label for="city">City</label>
                                     <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
-                                    <div class="alert alert-danger" *ngIf="ssForm.location.get('address').get('city').touched && !ssForm.location.get('address').get('city').valid">
-                                      <div *ngIf="ssForm.location.get('address').get('city').errors.required">City is required.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('city').errors.minlength">City needs to be at least {{ssForm.location.get('address').get('city').errors.minlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('city').errors.maxlength">City needs to be maximum of {{ssForm.location.get('address').get('city').errors.maxlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('city').errors.pattern">City needs to contain only ASCII characters.</div>
+                                    <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('address').get('city').touched && !ssForm.destinationLocation.get('address').get('city').valid">
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('city').errors.required">City is required.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('city').errors.minlength">City needs to be at least {{ssForm.destinationLocation.get('address').get('city').errors.minlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('city').errors.maxlength">City needs to be maximum of {{ssForm.destinationLocation.get('address').get('city').errors.maxlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('city').errors.pattern">City needs to contain only ASCII characters.</div>
                                     </div>
                                     <label for="postalCode">Postal Code</label>
                                     <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
-                                    <div class="alert alert-danger" *ngIf="ssForm.location.get('address').get('postalCode').touched && !ssForm.location.get('address').get('postalCode').valid">
-                                      <div *ngIf="ssForm.location.get('address').get('postalCode').errors.required">Postal code is required.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('postalCode').errors.minlength">Postal code needs to be at least {{ssForm.location.get('address').get('postalCode').errors.minlength.requiredLength}} character long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('postalCode').errors.maxlength">Postal code needs to be maximum of {{ssForm.location.get('address').get('postalCode').errors.maxlength.requiredLength}} characters long.</div>
-                                      <div *ngIf="ssForm.location.get('address').get('postalCode').errors.pattern">Postal code needs to contain only ASCII characters and digits.</div>
+                                    <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('address').get('postalCode').touched && !ssForm.destinationLocation.get('address').get('postalCode').valid">
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('postalCode').errors.required">Postal code is required.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('postalCode').errors.minlength">Postal code needs to be at least {{ssForm.destinationLocation.get('address').get('postalCode').errors.minlength.requiredLength}} character long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('postalCode').errors.maxlength">Postal code needs to be maximum of {{ssForm.destinationLocation.get('address').get('postalCode').errors.maxlength.requiredLength}} characters long.</div>
+                                      <div *ngIf="ssForm.destinationLocation.get('address').get('postalCode').errors.pattern">Postal code needs to contain only ASCII characters and digits.</div>
                                     </div>
                                   </div>
                                   <legend>Coordinates</legend>
                                   <label for="longitude">Longitude</label>
                                   <input formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
-                                  <div class="alert alert-danger" *ngIf="ssForm.location.get('longitude').touched && !ssForm.location.get('longitude').valid">
-                                    <div *ngIf="ssForm.location.get('longitude').errors.required">Longitude is required.</div>
-                                    <div *ngIf="ssForm.location.get('longitude').errors.isNotInLongitudeInterval">
+                                  <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('longitude').touched && !ssForm.destinationLocation.get('longitude').valid">
+                                    <div *ngIf="ssForm.destinationLocation.get('longitude').errors.required">Longitude is required.</div>
+                                    <div *ngIf="ssForm.destinationLocation.get('longitude').errors.isNotInLongitudeInterval">
                                       Longitude needs to be in [{{ssForm.location.get('longitude').errors.isNotInLongitudeInterval.minLongitude}}, {{ssForm.location.get('longitude').errors.isNotInLongitudeInterval.maxLongitude}}] interval.
                                     </div>
                                   </div>
                                   <label for="latitude">Latitude</label>
                                   <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
-                                  <div class="alert alert-danger" *ngIf="ssForm.location.get('latitude').touched && !ssForm.location.get('latitude').valid">
-                                    <div *ngIf="ssForm.location.get('latitude').errors.required">Latitude is required.</div>
-                                    <div *ngIf="ssForm.location.get('latitude').errors.isNotInLatitudeInterval">
-                                        Latitude needs to be in [{{ssForm.location.get('latitude').errors.isNotInLatitudeInterval.minLatitude}}, {{ssForm.location.get('latitude').errors.isNotInLatitudeInterval.maxLatitude}}] interval.
+                                  <div class="alert alert-danger" *ngIf="ssForm.destinationLocation.get('latitude').touched && !ssForm.destinationLocation.get('latitude').valid">
+                                    <div *ngIf="ssForm.destinationLocation.get('latitude').errors.required">Latitude is required.</div>
+                                    <div *ngIf="ssForm.destinationLocation.get('latitude').errors.isNotInLatitudeInterval">
+                                        Latitude needs to be in [{{ssForm.destinationLocation.get('latitude').errors.isNotInLatitudeInterval.minLatitude}}, {{ssForm.destinationLocation.get('latitude').errors.isNotInLatitudeInterval.maxLatitude}}] interval.
                                       </div>
                                   </div>
                                 </div>
