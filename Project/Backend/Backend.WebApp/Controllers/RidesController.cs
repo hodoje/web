@@ -17,9 +17,12 @@ using DomainEntities.Models;
 using Backend.AccessServices;
 using Backend.Dtos;
 using Newtonsoft.Json;
+using Backend.Models.CustomAttributes;
+using System.Threading;
 
 namespace Backend.Controllers
 {
+    [AuthenticationFilter]
     public class RidesController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -34,23 +37,18 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/rides/getAllRides")]
         [ResponseType(typeof(IEnumerable<RideDto>))]
         public IHttpActionResult GetAllRides()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
+            List<Ride> allRides = _unitOfWork.RideRepository.GetAllRidesIncludeAll().ToList();
+            foreach (Ride r in allRides)
             {
-                List<Ride> allRides = _unitOfWork.RideRepository.GetAllRidesIncludeAll().ToList();
-                foreach (Ride r in allRides)
-                {
-                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
-                }
-                List<RideDto> allRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allRides);
-                return Ok(allRidesDtos);
+                r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
             }
-            return BadRequest();
+            List<RideDto> allRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allRides);
+            return Ok(allRidesDtos);
         }
 
         [HttpGet]
@@ -58,84 +56,70 @@ namespace Backend.Controllers
         [ResponseType(typeof(IEnumerable<RideDto>))]
         public IHttpActionResult GetAllMyRides()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            List<Ride> allUserRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Customer.Username == loginModel.Username).ToList();
+            foreach (Ride r in allUserRides)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                List<Ride> allUserRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Customer.Username == loginModel.Username).ToList();
-                foreach (Ride r in allUserRides)
-                {
-                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
-                }
-                List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
-                return Ok(allUserRidesDtos);
+                r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
             }
-            return BadRequest();
+            List<RideDto> allUserRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allUserRides);
+            return Ok(allUserRidesDtos);
         }
 
         [HttpGet]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/rides/getAllDispatcherRides")]
         public IHttpActionResult GetAllDispatcherRides()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+
+            User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+            List<Ride> allDispatcherRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DispatcherId == dispatcher.Id).ToList();
+            foreach (Ride r in allDispatcherRides)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
-                List<Ride> allDispatcherRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DispatcherId == dispatcher.Id).ToList();
-                foreach (Ride r in allDispatcherRides)
-                {
-                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
-                }
-                List<RideDto> allDispatcherRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDispatcherRides);
-                return Ok(allDispatcherRidesDtos);
+                r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
             }
-            return BadRequest();
+            List<RideDto> allDispatcherRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDispatcherRides);
+            return Ok(allDispatcherRidesDtos);
         }
 
         [HttpGet]
+        [AuthorizationFilter(new string[] { "DISPATCHER", "DRIVER" })]
         [Route("api/rides/getAllDriverRides")]
         public IHttpActionResult GetAllDriverRides()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+
+            User driver = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+            List<Ride> allDriverRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DriverId == driver.Id).ToList();
+            foreach (Ride r in allDriverRides)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User driver = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
-                List<Ride> allDriverRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.DriverId == driver.Id).ToList();
-                foreach (Ride r in allDriverRides)
-                {
-                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
-                }
-                List<RideDto> allDriverRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDriverRides);
-                return Ok(allDriverRidesDtos);
+                r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
             }
-            return BadRequest();
+            List<RideDto> allDriverRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allDriverRides);
+            return Ok(allDriverRidesDtos);
         }
         
 
         [HttpGet]
+        [AuthorizationFilter(new string[] { "DISPATCHER", "DRIVER" })]
         [Route("api/rides/getAllPendingRides")]
         public IHttpActionResult GetAllPendingRides()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+
+            User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
+            List<Ride> allPendingRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.RideStatus == (int)RideStatus.CREATED).ToList();
+            foreach (Ride r in allPendingRides)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User dispatcher = _unitOfWork.UserRepository.Find(u => u.Username == loginModel.Username).FirstOrDefault();
-                List<Ride> allPendingRides = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.RideStatus == (int)RideStatus.CREATED).ToList();
-                foreach (Ride r in allPendingRides)
-                {
-                    r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
-                }
-                List<RideDto> allPendingRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allPendingRides);
-                return Ok(allPendingRidesDtos);
+                r.Comments = _unitOfWork.CommentRepository.FindAllCommentsIncludeUser(c => c.RideId == r.Id).ToList();
             }
-            return BadRequest();
+            List<RideDto> allPendingRidesDtos = _iMapper.Map<List<Ride>, List<RideDto>>(allPendingRides);
+            return Ok(allPendingRidesDtos);
         }
 
         [HttpPost]
@@ -194,8 +178,8 @@ namespace Backend.Controllers
 
             LoginModel loginModel = _accessService.GetLoginData(changeRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+
             Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
-            //oldRide.StartLocation = _unitOfWork.LocationRepository.GetById(oldRide.StartLocationId);
             Ride updatedRide = new Ride()
             {
                 StartLocation = _iMapper.Map<LocationDto, Location>(changeRideRequestApiMessage.Data.Location),
@@ -227,6 +211,7 @@ namespace Backend.Controllers
         {
             LoginModel loginModel = _accessService.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+
             Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             if (oldRide != null)
             {
@@ -240,10 +225,11 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "CUSTOMER", "DRIVER" })]
         [Route("api/rides/commentLatestCancelledRide")]
         public IHttpActionResult CommentLatestCancelledRide(CommentDto commentDto)
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
             LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
@@ -277,10 +263,11 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "CUSTOMER", "DRIVER" })]
         [Route("api/rides/addComment")]
         public IHttpActionResult AddCommentForARide(CommentDto commentDto)
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
             LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
@@ -312,10 +299,11 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "CUSTOMER", "DRIVER" })]
         [Route("api/rides/rateARide")]
         public IHttpActionResult RateARide(CommentDto commentDto)
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
             LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             Comment comment = _unitOfWork.CommentRepository.GetById(commentDto.Id);
@@ -331,15 +319,8 @@ namespace Backend.Controllers
         [Route("api/rides/refine")]
         public IHttpActionResult RefineRides(RefineRidesModel refine)
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            LoginModel loginModel = null;
-            if (_accessService.IsLoggedIn(hash))
-            {
-                if (_accessService.GetLoginData(hash, _unitOfWork) != null)
-                {
-                    loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                }
-            }
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
             List<Ride> refinedRides = new List<Ride>();
@@ -537,6 +518,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/rides/dispatcherRidesSearch")]
         public IHttpActionResult DispatcherRidesSearch(DispatcherRidesSearch searchParams)
         {
@@ -604,6 +586,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/rides/dispatcherFormRide")]
         public IHttpActionResult DispatcherFormRide(DispatcherFormRideRequestModel dispatcherFormRideRequest)
         {
@@ -612,27 +595,24 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
-            {
-                Ride newRide = new Ride();
-                newRide.StartLocation = _iMapper.Map<LocationDto, Location>(dispatcherFormRideRequest.Location);
-                newRide.Timestamp = DateTime.Now;
-                newRide.RideStatus = (int)RideStatus.FORMED;
-                newRide.CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == dispatcherFormRideRequest.CarType);
-                newRide.DriverId = dispatcherFormRideRequest.DriverId;
-                newRide.DispatcherId = dispatcherFormRideRequest.DispatcherId;
-                _unitOfWork.RideRepository.Add(newRide);
-                _unitOfWork.Complete();
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
-                RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
-                return CreatedAtRoute("DefaultApi", new { controller = "rides", id = newRideDto.Id }, newRideDto);
-            }
-            return BadRequest();
+            Ride newRide = new Ride();
+            newRide.StartLocation = _iMapper.Map<LocationDto, Location>(dispatcherFormRideRequest.Location);
+            newRide.Timestamp = DateTime.Now;
+            newRide.RideStatus = (int)RideStatus.FORMED;
+            newRide.CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == dispatcherFormRideRequest.CarType);
+            newRide.DriverId = dispatcherFormRideRequest.DriverId;
+            newRide.DispatcherId = dispatcherFormRideRequest.DispatcherId;
+            _unitOfWork.RideRepository.Add(newRide);
+            _unitOfWork.Complete();
+
+            RideDto newRideDto = _iMapper.Map<Ride, RideDto>(newRide);
+            return CreatedAtRoute("DefaultApi", new { controller = "rides", id = newRideDto.Id }, newRideDto);
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/rides/dispatcherProcessRide")]
         public IHttpActionResult DispatcherProcessRide(ProcessRideRequestModel rideProcessRequest)
         {
@@ -641,24 +621,21 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
-            {
-                Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideProcessRequest.RideId).FirstOrDefault();
-                rideToProcess.RideStatus = (int)RideStatus.PROCESSED;
-                rideToProcess.DriverId = rideProcessRequest.DriverId;
-                rideToProcess.DispatcherId = rideProcessRequest.DispatcherId;
-                _unitOfWork.RideRepository.Update(rideToProcess);
-                _unitOfWork.Complete();
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            
+            Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideProcessRequest.RideId).FirstOrDefault();
+            rideToProcess.RideStatus = (int)RideStatus.PROCESSED;
+            rideToProcess.DriverId = rideProcessRequest.DriverId;
+            rideToProcess.DispatcherId = rideProcessRequest.DispatcherId;
+            _unitOfWork.RideRepository.Update(rideToProcess);
+            _unitOfWork.Complete();
 
-                return StatusCode(HttpStatusCode.NoContent);
-            }
-            return BadRequest();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // Using the same model as Process because we're sending the same data
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DRIVER" })]
         [Route("api/rides/driverTakeOverRide")]
         public IHttpActionResult DriverTakeOverRide(ProcessRideRequestModel driverTakeOverRequest)
         {
@@ -667,71 +644,62 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
-            {
-                Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverTakeOverRequest.RideId).FirstOrDefault();
-                rideToProcess.RideStatus = (int)RideStatus.ACCEPTED;
-                rideToProcess.DriverId = driverTakeOverRequest.DriverId;
-                _unitOfWork.RideRepository.Update(rideToProcess);
-                _unitOfWork.Complete();
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
-                rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideToProcess.Id).FirstOrDefault();
-                RideDto takenRide = _iMapper.Map<Ride, RideDto>(rideToProcess);
-                return Ok(takenRide);
-            }
-            return BadRequest();
+            Ride rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverTakeOverRequest.RideId).FirstOrDefault();
+            rideToProcess.RideStatus = (int)RideStatus.ACCEPTED;
+            rideToProcess.DriverId = driverTakeOverRequest.DriverId;
+            _unitOfWork.RideRepository.Update(rideToProcess);
+            _unitOfWork.Complete();
+
+            rideToProcess = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == rideToProcess.Id).FirstOrDefault();
+            RideDto takenRide = _iMapper.Map<Ride, RideDto>(rideToProcess);
+            return Ok(takenRide);           
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DRIVER" })]
         [Route("api/rides/finishFailedRide")]
         public IHttpActionResult FinishFailedRide(CommentDto driverCommentDto)
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
-            if (_accessService.IsLoggedIn(hash))
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+            Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverCommentDto.RideId).FirstOrDefault();
+            if (rideToUpdate != null)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-                Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == driverCommentDto.RideId).FirstOrDefault();
-                if (rideToUpdate != null)
+                rideToUpdate.RideStatus = (int) RideStatus.FAILED;
+
+                Comment comment;
+                if ((comment = rideToUpdate.Comments.FirstOrDefault(c => c.UserId == user.Id)) == null)
                 {
-                    rideToUpdate.RideStatus = (int) RideStatus.FAILED;
-
-                    Comment comment;
-                    if ((comment = rideToUpdate.Comments.FirstOrDefault(c => c.UserId == user.Id)) == null)
-                    {
-                        comment = _iMapper.Map<CommentDto, Comment>(driverCommentDto);
-                        comment.UserId = user.Id;
-                        comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : comment.Description;
-                        comment.Timestamp = DateTime.Now;
-                        rideToUpdate.Comments.Add(comment);
-                        _unitOfWork.Complete();
-                    }
-                    else
-                    {
-                        comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : driverCommentDto.Description;
-                        comment.Timestamp = DateTime.Now;
-                        _unitOfWork.CommentRepository.Update(comment);
-                        _unitOfWork.Complete();
-                    }
-
-                    RideDto rideToUpdateDto = _iMapper.Map<Ride, RideDto>(rideToUpdate);
-                    return Ok(rideToUpdateDto);
+                    comment = _iMapper.Map<CommentDto, Comment>(driverCommentDto);
+                    comment.UserId = user.Id;
+                    comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : comment.Description;
+                    comment.Timestamp = DateTime.Now;
+                    rideToUpdate.Comments.Add(comment);
+                    _unitOfWork.Complete();
                 }
                 else
                 {
-                    return BadRequest();
+                    comment.Description = (String.IsNullOrWhiteSpace(driverCommentDto.Description)) ? "" : driverCommentDto.Description;
+                    comment.Timestamp = DateTime.Now;
+                    _unitOfWork.CommentRepository.Update(comment);
+                    _unitOfWork.Complete();
                 }
+
+                RideDto rideToUpdateDto = _iMapper.Map<Ride, RideDto>(rideToUpdate);
+                return Ok(rideToUpdateDto);
             }
             else
             {
-                return Unauthorized();
+                return BadRequest();
             }
         }
 
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DRIVER" })]
         [Route("api/rides/finishSuccessfulRide")]
         public IHttpActionResult FinishSuccessfulRide(RideDto successfulRideDto)
         {
@@ -750,36 +718,32 @@ namespace Backend.Controllers
                 return BadRequest();
             }
 
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
+            Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == successfulRideDto.Id).FirstOrDefault();
 
-            if (_accessService.IsLoggedIn(hash))
+            if (rideToUpdate != null)
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-                Ride rideToUpdate = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.Id == successfulRideDto.Id).FirstOrDefault();
+                Ride successfulRide = _iMapper.Map<RideDto, Ride>(successfulRideDto);
+                rideToUpdate.RideStatus = (int) RideStatus.SUCCESSFUL;
+                rideToUpdate.Price = successfulRide.Price;
+                rideToUpdate.DestinationLocation = successfulRide.DestinationLocation;
 
-                if (rideToUpdate != null)
-                {
-                    Ride successfulRide = _iMapper.Map<RideDto, Ride>(successfulRideDto);
-                    rideToUpdate.RideStatus = (int) RideStatus.SUCCESSFUL;
-                    rideToUpdate.Price = successfulRide.Price;
-                    rideToUpdate.DestinationLocation = successfulRide.DestinationLocation;
+                Comment comment = successfulRide.Comments.FirstOrDefault();
+                comment.UserId = user.Id;
+                comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
+                comment.Timestamp = DateTime.Now;
 
-                    Comment comment = successfulRide.Comments.FirstOrDefault();
-                    comment.UserId = user.Id;
-                    comment.Description = (String.IsNullOrWhiteSpace(comment.Description)) ? "" : comment.Description;
-                    comment.Timestamp = DateTime.Now;
+                rideToUpdate.Comments.Add(comment);
 
-                    rideToUpdate.Comments.Add(comment);
+                _unitOfWork.RideRepository.Update(rideToUpdate);
+                _unitOfWork.Complete();
 
-                    _unitOfWork.RideRepository.Update(rideToUpdate);
-                    _unitOfWork.Complete();
-
-                    return Ok(rideToUpdate);
-                }
-                return BadRequest();
+                return Ok(rideToUpdate);
             }
-            return Unauthorized();
+            return BadRequest();
         }
     }
 }

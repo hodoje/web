@@ -13,13 +13,13 @@ using System.Web.Http.Filters;
 
 namespace Backend.Models.CustomAttributes
 {
-    public class AuthorizeAttributes : AuthorizationFilterAttribute
+    public class AuthorizationFilter : AuthorizationFilterAttribute
     {
-        private string Role { get; }
+        private string[] Roles { get; }
 
-        public AuthorizeAttributes(string role)
+        public AuthorizationFilter(string[] roles)
         {
-            Role = role;
+            Roles = roles;
         }
 
         public override void OnAuthorization(HttpActionContext actionContext)
@@ -37,7 +37,7 @@ namespace Backend.Models.CustomAttributes
                 string hash = _accessService.ExtractHash(encodedHash);
                 if (_accessService.IsLoggedIn(hash))
                 {
-                    if(_accessService.IsAuthorized(hash, Role))
+                    if(_accessService.IsAuthorized(hash, Roles))
                     {
                         Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity(hash), null);
                         return;

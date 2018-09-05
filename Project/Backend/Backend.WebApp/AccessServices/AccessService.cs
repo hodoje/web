@@ -113,8 +113,6 @@ namespace Backend.AccessServices
             return extractedHash;
         }
 
-        [AuthenticationFilter]
-        [AuthorizeAttributes(role: "DISPATCHER")]
         public bool BlockUser(string username, IUnitOfWork unitOfWork)
         {
             User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
@@ -139,8 +137,6 @@ namespace Backend.AccessServices
             return false;
         }
 
-        [AuthenticationFilter]
-        [AuthorizeAttributes(role: "DISPATCHER")]
         public bool UnblockUser(string username, IUnitOfWork unitOfWork)
         {
             User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
@@ -158,14 +154,24 @@ namespace Backend.AccessServices
             return false;
         }
 
-        public bool IsAuthorized(string hash, string role)
+        public bool IsAuthorized(string hash, string[] roles)
         {
             Dictionary<string, LoginModel> loggedUsers = _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Key, u => u.Value);
-            if (loggedUsers[hash].Role == role)
+            if (!String.IsNullOrWhiteSpace(hash))
             {
-                return true;
+                if (roles.Contains(loggedUsers[hash].Role))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
     }
 }

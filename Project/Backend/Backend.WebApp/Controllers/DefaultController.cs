@@ -1,39 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Backend.DataAccess;
-using Backend.DataAccess.ModelRepositories;
-using Backend.DataAccess.UnitOfWork;
-using Backend.Models;
-using DomainEntities.Models;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Net;
+//using System.Net.Http;
+//using System.Web.Http;
+//using System.Web.Http.Description;
+//using Backend.DataAccess;
+//using Backend.DataAccess.ModelRepositories;
+//using Backend.DataAccess.UnitOfWork;
+//using Backend.Models;
+//using DomainEntities.Models;
 
-namespace Backend.Controllers
-{
-    public class DefaultController : ApiController
-    {
-        private readonly IUnitOfWork _unitOfWork;
+//namespace Backend.Controllers
+//{
+//    public class DefaultController : ApiController
+//    {
+//        private readonly IUnitOfWork _unitOfWork;
 
-        public DefaultController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-            Location dl = new Location
-            {
-                Address =
-                {
-                    City = "NS",
-                    StreetName = "STR",
-                    StreetNumber = "123",
-                    PostalCode = "ABC123"
-                },
-                Longitude = 5,
-                Latitude = 7
-            };
-            _unitOfWork.LocationRepository.Add(dl);
-            _unitOfWork.Complete();
+//        public DefaultController(IUnitOfWork unitOfWork)
+//        {
+            //_unitOfWork = unitOfWork;
+            //Location dl = new Location
+            //{
+            //    Address =
+            //    {
+            //        City = "NS",
+            //        StreetName = "STR",
+            //        StreetNumber = "123",
+            //        PostalCode = "ABC123"
+            //    },
+            //    Longitude = 5,
+            //    Latitude = 7
+            //};
+            //_unitOfWork.LocationRepository.Add(dl);
+            //_unitOfWork.Complete();
 
             //User d = new User
             //{
@@ -81,38 +81,38 @@ namespace Backend.Controllers
             //_unitOfWork.UserRepository.Add(cust);
             //_unitOfWork.Complete();
 
-            User dd = new User
-            {
-                Username = "username123",
-                Password = "password123",
-                Name = "dimitrije",
-                Lastname = "nestorov",
-                DriverLocationId = dl.Id,
-                Email = "dimitrije@email.com",
-                Gender = (int)Gender.MALE,
-                IsBanned = false,
-                Role = (int)Role.DRIVER,
-            };
+            //User dd = new User
+            //{
+            //    Username = "username123",
+            //    Password = "password123",
+            //    Name = "dimitrije",
+            //    Lastname = "nestorov",
+            //    DriverLocationId = dl.Id,
+            //    Email = "dimitrije@email.com",
+            //    Gender = (int)Gender.MALE,
+            //    IsBanned = false,
+            //    Role = (int)Role.DRIVER,
+            //};
 
-            _unitOfWork.UserRepository.Add(dd);
-            _unitOfWork.Complete();
+            //_unitOfWork.UserRepository.Add(dd);
+            //_unitOfWork.Complete();
 
-            Car c = new Car
-            {
-                Id = dd.Id,
-                CarType = (int)CarType.PASSENGER,
-                DriverId = dd.Id,
-                RegistrationNumber = "ABC123",
-                TaxiNumber = 66,
-                YearOfManufactoring = 2006
-            };
+            //Car c = new Car
+            //{
+            //    Id = dd.Id,
+            //    CarType = (int)CarType.PASSENGER,
+            //    DriverId = dd.Id,
+            //    RegistrationNumber = "ABC123",
+            //    TaxiNumber = 66,
+            //    YearOfManufactoring = 2006
+            //};
 
-            _unitOfWork.CarRepository.Add(c);
-            _unitOfWork.Complete();
+            //_unitOfWork.CarRepository.Add(c);
+            //_unitOfWork.Complete();
 
-            dd.CarId = c.Id;
-            _unitOfWork.UserRepository.Update(dd);
-            _unitOfWork.Complete();
+            //dd.CarId = c.Id;
+            //_unitOfWork.UserRepository.Update(dd);
+            //_unitOfWork.Complete();
 
             //Ride r = new Ride
             //{
@@ -133,13 +133,13 @@ namespace Backend.Controllers
             //_unitOfWork.RideRepository.Add(r);
             //_unitOfWork.Complete();
 
-        }
+        //}
 
-        public User GetDefault()
-        {
-            //User u = _unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
-            //return u;
-            return null;
-        }
-    }
-}
+        //public User GetDefault()
+        //{
+        //    //User u = _unitOfWork.UserRepository.Find(x => x.IsBanned == false).First();
+        //    //return u;
+        //    return null;
+        //}
+    //}
+//}

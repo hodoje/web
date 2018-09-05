@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -17,10 +18,12 @@ using Backend.DataAccess;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Dtos;
 using Backend.Models;
+using Backend.Models.CustomAttributes;
 using DomainEntities.Models;
 
 namespace Backend.Controllers
 {
+    [AuthenticationFilter]
     public class UsersController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -33,27 +36,23 @@ namespace Backend.Controllers
             _unitOfWork = unitOfWork;
             _iMapper = iMapper;
             _accessService = accessService;
-            _hashGenerator = hashGenerator;
+            _hashGenerator = hashGenerator;            
         }
 
         // GET: api/Users
         [HttpGet]
         [ResponseType(typeof(IEnumerable<UserDto>))]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/users/getAllUsers")]
         public IHttpActionResult GetUsers()
         {
-            //LoginModel lm = new LoginModel {Username = "agsa", Password = "asg"};
-            //if (_loginRepository.IsLoggedIn(lm))
-            //{
             IEnumerable<User> users = _unitOfWork.UserRepository.GetAllIncludeAll();
             if (users == null || users.Count() < 1)
             {
-                return NotFound();
+                return Ok(new List<User>());
             }
             IEnumerable<UserDto> userDtos = _iMapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
             return Ok(userDtos);
-            //}
-            //return ResponseMessage(new HttpResponseMessage(HttpStatusCode.Forbidden));
         }
 
         // GET: api/Users/5
@@ -71,43 +70,34 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [AuthenticationFilter]
         [Route("api/users/getuserbyusername")]
         public IHttpActionResult GetUser()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            if (_accessService.IsLoggedIn(hash))
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+            User user = new User();
+            if (loginModel.Role == "CUSTOMER" || loginModel.Role == "DISPATCHER")
             {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                User user = new User();
-                if (loginModel.Role == "CUSTOMER" || loginModel.Role == "DISPATCHER")
-                {
-                    user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
-                }
-                else if (loginModel.Role == "DRIVER")
-                {
-                    user = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
-                }
-                UserDto userDto = _iMapper.Map<User, UserDto>(user);
-                return Ok(userDto);
+                user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
             }
-            return BadRequest();
+            else if (loginModel.Role == "DRIVER")
+            {
+                user = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
+            }
+            UserDto userDto = _iMapper.Map<User, UserDto>(user);
+            return Ok(userDto);            
         }
 
         [HttpGet]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/users/getAllDrivers")]
         public IHttpActionResult GetAllDrivers()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+
             List<UserDto> driverDtoList = new List<UserDto>();
-            ApiMessage<string, LoginModel> loginData = _accessService.GetLoginData(hash, _unitOfWork);
-            if (loginData != null)
-            {
-                LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                if (loginModel.Role == "DISPATCHER")
-                {
-                    driverDtoList = _iMapper.Map<List<User>, List<UserDto>>(_unitOfWork.UserRepository.GetAllDriversIncludeLocationAndCar().ToList());
-                }
-            }
+            driverDtoList = _iMapper.Map<List<User>, List<UserDto>>(_unitOfWork.UserRepository.GetAllDriversIncludeLocationAndCar().ToList());
             return Ok(driverDtoList);
         }
 
@@ -178,6 +168,7 @@ namespace Backend.Controllers
 
         // POST: api/Users
         [HttpPost]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [ResponseType(typeof(UserDto))]
         public IHttpActionResult PostUser(UserDto userDto)
         {
@@ -226,27 +217,27 @@ namespace Backend.Controllers
             return CreatedAtRoute("DefaultApi", new { id = userDto.Id }, userDto);
         }
 
-        //DELETE: api/Users/5
-        [HttpDelete]
-        [ResponseType(typeof(UserDto))]
-        public IHttpActionResult DeleteUser(int id)
-        {
-            User user = _unitOfWork.UserRepository.GetById(id);
-            Car usersCar = _unitOfWork.CarRepository.GetById(id);
-            UserDto userDto = _iMapper.Map<User, UserDto>(user);
-            if (user == null)
-            {
-                return NotFound();
-            }
+        ////DELETE: api/Users/5
+        //[HttpDelete]
+        //[ResponseType(typeof(UserDto))]
+        //public IHttpActionResult DeleteUser(int id)
+        //{
+        //    User user = _unitOfWork.UserRepository.GetById(id);
+        //    Car usersCar = _unitOfWork.CarRepository.GetById(id);
+        //    UserDto userDto = _iMapper.Map<User, UserDto>(user);
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _unitOfWork.CarRepository.Remove(usersCar);
-            _unitOfWork.Complete();
+        //    _unitOfWork.CarRepository.Remove(usersCar);
+        //    _unitOfWork.Complete();
             
-            _unitOfWork.UserRepository.Remove(user);
-            _unitOfWork.Complete();
+        //    _unitOfWork.UserRepository.Remove(user);
+        //    _unitOfWork.Complete();
 
-            return Ok(userDto);
-        }
+        //    return Ok(userDto);
+        //}
 
         protected override void Dispose(bool disposing)
         {

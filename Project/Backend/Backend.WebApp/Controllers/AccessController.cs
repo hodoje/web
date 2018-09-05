@@ -7,6 +7,7 @@ using System.Web.Http;
 using Backend.AccessServices;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
+using Backend.Models.CustomAttributes;
 
 namespace Backend.Controllers
 {
@@ -61,43 +62,37 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [AuthenticationFilter]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/access/blockUser")]
         public IHttpActionResult BlockUser()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);
-            if (_accessService.IsAuthorized(hash))
+            string usernameToBlock = Request.Content.ReadAsStringAsync().Result;
+            if (_accessService.BlockUser(usernameToBlock, _unitOfWork))
             {
-                string username = Request.Content.ReadAsStringAsync().Result;
-                if (_accessService.BlockUser(username, _unitOfWork))
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return Ok();
             }
-            return Unauthorized();
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
+        [AuthenticationFilter]
+        [AuthorizationFilter(new string[] { "DISPATCHER" })]
         [Route("api/access/unblockUser")]
         public IHttpActionResult UnblockUser()
         {
-            string hash = _accessService.ExtractHash(Request.Headers.Authorization.Parameter);            
-            if (_accessService.IsAuthorized(hash))
+            string usernameToUnblock = Request.Content.ReadAsStringAsync().Result;
+            if (_accessService.UnblockUser(usernameToUnblock, _unitOfWork))
             {
-                string username = Request.Content.ReadAsStringAsync().Result;
-                if (_accessService.UnblockUser(username, _unitOfWork))
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return Ok();
             }
-            return Unauthorized();
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }
