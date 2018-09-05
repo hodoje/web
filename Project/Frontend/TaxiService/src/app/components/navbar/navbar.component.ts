@@ -42,7 +42,6 @@ export class NavbarComponent implements OnInit{
         localStorage.userHash = null;
         localStorage.role = null;
         this.isLoggedIn = false;
-        console.log(error)
       }
     );
   }

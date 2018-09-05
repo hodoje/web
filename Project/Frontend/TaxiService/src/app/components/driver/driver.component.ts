@@ -1,3 +1,4 @@
+import { AccessService } from './../../services/access.service';
 import { Comment } from './../../models/comment.model';
 import { LocationsService } from './../../services/locations.service';
 import { RidesService } from './../../services/rides.service';
@@ -174,7 +175,8 @@ export class DriverComponent implements OnInit {
   constructor(private usersService: UsersService, 
               private ridesService: RidesService, 
               private carsService: CarsService, 
-              private locationsService: LocationsService) { }
+              private locationsService: LocationsService
+              private accessService: AccessService) { }
 
   ngOnInit() {
     this.personalData = new User();
@@ -239,6 +241,15 @@ export class DriverComponent implements OnInit {
       this.personalDataForm.markAsPristine();
       this.carDataForm.markAsPristine();
       this.locationDataForm.markAsPristine();
+    },
+    (error) => {
+      if(error.status == 401){
+        this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+        localStorage.userHash = null;
+        localStorage.role = null;
+        alert('You have been banned!');
+        window.location.replace('/logout');
+      }
     });
   }
 
@@ -256,8 +267,14 @@ export class DriverComponent implements OnInit {
         localStorage.userHash = data;
         this.personalDataForm.markAsPristine();
       },
-      error => {
-        console.log(error);
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -276,6 +293,15 @@ export class DriverComponent implements OnInit {
           carType: updatedCar.carType
         });
         this.carDataForm.markAsPristine();
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -297,6 +323,15 @@ export class DriverComponent implements OnInit {
           latitude: updatedLocation.latitude
         });
         this.locationDataForm.markAsPristine();
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -339,6 +374,15 @@ export class DriverComponent implements OnInit {
           r.comments = this.setCurrentUserCommentToBottom(r.comments);
         });
         this.takenRide = this.driverRides.find(r => r.rideStatus === 'ACCEPTED' && r.driver.id === this.personalData.id);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -347,6 +391,15 @@ export class DriverComponent implements OnInit {
     this.ridesService.getAllPendingRides().subscribe(
       (data: Ride[]) => {
         this.pendingRides = this.parseRides(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -363,6 +416,15 @@ export class DriverComponent implements OnInit {
     this.ridesService.driverTakeOverRide(driverTakeOverRequest).subscribe(
       (data: Ride) => {
         this.takenRide = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -387,6 +449,15 @@ export class DriverComponent implements OnInit {
         this.driverRides[takenRideToUpdateIndex] = this.parseSingleRide(data);
         this.takenRide = null;
         jQuery("#successfulRideModal").modal("toggle");
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -402,19 +473,18 @@ export class DriverComponent implements OnInit {
         this.driverRides[takenRideToUpdateIndex] = this.parseSingleRide(data);
         this.takenRide = null;
         jQuery("#failedRideModal").modal("toggle");
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
-
-  // commentCancelledRide(comment){
-  //   jQuery("#commentModal").modal("toggle");
-  //   this.isRideCancelled = !this.isRideCancelled;
-
-  //   let newComment = new Comment();
-  //   newComment.description = comment.description;
-  //   newComment.timestamp = new Date();
-  //   this.ridesService.commentCancelledRide(newComment).subscribe();
-  // }
 
   addComment(comment: Comment){
     comment.id = comment.rideId;
@@ -422,6 +492,15 @@ export class DriverComponent implements OnInit {
       (data: Ride) => {
         var rideIndex = this.driverRides.findIndex(r => r.id === data.id);
         this.driverRides[rideIndex] = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -445,13 +524,33 @@ export class DriverComponent implements OnInit {
         (data: Ride) => {
           var rideIndex = this.driverRides.findIndex(r => r.id === data.id);
         this.driverRides[rideIndex] = this.parseSingleRide(data);
+        },
+        (error) => {
+          if(error.status == 401){
+            this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+            localStorage.userHash = null;
+            localStorage.role = null;
+            alert('You have been banned!');
+            window.location.replace('/logout');
+          }
         }
       );
     }
     else{
       let comment = rideToComment.comments.find(c => c.userId === this.personalData.id);  
       comment.rating = ratingIndex + 1;
-      this.ridesService.rateARide(comment).subscribe();  
+      this.ridesService.rateARide(comment).subscribe(
+        () => {},
+        (error) => {
+          if(error.status == 401){
+            this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+            localStorage.userHash = null;
+            localStorage.role = null;
+            alert('You have been banned!');
+            window.location.replace('/logout');
+          }
+        }
+      );  
     }
   }
 

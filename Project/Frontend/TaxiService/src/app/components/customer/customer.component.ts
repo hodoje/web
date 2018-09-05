@@ -1,3 +1,5 @@
+import { AccessService } from './../../services/access.service';
+import { MapComponent } from './../map/map.component';
 import { RefineRidesModel } from './../../models/refine.model';
 import { Comment } from './../../models/comment.model';
 import { ChangeRideRequest } from './../../models/changeRideRequest';
@@ -13,6 +15,7 @@ import { RideStatus } from './../../models/rideStatus';
 import { RideRequest } from './../../models/rideRequest';
 import { FormGroup, FormControl, Validators } from '../../../../node_modules/@angular/forms';
 import { RideFormValidators } from '../../common/validators/ride-form.validators';
+import { Router } from '@angular/router';
 
 // for modal hiding in callARide
 declare var jQuery: any;
@@ -129,7 +132,11 @@ export class CustomerComponent implements OnInit {
     commentDescription: new FormControl()
   });
 
-  constructor(private usersService: UsersService, private notificationService: NotificationService, private ridesService: RidesService) {
+  constructor(private usersService: UsersService, 
+              private notificationService: NotificationService, 
+              private ridesService: RidesService,
+              private accessService: AccessService,
+              private router: Router) {
     // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
     //   if(!this.isRideRequestPending){
     //     this.isRideRequestPending = true;
@@ -216,6 +223,15 @@ export class CustomerComponent implements OnInit {
         this.latestSuccessfulRide = null;
         this.successfulRideRating = 0;
         jQuery('#successfulRideModal').modal('toggle');
+    },
+    (error) => {
+      if(error.status == 401){
+        this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+        localStorage.userHash = null;
+        localStorage.role = null;
+        alert('You have been banned!');
+        window.location.replace('/logout');
+      }
     });
   }
 
@@ -234,6 +250,15 @@ export class CustomerComponent implements OnInit {
         phoneNumber: data.phoneNumber
       });
       this.personalDataForm.markAsPristine();
+    },
+    (error) => {
+      if(error.status == 401){
+        this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+        localStorage.userHash = null;
+        localStorage.role = null;
+        alert('You have been banned!');
+        window.location.replace('/logout');
+      }
     });
   }
 
@@ -263,6 +288,15 @@ export class CustomerComponent implements OnInit {
             }
           }
         }
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     )
   }
@@ -281,8 +315,14 @@ export class CustomerComponent implements OnInit {
         localStorage.userHash = data;
         this.personalDataForm.markAsPristine();
       },
-      error => {
-        console.log(error);
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -297,6 +337,15 @@ export class CustomerComponent implements OnInit {
       (data: Ride) =>{
         this.pendingRide = this.parseSingleRide(data);
         this.ridesHistory.push(this.parseSingleRide(data));
+    },
+    (error) => {
+      if(error.status == 401){
+        this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+        localStorage.userHash = null;
+        localStorage.role = null;
+        alert('You have been banned!');
+        window.location.replace('/logout');
+      }
     });
     this.isRideRequestPending = true;
   }
@@ -313,6 +362,15 @@ export class CustomerComponent implements OnInit {
       (data: Ride) => {
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -327,6 +385,15 @@ export class CustomerComponent implements OnInit {
       (data: Ride) => {
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
     this.isRideRequestPending = false;
@@ -341,6 +408,15 @@ export class CustomerComponent implements OnInit {
       (data: Ride) => {
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -351,6 +427,15 @@ export class CustomerComponent implements OnInit {
       (data: Ride) => {
         var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+      },
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }
@@ -374,13 +459,33 @@ export class CustomerComponent implements OnInit {
         (data: Ride) => {
           var rideIndex = this.ridesHistory.findIndex(r => r.id === data.id);
         this.ridesHistory[rideIndex] = this.parseSingleRide(data);
+        },
+        (error) => {
+          if(error.status == 401){
+            this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+            localStorage.userHash = null;
+            localStorage.role = null;
+            alert('You have been banned!');
+            window.location.replace('/logout');
+          }
         }
       );
     }
     else{
       let comment = rideToComment.comments.find(c => c.userId === this.personalData.id);  
       comment.rating = ratingIndex + 1;
-      this.ridesService.rateARide(comment).subscribe();  
+      this.ridesService.rateARide(comment).subscribe(
+        () => {},
+        (error) => {
+          if(error.status == 401){
+            this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+            localStorage.userHash = null;
+            localStorage.role = null;
+            alert('You have been banned!');
+            window.location.replace('/logout');
+          }
+        }
+      );  
     }
   }
 
@@ -408,8 +513,14 @@ export class CustomerComponent implements OnInit {
       (data: Ride[]) =>{
         this.ridesHistory = this.parseRides(data);
       },
-      error => {
-        console.log(error);
+      (error) => {
+        if(error.status == 401){
+          this.accessService.logout(new ApiMessage(localStorage.userHash, null));
+          localStorage.userHash = null;
+          localStorage.role = null;
+          alert('You have been banned!');
+          window.location.replace('/logout');
+        }
       }
     );
   }

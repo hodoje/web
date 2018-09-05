@@ -1,3 +1,4 @@
+import { MapsService } from './services/maps.service';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -28,6 +29,8 @@ import { RouterModule, Router, CanActivate } from '@angular/router';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgmCoreModule } from '@agm/core';
+import { MapComponent } from './components/map/map.component';
 
 const Routes = [
   {
@@ -67,7 +70,8 @@ const Routes = [
     ContentComponent,
     CustomerComponent,
     DriverComponent,
-    DispatcherComponent
+    DispatcherComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +79,10 @@ const Routes = [
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(Routes),
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyBrjeABCsOwW1rhi7eW6_b_fWF8OK2HeiA'
+    })
   ],
   providers: [
     AccessService,
@@ -87,7 +94,8 @@ const Routes = [
     LoginToNavbarService,
     NotificationService,
     LoginGuard,
-    ContentGuard
+    ContentGuard,
+    MapsService
   ],
   bootstrap: [AppComponent]
 })

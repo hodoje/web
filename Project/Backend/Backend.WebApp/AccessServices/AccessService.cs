@@ -128,7 +128,14 @@ namespace Backend.AccessServices
                     if (loginModelForLoggedUser != null)
                     {
                         string hash = loggedUsers.FirstOrDefault(pair => pair.Value == loginModelForLoggedUser).Key;
-                        bool isLoggedOut = Logout(hash);
+                        if (Logout(hash))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     return true;
                 }
