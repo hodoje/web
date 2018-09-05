@@ -15,7 +15,7 @@ namespace Backend.AccessServices
         bool IsLoggedIn(string hash);
         bool BlockUser(string username, IUnitOfWork unitOfWork);
         bool UnblockUser(string username, IUnitOfWork unitOfWork);
-        bool IsAuthorized(string hash);
+        bool IsAuthorized(string hash, string role);
         ApiMessage<string, LoginModel> GetLoginData(string userHash, IUnitOfWork unitOfWork);
         string ExtractHash(string encodedHash);
     }

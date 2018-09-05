@@ -5,6 +5,7 @@ using System.Web;
 using Backend.AccessServices;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
+using Backend.Models.CustomAttributes;
 using DomainEntities.Models;
 
 namespace Backend.AccessServices
@@ -112,6 +113,8 @@ namespace Backend.AccessServices
             return extractedHash;
         }
 
+        [AuthenticationFilter]
+        [AuthorizeAttributes(role: "DISPATCHER")]
         public bool BlockUser(string username, IUnitOfWork unitOfWork)
         {
             User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
@@ -136,6 +139,8 @@ namespace Backend.AccessServices
             return false;
         }
 
+        [AuthenticationFilter]
+        [AuthorizeAttributes(role: "DISPATCHER")]
         public bool UnblockUser(string username, IUnitOfWork unitOfWork)
         {
             User userToBlock = unitOfWork.UserRepository.Find(u => u.Username == username).FirstOrDefault();
@@ -153,10 +158,10 @@ namespace Backend.AccessServices
             return false;
         }
 
-        public bool IsAuthorized(string hash)
+        public bool IsAuthorized(string hash, string role)
         {
             Dictionary<string, LoginModel> loggedUsers = _cacheManager.Get("LoggedUsers").ToDictionary(u => u.Key, u => u.Value);
-            if (loggedUsers[hash].Role == Role.DISPATCHER.ToString())
+            if (loggedUsers[hash].Role == role)
             {
                 return true;
             }
