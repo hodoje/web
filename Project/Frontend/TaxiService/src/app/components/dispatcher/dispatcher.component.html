@@ -61,20 +61,25 @@
                             </div>
                             <div class="form-group">
                               <h3>Driver</h3>
-                              <div *ngIf="ride?.carType === 'DEFAULT'">
-                                <select required formControlName="driverId" class="custom-select form-control form-control-sm">
-                                  <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
-                                </select>
+                              <div>
+                                <div *ngIf="ride?.carType === 'DEFAULT'">
+                                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
+                                    <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
+                                  </select>
+                                </div>
+                                <div *ngIf="ride?.carType === 'PASSENGER'">
+                                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
+                                    <option *ngFor="let driver of passengerDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
+                                  </select>
+                                </div>
+                                <div *ngIf="ride?.carType === 'VAN'">
+                                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
+                                    <option *ngFor="let driver of vanDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
+                                  </select>
+                                </div>
                               </div>
-                              <div *ngIf="ride?.carType === 'PASSENGER'">
-                                <select required formControlName="driverId" class="custom-select form-control form-control-sm">
-                                  <option *ngFor="let driver of passengerDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
-                                </select>
-                              </div>
-                              <div *ngIf="ride?.carType === 'VAN'">
-                                <select required formControlName="driverId" class="custom-select form-control form-control-sm">
-                                  <option *ngFor="let driver of vanDrivers" [value]="driver.id">{{driver?.name}} {{driver?.lastname}}</option>
-                                </select>
+                              <div class="alert alert-danger" *ngIf="rdForm.location.get('latitude').touched && !rdForm.location.get('latitude').valid">
+                                <div *ngIf="parForm.driverId.errors.required">Driver is required.</div>
                               </div>
                             </div>
                             <div class="modal-footer">
@@ -152,13 +157,13 @@
                     <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
-                    <div *ngIf="ride?.comments.length > 0">
+                    <!-- <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
                         <div>
                           <br/>
                           <span class="card-text">Rating: </span>
                           <span>
-                            <a *ngFor="let rating of ratingList; let i = index">
+                            <a class="no-hover" *ngFor="let rating of ratingList; let i = index">
                               <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
                             </a>
                           </span>
@@ -167,7 +172,7 @@
                           <br/>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 <!--/.Card content-->
@@ -200,23 +205,59 @@
             <div class="modal-body">
               <form [formGroup]="rideForm">
                 <div class="form-group" formGroupName="location">
-                  <h3>Starting location</h3>
+                  <h3>What's your location?</h3>
                   <div formGroupName="address">
                     <legend>Address</legend>
                     <label for="streetName">Street Name</label>
                     <input required formControlName="streetName" type="text" name="streetName" class="form-control form-control-sm">
+                    <div class="alert alert-danger" *ngIf="rdForm.location.get('address').get('streetName').touched && !rdForm.location.get('address').get('streetName').valid">
+                      <div *ngIf="rdForm.location.get('address').get('streetName').errors.required">Street name is required.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetName').errors.minlength">Street name needs to be at least {{rdForm.location.get('address').get('streetName').errors.minlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetName').errors.maxlength">Street name needs to be maximum of {{rdForm.location.get('address').get('streetName').errors.maxlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetName').errors.pattern">Street name needs to contain only ASCII characters.</div>
+                    </div>
                     <label for="streetNumber">Street Number</label>
                     <input required formControlName="streetNumber" type="text" name="streetNumber" class="form-control form-control-sm">
+                    <div class="alert alert-danger" *ngIf="rdForm.location.get('address').get('streetNumber').touched && !rdForm.location.get('address').get('streetNumber').valid">
+                      <div *ngIf="rdForm.location.get('address').get('streetNumber').errors.required">Street number is required.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetNumber').errors.minlength">Street number needs to be at least {{rdForm.location.get('address').get('streetNumber').errors.minlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetNumber').errors.maxlength">Street number needs to be maximum of {{rdForm.location.get('address').get('streetNumber').errors.maxlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('streetNumber').errors.pattern">Street number needs to contain only digits.</div>
+                    </div>
                     <label for="city">City</label>
                     <input required formControlName="city" type="text" name="city" class="form-control form-control-sm">
+                    <div class="alert alert-danger" *ngIf="rdForm.location.get('address').get('city').touched && !rdForm.location.get('address').get('city').valid">
+                      <div *ngIf="rdForm.location.get('address').get('city').errors.required">City is required.</div>
+                      <div *ngIf="rdForm.location.get('address').get('city').errors.minlength">City needs to be at least {{rdForm.location.get('address').get('city').errors.minlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('city').errors.maxlength">City needs to be maximum of {{rdForm.location.get('address').get('city').errors.maxlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('city').errors.pattern">City needs to contain only ASCII characters.</div>
+                    </div>
                     <label for="postalCode">Postal Code</label>
                     <input required formControlName="postalCode" type="text" name="postalCode" class="form-control form-control-sm">
+                    <div class="alert alert-danger" *ngIf="rdForm.location.get('address').get('postalCode').touched && !rdForm.location.get('address').get('postalCode').valid">
+                      <div *ngIf="rdForm.location.get('address').get('postalCode').errors.required">Postal code is required.</div>
+                      <div *ngIf="rdForm.location.get('address').get('postalCode').errors.minlength">Postal code needs to be at least {{rdForm.location.get('address').get('postalCode').errors.minlength.requiredLength}} character long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('postalCode').errors.maxlength">Postal code needs to be maximum of {{rdForm.location.get('address').get('postalCode').errors.maxlength.requiredLength}} characters long.</div>
+                      <div *ngIf="rdForm.location.get('address').get('postalCode').errors.pattern">Postal code needs to contain only ASCII characters and digits.</div>
+                    </div>
                   </div>
                   <legend>Coordinates</legend>
                   <label for="longitude">Longitude</label>
-                  <input required formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
+                  <input formControlName="longitude" type="text" name="longitude" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="rdForm.location.get('longitude').touched && !rdForm.location.get('longitude').valid">
+                    <div *ngIf="rdForm.location.get('longitude').errors.required">Longitude is required.</div>
+                    <div *ngIf="rdForm.location.get('longitude').errors.isNotInLongitudeInterval">
+                      Longitude needs to be in [{{rdForm.location.get('longitude').errors.isNotInLongitudeInterval.minLongitude}}, {{rdForm.location.get('longitude').errors.isNotInLongitudeInterval.maxLongitude}}] interval.
+                    </div>
+                  </div>
                   <label for="latitude">Latitude</label>
                   <input required formControlName="latitude" type="text" name="latitude" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="rdForm.location.get('latitude').touched && !rdForm.location.get('latitude').valid">
+                    <div *ngIf="rdForm.location.get('latitude').errors.required">Latitude is required.</div>
+                    <div *ngIf="rdForm.location.get('latitude').errors.isNotInLatitudeInterval">
+                        Latitude needs to be in [{{rdForm.location.get('latitude').errors.isNotInLatitudeInterval.minLatitude}}, {{rdForm.location.get('latitude').errors.isNotInLatitudeInterval.maxLatitude}}] interval.
+                      </div>
+                  </div>
                 </div>
                 <div class="form-group">
                   <h3>Car type</h3>
@@ -227,9 +268,12 @@
                 </div>
                 <div class="form-group">
                   <h3>Driver</h3>
-                  <select required formControlName="driverId" class="custom-select form-control form-control-sm">
+                  <select formControlName="driverId" class="custom-select form-control form-control-sm">
                     <option *ngFor="let driver of allDrivers" [value]="driver.id">{{driver.name}} {{driver.lastname}}</option>
                   </select>
+                  <div class="alert alert-danger" *ngIf="rdForm.driverId.touched && !rdForm.driverId.valid">
+                    <div *ngIf="rdForm.driverId.errors.required">Driver is required.</div>
+                  </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -245,115 +289,115 @@
       <h2>My personal data</h2>
       <form [formGroup]="personalDataForm">
         <table class="table table-sm table-hover">
-          <tr>
-            <td>Username:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="username" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.username.touched && !pdForm.username.valid">
-                  <div *ngIf="pdForm.username.errors.required">Username is required.</div>
-                  <div *ngIf="pdForm.username.errors.minlength">Username needs to be at least 8 characters long.</div>
-                  <div *ngIf="pdForm.username.errors.maxlength">Username needs to be maximum of 30 characters long.</div>
-                  <div *ngIf="pdForm.username.errors.pattern">Username can contain only ASCII characters and numbers.</div>
+            <tr>
+              <td>Username:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="username" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.username.touched && !pdForm.username.valid">
+                    <div *ngIf="pdForm.username.errors.required">Username is required.</div>
+                    <div *ngIf="pdForm.username.errors.minlength">Username needs to be at least {{pdForm.username.errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.username.errors.maxlength">Username needs to be maximum of {{pdForm.username.errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.username.errors.pattern">Username needs to contain only ASCII characters and digits.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Password:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="password" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.password.touched && !pdForm.password.valid">
-                  <div *ngIf="pdForm.password.errors.required">Password is required.</div>
-                  <div *ngIf="pdForm.password.errors.minlength">Password needs to be at least 8 characters long.</div>
-                  <div *ngIf="pdForm.password.errors.maxlength">Password needs to be maximum of 30 characters long.</div>
-                  <div *ngIf="pdForm.password.errors.pattern">Password can contain only ASCII characters and numbers.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="password" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.password.touched && !pdForm.password.valid">
+                    <div *ngIf="pdForm.password.errors.required">Password is required.</div>
+                    <div *ngIf="pdForm.password.errors.minlength">Password needs to be at least {{pdForm.password.errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.password.errors.maxlength">Password needs to be maximum of {{pdForm.password.errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.password.errors.pattern">Password needs to contain only ASCII characters and digits.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Name:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="name" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.name.touched && !pdForm.name.valid">
-                  <div *ngIf="pdForm.name.errors.required">Name is required.</div>
-                  <div *ngIf="pdForm.name.errors.minlength">Name needs to be at least 3 characters long.</div>
-                  <div *ngIf="pdForm.name.errors.maxlength">Name needs to be maximum of 30 characters long.</div>
-                  <div *ngIf="pdForm.name.errors.pattern">Name can contain only ASCII characters.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Name:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="name" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.name.touched && !pdForm.name.valid">
+                    <div *ngIf="pdForm.name.errors.required">Name is required.</div>
+                    <div *ngIf="pdForm.name.errors.minlength">Name needs to be at least {{pdForm.name.errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.name.errors.maxlength">Name needs to be maximum of {{pdForm.name.errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.name.errors.pattern">Name needs to contain only ASCII characters.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Lastname:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="lastname" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.lastname.touched && !pdForm.lastname.valid">
-                  <div *ngIf="pdForm.lastname.errors.required">Lastname is required.</div>
-                  <div *ngIf="pdForm.lastname.errors.minlength">Lastname needs to be at least 3 characters long.</div>
-                  <div *ngIf="pdForm.lastname.errors.maxlength">Lastname needs to be maximum of 30 characters long.</div>
-                  <div *ngIf="pdForm.lastname.errors.pattern">Lastname can contain only ASCII characters.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Lastname:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="lastname" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.lastname.touched && !pdForm.lastname.valid">
+                    <div *ngIf="pdForm.lastname.errors.required">Lastname is required.</div>
+                    <div *ngIf="pdForm.lastname.errors.minlength">Lastname needs to be at least {{pdForm.lastname.errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.lastname.errors.maxlength">Lastname needs to be maximum of {{pdForm.lastname.errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="pdForm.lastname.errors.pattern">Lastname needs to contain only ASCII characters.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Email:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="email" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.email.touched && !pdForm.email.valid">
-                  <div *ngIf="pdForm.email.errors.required">Email is required.</div>
-                  <div *ngIf="pdForm.email.errors.email">Email is not valid.</div>
-                  <div *ngIf="pdForm.email.errors.maxlength">Email can be a maximum of 254 characters long.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Email:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="email" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.email.touched && !pdForm.email.valid">
+                    <div *ngIf="pdForm.email.errors.required">Email is required.</div>
+                    <div *ngIf="pdForm.email.errors.email">Email is not valid.</div>
+                    <div *ngIf="pdForm.email.errors.maxlength">Email needs to be a maximum of {{pdForm.email.errors.maxlength.requiredLength}} characters long.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Gender:</td>
-            <td>
-              <div class="form-group">
-                <select formControlName="gender" class="custom-select form-control form-control-sm">
-                  <option>MALE</option>
-                  <option>FEMALE</option>
-                </select>
-                <div class="alert alert-danger" *ngIf="pdForm.gender.touched && !pdForm.gender.valid">
-                  <div *ngIf="pdForm.gender.errors.required">Gender is required.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Gender:</td>
+              <td>
+                <div class="form-group">
+                  <select formControlName="gender" class="custom-select form-control form-control-sm">
+                    <option>MALE</option>
+                    <option>FEMALE</option>
+                  </select>
+                  <div class="alert alert-danger" *ngIf="pdForm.gender.touched && !pdForm.gender.valid">
+                    <div *ngIf="pdForm.gender.errors.required">Gender is required.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>NIDN:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.nationalIdentificationNumber.touched && !pdForm.nationalIdentificationNumber.valid">
-                  <div *ngIf="pdForm.nationalIdentificationNumber.errors.minlength || pdForm.nationalIdentificationNumber.errors.maxlength">National identification number needs to be 13 digits long.</div>
-                  <div *ngIf="pdForm.nationalIdentificationNumber.errors.pattern">National identification number can contain only numbers.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>NIDN:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.nationalIdentificationNumber.touched && !pdForm.nationalIdentificationNumber.valid">
+                    <div *ngIf="pdForm.nationalIdentificationNumber.errors.minlength || pdForm.nationalIdentificationNumber.errors.maxlength">National identification number needs to be {{pdForm.nationalIdentificationNumber.errors.minlength.requiredLength}} digits long.</div>
+                    <div *ngIf="pdForm.nationalIdentificationNumber.errors.pattern">National identification number needs to contain only digits.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Phone number:</td>
-            <td>
-              <div class="form-group">
-                <input formControlName="phoneNumber" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="pdForm.phoneNumber.touched && !pdForm.phoneNumber.valid">
-                  <div *ngIf="pdForm.phoneNumber.errors.minlength">Phone number needs to be at least 5 digits long.</div>
-                  <div *ngIf="pdForm.phoneNumber.errors.maxlength">Phone number needs to be maximum of 10 digits long.</div>
-                  <div *ngIf="pdForm.phoneNumber.errors.pattern">Phone number can contain only numbers.</div>
+              </td>
+            </tr>
+            <tr>
+              <td>Phone number:</td>
+              <td>
+                <div class="form-group">
+                  <input formControlName="phoneNumber" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="pdForm.phoneNumber.touched && !pdForm.phoneNumber.valid">
+                    <div *ngIf="pdForm.phoneNumber.errors.minlength">Phone number needs to be at least {{pdForm.phoneNumber.errors.minlength.requiredLength}} digits long.</div>
+                    <div *ngIf="pdForm.phoneNumber.errors.maxlength">Phone number needs to be maximum of {{pdForm.phoneNumber.errors.maxlength.requiredLength}} digits long.</div>
+                    <div *ngIf="pdForm.phoneNumber.errors.pattern">Phone number needs to contain only digits.</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </table>
+              </td>
+            </tr>
+          </table>
         <button [hidden]="!personalDataForm.dirty && personalDataForm.valid" class="btn btn-primary" type="submit" [disabled]="!personalDataForm.valid" (click)="changeMyData()">Save changes</button>  
       </form>
     </div>
@@ -436,13 +480,13 @@
                     <br/>
                     &nbsp;&nbsp;&nbsp;&nbsp;<span class="card-text">Lastname: </span>
                     <span class="card-text">{{ride?.dispatcher?.lastname}}</span>
-                    <div *ngIf="ride?.comments.length > 0">
+                    <!-- <div *ngIf="ride?.comments.length > 0">
                       <div *ngFor="let comment of ride?.comments">
                         <div>
                           <br/>
                           <span class="card-text">Rating: </span>
                           <span>
-                              <a *ngFor="let rating of ratingList; let i = index">
+                              <a class="no-hover" *ngFor="let rating of ratingList; let i = index">
                                 <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
                               </a>
                           </span>
@@ -451,7 +495,7 @@
                           <br/>
                         </div>
                       </div>                        
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 <!--/.Card content-->
@@ -486,37 +530,99 @@
                 <h3>Personal information</h3>
                 <label for="username">Username</label>
                 <input formControlName="username" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.username.touched && !drForm.username.valid">
+                  <div *ngIf="drForm.username.errors.required">Username is required.</div>
+                  <div *ngIf="drForm.username.errors.minlength">Username needs to be at least {{drForm.username.errors.minlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.username.errors.maxlength">Username needs to be maximum of {{drForm.username.errors.maxlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.username.errors.pattern">Username needs to contain only ASCII characters and digits.</div>
+                </div>
                 <label for="password">Password</label>
                 <input formControlName="password" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.password.touched && !drForm.password.valid">
+                  <div *ngIf="drForm.password.errors.required">Password is required.</div>
+                  <div *ngIf="drForm.password.errors.minlength">Password needs to be at least {{drForm.password.errors.minlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.password.errors.maxlength">Password needs to be maximum of {{drForm.password.errors.maxlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.password.errors.pattern">Password needs to contain only ASCII characters and digits.</div>
+                </div>
                 <label for="name">Name</label>
                 <input formControlName="name" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.name.touched && !drForm.name.valid">
+                  <div *ngIf="drForm.name.errors.required">Name is required.</div>
+                  <div *ngIf="drForm.name.errors.minlength">Name needs to be at least {{drForm.name.errors.minlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.name.errors.maxlength">Name needs to be maximum of {{drForm.name.errors.maxlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.name.errors.pattern">Name needs to contain only ASCII characters.</div>
+                </div>
                 <label for="lastname">Lastname</label>
                 <input formControlName="lastname" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.lastname.touched && !drForm.lastname.valid">
+                  <div *ngIf="drForm.lastname.errors.required">Lastname is required.</div>
+                  <div *ngIf="drForm.lastname.errors.minlength">Lastname needs to be at least {{drForm.lastname.errors.minlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.lastname.errors.maxlength">Lastname needs to be maximum of {{drForm.lastname.errors.maxlength.requiredLength}} characters long.</div>
+                  <div *ngIf="drForm.lastname.errors.pattern">Lastname needs to contain only ASCII characters.</div>
+                </div>
                 <label for="email">Email</label>
                 <input formControlName="email" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.email.touched && !drForm.email.valid">
+                  <div *ngIf="drForm.email.errors.required">Email is required.</div>
+                  <div *ngIf="drForm.email.errors.email">Email is not valid.</div>
+                  <div *ngIf="drForm.email.errors.maxlength">Email needs to be a maximum of {{drForm.email.errors.maxlength.requiredLength}} characters long.</div>
+                </div>
                 <label for="gender">Gender</label>
                 <select formControlName="gender" class="custom-select form-control form-control-sm">
                   <option>MALE</option>
                   <option>FEMALE</option>
                 </select>
+                <div class="alert alert-danger" *ngIf="drForm.gender.touched && !drForm.gender.valid">
+                  <div *ngIf="drForm.gender.errors.required">Gender is required.</div>
+                </div>
                 <label for="nationalIdentificationNumber">NIDN</label>
                 <input formControlName="nationalIdentificationNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.nationalIdentificationNumber.touched && !drForm.nationalIdentificationNumber.valid">
+                  <div *ngIf="drForm.nationalIdentificationNumber.errors.minlength || pdForm.nationalIdentificationNumber.errors.maxlength">National identification number needs to be {{drForm.nationalIdentificationNumber.errors.minlength.requiredLength}} digits long.</div>
+                  <div *ngIf="drForm.nationalIdentificationNumber.errors.pattern">National identification number needs to contain only digits.</div>
+                </div>
                 <label for="phoneNumber">Phone number</label>
                 <input formControlName="phoneNumber" class="form-control form-control-sm">
+                <div class="alert alert-danger" *ngIf="drForm.phoneNumber.touched && !drForm.phoneNumber.valid">
+                  <div *ngIf="drForm.phoneNumber.errors.minlength">Phone number needs to be at least {{drForm.phoneNumber.errors.minlength.requiredLength}} digits long.</div>
+                  <div *ngIf="drForm.phoneNumber.errors.maxlength">Phone number needs to be maximum of {{drForm.phoneNumber.errors.maxlength.requiredLength}} digits long.</div>
+                  <div *ngIf="drForm.phoneNumber.errors.pattern">Phone number needs to contain only digits.</div>
+                </div>
                 <br/>
                 <div class="form-group" formGroupName="car">
                   <h3>Car information</h3>
                   <label for="registrationNumber">Registration number</label>
-                  <input formControlName="registrationNumber" class="form-control form-control-sm">
+                  <input type="text" formControlName="registrationNumber" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="drForm.car.get('registrationNumber').touched && !drForm.car.get('registrationNumber').valid">
+                    <div *ngIf="drForm.car.get('registrationNumber').errors.required">Registration number is required.</div>
+                    <div *ngIf="drForm.car.get('registrationNumber').errors.pattern">Registration number needs to contain only characters and digits.</div>
+                  </div>
                   <label for="taxiNumber">Taxi number</label>
-                  <input formControlName="taxiNumber" class="form-control form-control-sm">
+                  <input type="text" formControlName="taxiNumber" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="drForm.car.get('taxiNumber').touched && !drForm.car.get('taxiNumber').valid">
+                    <div *ngIf="drForm.car.get('taxiNumber').errors.required">Taxi number is required.</div>
+                    <div *ngIf="drForm.car.get('taxiNumber').errors.isNotInTaxiNumberInterval">
+                      Taxi number needs to be in [{{drForm.car.get('taxiNumber').errors.isNotInTaxiNumberInterval.minTaxiNumber}}, {{drForm.car.get('taxiNumber').errors.isNotInTaxiNumberInterval.maxTaxiNumber}}] interval.
+                    </div>
+                    <div *ngIf="drForm.car.get('taxiNumber').errors.pattern">Taxi number needs to contain only digits.</div>
+                  </div>
                   <label for="yearOfManufactoring">Year of manufactoring</label>
-                  <input formControlName="yearOfManufactoring" class="form-control form-control-sm">
+                  <input type="text" formControlName="yearOfManufactoring" class="form-control form-control-sm">
+                  <div class="alert alert-danger" *ngIf="drForm.car.get('yearOfManufactoring').touched && !drForm.car.get('yearOfManufactoring').valid">
+                    <div *ngIf="drForm.car.get('yearOfManufactoring').errors.required">Year of manufactoring is required.</div>
+                    <div *ngIf="drForm.car.get('yearOfManufactoring').errors.isNotInYearOfManufactoringInterval">
+                      Year of manufactoring needs to be in [{{drForm.car.get('yearOfManufactoring').errors.isNotInYearOfManufactoringInterval.minYearOfManufactoring}}, {{drForm.car.get('yearOfManufactoring').errors.isNotInYearOfManufactoringInterval.minYearOfManufactoring}}] interval.
+                    </div>
+                    <div *ngIf="drForm.car.get('yearOfManufactoring').errors.pattern">Year of manufactoring needs to contain only numbers.</div>
+                  </div>
                   <label for="carType">Car type</label>
                   <select formControlName="carType" class="custom-select form-control form-control-sm">
                     <option>PASSENGER</option>
                     <option>VAN</option>
                   </select>
+                  <div class="alert alert-danger" *ngIf="drForm.car.get('carType').touched && !drForm.car.get('carType').valid">
+                    <div *ngIf="drForm.car.get('carType').errors.required">Car type is required.</div>
+                  </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -656,9 +762,9 @@
                           <br/>
                           <span class="card-text">Rating: </span>
                           <span>
-                              <a *ngFor="let rating of ratingList; let i = index">
-                                <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
-                              </a>
+                            <a class="no-hover" *ngFor="let rating of ratingList; let i = index">
+                              <i [ngStyle]="{'color': (i < comment?.rating) ? 'red' : 'grey'}" class="fa fa-star"></i>
+                            </a>
                           </span>
                           <textarea readonly="true" type="text" class="form-control form-control-lg" [value]="comment?.description"></textarea>
                           <span *ngIf="comment?.description !== null" class="card-text float-left">{{comment?.user?.username}} at {{comment?.timestamp?.toLocaleDateString()}} {{comment?.timestamp?.toLocaleTimeString()}}</span>

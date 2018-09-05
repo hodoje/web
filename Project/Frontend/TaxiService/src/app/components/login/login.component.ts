@@ -32,7 +32,7 @@ export class LoginComponent{
         localStorage.setItem('userHash', data.key);
         localStorage.setItem('role', data.data.role);
         this.isLoggedIn = true;
-        this.router.navigate(['/content']);
+        this.router.navigate(['/profile']);
 
         this.loginToNavbarService.login();
       },

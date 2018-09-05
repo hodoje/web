@@ -1,3 +1,4 @@
+import { DriverFormValidators } from './../../common/validators/driver-form.validators';
 import { DispatcherFormRideRequest } from './../../models/dispatcherFormRideRequest';
 import { AccessService } from './../../services/access.service';
 import { RidesService } from './../../services/rides.service';
@@ -8,9 +9,10 @@ import { User } from '../../models/user.model';
 import { Car } from '../../models/car.model';
 import { Location } from './../../models/location.model';
 import { Ride } from '../../models/ride.model';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
 import { ApiMessage } from '../../models/apiMessage.model';
+import { RideFormValidators } from '../../common/validators/ride-form.validators';
 
 declare var jQuery: any;
 
@@ -30,50 +32,134 @@ export class DispatcherComponent implements OnInit {
   ratingList = [false, false, false, false, false];
 
   personalDataForm = new FormGroup({
-    username: new FormControl(),
-    password: new FormControl(),
-    name: new FormControl(),
-    lastname: new FormControl(),
-    email: new FormControl(),
-    gender: new FormControl(),
-    nationalIdentificationNumber: new FormControl(),
-    phoneNumber: new FormControl()
+    username: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    password: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    name: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    lastname: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    email: new FormControl(
+      null, 
+      [Validators.required, Validators.email, Validators.maxLength(254)]
+    ),
+    gender: new FormControl(
+      null,
+      Validators.required
+    ),
+    nationalIdentificationNumber: new FormControl(
+      null, 
+      [Validators.minLength(13), Validators.maxLength(13),Validators.pattern('[0-9]*')]
+    ),
+    phoneNumber: new FormControl(
+      null, 
+      [Validators.minLength(5), Validators.maxLength(10), Validators.pattern('[0-9]*')]
+    )
   });
 
   rideForm = new FormGroup({
     location: new FormGroup({
       address: new FormGroup({
-        streetName: new FormControl(),
-        streetNumber: new FormControl(),
-        city: new FormControl(),
-        postalCode: new FormControl()
+        streetName: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        streetNumber: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(4), Validators.pattern('[0-9]*')]
+        ),
+        city: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        postalCode: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(10), Validators.pattern('[a-zA-Z0-9]*')]
+        )
       }),
-      longitude: new FormControl(),
-      latitude: new FormControl()
+      longitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklongitudeInterval]
+      ),
+      latitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklatitudeInterval]
+      )
     }),
     carType: new FormControl(),
-    driverId: new FormControl()
+    driverId: new FormControl(
+      null,
+      Validators.required
+    )
   });  
 
   driverForm = new FormGroup({
-    username: new FormControl(),
-    password: new FormControl(),
-    name: new FormControl(),
-    lastname: new FormControl(),
-    email: new FormControl(),
-    gender: new FormControl(),
-    nationalIdentificationNumber: new FormControl(),
-    phoneNumber: new FormControl(),
+    username: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    password: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    name: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    lastname: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    email: new FormControl(
+      null, 
+      [Validators.required, Validators.email, Validators.maxLength(254)]
+    ),
+    gender: new FormControl(
+      null,
+      Validators.required
+    ),
+    nationalIdentificationNumber: new FormControl(
+      null, 
+      [Validators.minLength(13), Validators.maxLength(13),Validators.pattern('[0-9]*')]
+    ),
+    phoneNumber: new FormControl(
+      null, 
+      [Validators.minLength(5), Validators.maxLength(10), Validators.pattern('[0-9]*')]
+    ),
     car: new FormGroup({
-      registrationNumber: new FormControl(),
-      taxiNumber: new FormControl(),
-      yearOfManufactoring: new FormControl(),
-      carType: new FormControl()
+      registrationNumber: new FormControl(
+        null,
+        [Validators.required, Validators.pattern('[a-zA-Z0-9]*')]
+      ),
+      taxiNumber: new FormControl(
+        null,
+        [Validators.required, Validators.pattern('[0-9]*'), DriverFormValidators.checkTaxiNumberInterval]
+      ),
+      yearOfManufactoring: new FormControl(
+        null,
+        [Validators.required, Validators.pattern('[0-9]*'), DriverFormValidators.checkYearOfManufactoringInterval]
+      ),
+      carType: new FormControl(
+        null,
+        Validators.required
+      )
     })
   });
 
   processARideForm = new FormGroup({
-    driverId: new FormControl()
+    driverId: new FormControl(
+      null,
+      Validators.required
+    )
   });
 
   dispatcherRidesSearchForm = new FormGroup({
@@ -102,6 +188,18 @@ export class DispatcherComponent implements OnInit {
 
   get pdForm(){
     return this.personalDataForm.controls;
+  }
+  
+  get rdForm(){
+    return this.rideForm.controls;
+  }
+
+  get drForm(){
+    return this.driverForm.controls;
+  }
+
+  get parForm(){
+    return this.processARideForm.controls;
   }
 
   get passengerDrivers(){
@@ -214,8 +312,10 @@ export class DispatcherComponent implements OnInit {
     let newDriver = new User();
     newDriver = this.driverForm.value;
     newDriver.role = 'DRIVER';
+    console.log(newDriver);
     this.usersService.post(newDriver).subscribe(
-      data => {
+      (data: Location) => {
+        console.log('matori')
         jQuery("#addADriverModal").modal("toggle");
         this.driverForm.reset();
         this.getAllUsers();

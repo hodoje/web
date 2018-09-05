@@ -11,9 +11,11 @@ import { User } from '../../models/user.model';
 import { RegistrationModel } from '../../models/registration.model';
 import { Car } from '../../models/car.model';
 import { Ride } from '../../models/ride.model';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RideStatus } from '../../models/rideStatus';
 import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
+import { DriverFormValidators } from '../../common/validators/driver-form.validators';
+import { RideFormValidators } from '../../common/validators/ride-form.validators';
 
 declare var jQuery: any;
 
@@ -36,32 +38,88 @@ export class DriverComponent implements OnInit {
   ratingList = [false, false, false, false, false];
   
   personalDataForm = new FormGroup({
-    username: new FormControl(),
-    password: new FormControl(),
-    name: new FormControl(),
-    lastname: new FormControl(),
-    email: new FormControl(),
-    gender: new FormControl(),
-    nationalIdentificationNumber: new FormControl(),
-    phoneNumber: new FormControl()
+    username: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    password: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    name: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    lastname: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    email: new FormControl(
+      null, 
+      [Validators.required, Validators.email, Validators.maxLength(254)]
+    ),
+    gender: new FormControl(
+      null,
+      Validators.required
+    ),
+    nationalIdentificationNumber: new FormControl(
+      null, 
+      [Validators.minLength(13), Validators.maxLength(13),Validators.pattern('[0-9]*')]
+    ),
+    phoneNumber: new FormControl(
+      null, 
+      [Validators.minLength(5), Validators.maxLength(10), Validators.pattern('[0-9]*')]
+    )
   });
 
   carDataForm = new FormGroup({
-    taxiNumber: new FormControl(),
-    registrationNumber: new FormControl(),
-    yearOfManufactoring: new FormControl(),
-    carType: new FormControl()
+    registrationNumber: new FormControl(
+      null,
+      [Validators.required, Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    taxiNumber: new FormControl(
+      null,
+      [Validators.required, Validators.pattern('[0-9]*'), DriverFormValidators.checkTaxiNumberInterval]
+    ),
+    yearOfManufactoring: new FormControl(
+      null,
+      [Validators.required, Validators.pattern('[0-9]*'), DriverFormValidators.checkYearOfManufactoringInterval]
+    ),
+    carType: new FormControl(
+      null,
+      Validators.required
+    )
   });
 
   locationDataForm = new FormGroup({
-    address: new FormGroup({
-      streetName: new FormControl(),
-      streetNumber: new FormControl(),
-      city: new FormControl(),
-      postalCode: new FormControl()
-    }),
-    longitude: new FormControl(),
-    latitude: new FormControl()
+    location: new FormGroup({
+      address: new FormGroup({
+        streetName: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        streetNumber: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(4), Validators.pattern('[0-9]*')]
+        ),
+        city: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        postalCode: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(10), Validators.pattern('[a-zA-Z0-9]*')]
+        )
+      }),
+      longitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklongitudeInterval]
+      ),
+      latitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklatitudeInterval]
+      )
+    })
   });
 
   refineForm = new FormGroup({
@@ -102,24 +160,14 @@ export class DriverComponent implements OnInit {
   });
 
   failedRideForm = new FormGroup({
-    commentDescription: new FormControl()
+    commentDescription: new FormControl(
+      null, 
+      Validators.required
+    )
   });
 
   acceptedRideForm = new FormGroup({
-    // location: new FormGroup({
-    //   address: new FormGroup({
-    //     streetName: new FormControl(),
-    //     streetNumber: new FormControl(),
-    //     city: new FormControl(),
-    //     postalCode: new FormControl()
-    //   }),
-    //   longitude: new FormControl(),
-    //   latitude: new FormControl()
-    // }),
-    // carType: new FormControl(),
-    // driverId: new FormControl(),
     price: new FormControl(),
-    // rating: new FormControl(),
     commentDescription: new FormControl()
   });
 
@@ -148,6 +196,14 @@ export class DriverComponent implements OnInit {
 
   get ldForm(){
     return this.locationDataForm.controls;
+  }
+
+  get ssForm(){
+    return this.successfulRideForm.controls;
+  }
+
+  get flForm(){
+    return this.failedRideForm.controls;
   }
 
   getMyData(){

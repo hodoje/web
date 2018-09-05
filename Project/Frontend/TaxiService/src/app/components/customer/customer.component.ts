@@ -3,19 +3,16 @@ import { Comment } from './../../models/comment.model';
 import { ChangeRideRequest } from './../../models/changeRideRequest';
 import { CancelRideRequest } from './../../models/cancelRideRequest';
 import { RidesService } from './../../services/rides.service';
-import { Location } from './../../models/location.model';
 import { Ride } from './../../models/ride.model';
 import { UsersService } from './../../services/users.service';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiMessage } from '../../models/apiMessage.model';
-import { LoginModel } from '../../models/login.model';
 import { User } from '../../models/user.model';
-import { RegistrationModel } from '../../models/registration.model';
 import { NotificationService } from '../../services/notification.service';
 import { RideStatus } from './../../models/rideStatus';
 import { RideRequest } from './../../models/rideRequest';
-import { FormGroup, FormControl } from '../../../../node_modules/@angular/forms';
-import { Address } from '../../models/address.model';
+import { FormGroup, FormControl, Validators } from '../../../../node_modules/@angular/forms';
+import { RideFormValidators } from '../../common/validators/ride-form.validators';
 
 // for modal hiding in callARide
 declare var jQuery: any;
@@ -40,26 +37,68 @@ export class CustomerComponent implements OnInit {
   latestSuccessfulRide: Ride;
   
   personalDataForm = new FormGroup({
-    username: new FormControl(),
-    password: new FormControl(),
-    name: new FormControl(),
-    lastname: new FormControl(),
-    email: new FormControl(),
-    gender: new FormControl(),
-    nationalIdentificationNumber: new FormControl(),
-    phoneNumber: new FormControl()
+    username: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    password: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(8), Validators.maxLength(30), Validators.pattern('[a-zA-Z0-9]*')]
+    ),
+    name: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    lastname: new FormControl(
+      null, 
+      [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+    ),
+    email: new FormControl(
+      null, 
+      [Validators.required, Validators.email, Validators.maxLength(254)]
+    ),
+    gender: new FormControl(
+      null,
+      Validators.required
+    ),
+    nationalIdentificationNumber: new FormControl(
+      null, 
+      [Validators.minLength(13), Validators.maxLength(13),Validators.pattern('[0-9]*')]
+    ),
+    phoneNumber: new FormControl(
+      null, 
+      [Validators.minLength(5), Validators.maxLength(10), Validators.pattern('[0-9]*')]
+    )
   });
 
   rideForm = new FormGroup({
     location: new FormGroup({
       address: new FormGroup({
-        streetName: new FormControl(),
-        streetNumber: new FormControl(),
-        city: new FormControl(),
-        postalCode: new FormControl()
+        streetName: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        streetNumber: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(4), Validators.pattern('[0-9]*')]
+        ),
+        city: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+        ),
+        postalCode: new FormControl(
+          null,
+          [Validators.required, Validators.minLength(1), Validators.maxLength(10), Validators.pattern('[a-zA-Z0-9]*')]
+        )
       }),
-      longitude: new FormControl(),
-      latitude: new FormControl()
+      longitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklongitudeInterval]
+      ),
+      latitude: new FormControl(
+        null,
+        [Validators.required, RideFormValidators.checklatitudeInterval]
+      )
     }),
     carType: new FormControl()
   });
@@ -116,6 +155,10 @@ export class CustomerComponent implements OnInit {
 
   get pdForm(){
     return this.personalDataForm.controls;
+  }
+
+  get rdForm(){
+    return this.rideForm.controls;
   }
 
   private parseSingleRide(unparsedRide: Ride){
