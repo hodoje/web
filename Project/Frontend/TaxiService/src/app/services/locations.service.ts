@@ -1,7 +1,7 @@
-import { Location } from './../models/location.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GenericService } from './generic.service';
 import { Injectable } from '../../../node_modules/@angular/core';
+import { Location } from '../models/location.model';
 
 @Injectable({
   providedIn: 'root'

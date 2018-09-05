@@ -1,4 +1,3 @@
-import { MapsService } from './services/maps.service';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -94,8 +93,7 @@ const Routes = [
     LoginToNavbarService,
     NotificationService,
     LoginGuard,
-    ContentGuard,
-    MapsService
+    ContentGuard
   ],
   bootstrap: [AppComponent]
 })

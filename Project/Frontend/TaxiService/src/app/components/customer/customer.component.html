@@ -22,6 +22,14 @@
               <form [formGroup]="rideForm">
                 <div class="form-group" formGroupName="location">
                   <h3>What's your location?</h3>
+                  <div>
+                    <p>
+                      <agm-map [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long" [zoom]="15" (mapClick)="placeMarker($event, rideForm)">
+                        <agm-marker [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long">                  
+                        </agm-marker>
+                      </agm-map>
+                    </p>
+                  </div>
                   <div formGroupName="address">
                     <legend>Address</legend>
                     <label for="streetName">Street Name</label>
@@ -104,7 +112,7 @@
               <p *ngIf="pendingRide?.rideStatus !== 'CREATED'" class="card-text">STATUS: {{pendingRide?.rideStatus}}</p>
           </div>
           <!--/.Card content-->
-          <button class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#callARideModal">Change</button>
+          <button [disabled]="pendingRide?.rideStatus !== 'CREATED'" class="btn btn-primary" (click)="toggleChangeRide()" data-toggle="modal" data-target="#callARideModal">Change</button>
           <button [disabled]="pendingRide?.rideStatus !== 'CREATED'" class="btn btn-primary" type="button" class="btn btn-primary" data-toggle="modal" data-target="#commentModal" (click)="cancelARide()">Cancel</button>
         </div>
       </div>

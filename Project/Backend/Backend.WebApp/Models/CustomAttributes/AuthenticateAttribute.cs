@@ -20,7 +20,7 @@ namespace Backend.Models.CustomAttributes
             string encodedHash;
             var _accessService = actionContext.ControllerContext.Configuration.DependencyResolver.GetService(typeof(IAccessService)) as IAccessService;
             var authHeader = actionContext.Request.Headers.Authorization;
-            if (authHeader == null || authHeader.Scheme != "Basic" || String.IsNullOrWhiteSpace(authHeader.Parameter))
+            if (authHeader == null || String.IsNullOrWhiteSpace(authHeader.Parameter))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
             }

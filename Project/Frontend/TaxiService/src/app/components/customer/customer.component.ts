@@ -16,9 +16,12 @@ import { RideRequest } from './../../models/rideRequest';
 import { FormGroup, FormControl, Validators } from '../../../../node_modules/@angular/forms';
 import { RideFormValidators } from '../../common/validators/ride-form.validators';
 import { Router } from '@angular/router';
+import { MapInfo } from '../../models/map-information.model';
+import { Location } from '../../models/location.model';
 
 // for modal hiding in callARide
 declare var jQuery: any;
+declare var google;
 
 @Component({
   selector: 'customer',
@@ -38,6 +41,7 @@ export class CustomerComponent implements OnInit {
   pendingRide: Ride;
   successfulRideRating: number;
   latestSuccessfulRide: Ride;
+  mapInfo: MapInfo;
   
   personalDataForm = new FormGroup({
     username: new FormControl(
@@ -79,7 +83,7 @@ export class CustomerComponent implements OnInit {
       address: new FormGroup({
         streetName: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         streetNumber: new FormControl(
           null,
@@ -87,7 +91,7 @@ export class CustomerComponent implements OnInit {
         ),
         city: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         postalCode: new FormControl(
           null,
@@ -135,18 +139,11 @@ export class CustomerComponent implements OnInit {
   constructor(private usersService: UsersService, 
               private notificationService: NotificationService, 
               private ridesService: RidesService,
-              private accessService: AccessService,
-              private router: Router) {
-    // jQuery('body').on('hidden.bs.modal', '#callARideModal', function(this){
-    //   if(!this.isRideRequestPending){
-    //     this.isRideRequestPending = true;
-    //     //this.isRideChanging = false;
-    //     //jQuery("#callARideModal").modal("toggle");
-    //   }
-    // }.bind(this));
+              private accessService: AccessService) {
   }
 
   ngOnInit() {
+    this.mapInfo = new MapInfo(45.246102512788326, 19.851694107055664);
     this.personalData = new User();
     this.ridesHistory = [];
     this.rideStatuses = [];
@@ -205,6 +202,44 @@ export class CustomerComponent implements OnInit {
     let twoMins = 1000 * 60 * 2;
     let now = Date.now();
     return (now - past < twoMins) ? false : true;
+  }
+
+  placeMarker(event, rideForm: FormGroup){
+    this.mapInfo.lat = event.coords.lat;
+    this.mapInfo.long = event.coords.lng;
+
+    let resultLocationData: any;
+    let geocoder = new google.maps.Geocoder();
+    let mylatLng = new google.maps.LatLng(this.mapInfo.lat, this.mapInfo.long);
+    let geocoderRequest = {latLng: mylatLng};
+    geocoder.geocode(geocoderRequest, function(result, status){
+      let rideLocation = new Location();
+      resultLocationData = result[0] as Array<string>;
+
+      rideLocation.latitude = event.coords.lat;
+      rideLocation.longitude = event.coords.lng;
+
+      resultLocationData.address_components.forEach(prop => {
+        if(prop.types.find(t => t === 'street_number') !== undefined){
+          rideLocation.address.streetNumber = prop.long_name as string;
+        }
+        if(prop.types.find(t => t === 'route') !== undefined){
+          rideLocation.address.streetName = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'locality') !== undefined){
+          rideLocation.address.city = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'postal_code') !== undefined){
+          rideLocation.address.postalCode = prop.long_name as string;
+        }
+      });
+
+      rideForm.patchValue({
+        location: rideLocation
+      });
+    });
   }
 
   rateSuccessfulRideRating(starIndex){

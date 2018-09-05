@@ -124,17 +124,19 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("api/rides/rideRequest")]
-        public IHttpActionResult RequestRide(ApiMessage<string, RideRequestModel> rideRequestApiMessage)
+        public IHttpActionResult RequestRide(RideRequestModel rideRequestApiMessage)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            LoginModel loginModel = _accessService.GetLoginData(rideRequestApiMessage.Key, _unitOfWork).Data;
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
-            Location newRideLocation = _iMapper.Map<LocationDto, Location>(rideRequestApiMessage.Data.Location);
+            Location newRideLocation = _iMapper.Map<LocationDto, Location>(rideRequestApiMessage.Location);
 
             try
             {
@@ -148,7 +150,7 @@ namespace Backend.Controllers
 
             Ride newRide = new Ride();
             newRide.StartLocationId = newRideLocation.Id;
-            newRide.CarType = (int)Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == rideRequestApiMessage.Data.CarType);
+            newRide.CarType = (int)Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(ct => ct.ToString() == rideRequestApiMessage.CarType);
             newRide.CustomerId = user.Id;
             newRide.Timestamp = DateTime.Now;
 
@@ -169,21 +171,22 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("api/rides/changeRideRequest")]
-        public IHttpActionResult ChangeRideRequest(ApiMessage<string, ChangeRideRequestModel> changeRideRequestApiMessage)
+        public IHttpActionResult ChangeRideRequest(ChangeRideRequestModel changeRideRequestApiMessage)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            string hash = Thread.CurrentPrincipal.Identity.Name;
 
-            LoginModel loginModel = _accessService.GetLoginData(changeRideRequestApiMessage.Key, _unitOfWork).Data;
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
             Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();
             Ride updatedRide = new Ride()
             {
-                StartLocation = _iMapper.Map<LocationDto, Location>(changeRideRequestApiMessage.Data.Location),
-                CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(t => t.ToString() == changeRideRequestApiMessage.Data.CarType)
+                StartLocation = _iMapper.Map<LocationDto, Location>(changeRideRequestApiMessage.Location),
+                CarType = (int) Enum.GetValues(typeof(CarType)).Cast<CarType>().FirstOrDefault(t => t.ToString() == changeRideRequestApiMessage.CarType)
             };
 
             oldRide.StartLocation.Address = updatedRide.StartLocation.Address;
@@ -207,9 +210,11 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("api/rides/cancelRideRequest")]
-        public IHttpActionResult CancelRideRequest(ApiMessage<string, CancelRideRequestModel> cancelRideRequestApiMessage)
+        public IHttpActionResult CancelRideRequest(CancelRideRequestModel cancelRideRequestApiMessage)
         {
-            LoginModel loginModel = _accessService.GetLoginData(cancelRideRequestApiMessage.Key, _unitOfWork).Data;
+            string hash = Thread.CurrentPrincipal.Identity.Name;
+
+            LoginModel loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
             User user = _unitOfWork.UserRepository.GetUserByUsername(loginModel.Username, loginModel.Role);
 
             Ride oldRide = _unitOfWork.RideRepository.FilterRidesIncludeAll(r => r.CustomerId == user.Id && r.RideStatus == (int)RideStatus.CREATED).FirstOrDefault();

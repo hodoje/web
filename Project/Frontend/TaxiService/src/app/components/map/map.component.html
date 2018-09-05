@@ -1,6 +1,6 @@
 <p>
   <!-- Kreiramo mapu -->
-  <agm-map [latitude]="mapInfo.lat" [longitude]="mapInfo.long" [zoom]="15" (mapClick)="placeMarker($event)">
+  <agm-map id="map" [latitude]="mapInfo.lat" [longitude]="mapInfo.long" [zoom]="15" (mapClick)="placeMarker($event)">
    
     <!-- Postavljamo markere -->
     <agm-marker [latitude]="mapInfo.lat" [longitude]="mapInfo.long" [title]="mapInfo.title"

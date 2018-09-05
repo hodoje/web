@@ -56,18 +56,24 @@ export class RidesService extends GenericService {
   }
 
   requestRide(rideRequestData: RideRequest){
-    let apiMessage = new ApiMessage(localStorage.userHash, rideRequestData);
-    return this.httpClient.post('http://localhost:3737/api/rides/rideRequest', apiMessage);
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/rideRequest', rideRequestData, {'headers': headers});
   }
 
   changeRide(changeRideRequestData: ChangeRideRequest){
-    let apiMessage = new ApiMessage(localStorage.userHash, changeRideRequestData);
-    return this.httpClient.post('http://localhost:3737/api/rides/changeRideRequest', apiMessage);
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));
+    return this.httpClient.post('http://localhost:3737/api/rides/changeRideRequest', changeRideRequestData, {'headers': headers});
   }
 
   cancelRide(cancelRideRequest: CancelRideRequest){
-    let apiMessage = new ApiMessage(localStorage.userHash, cancelRideRequest);
-    return this.httpClient.post('http://localhost:3737/api/rides/cancelRideRequest', apiMessage);
+    let headers = new HttpHeaders();
+    headers = headers.append('Access-Control-Allow-Credentials', 'true');
+    headers = headers.append('Authorization', 'Basic ' + btoa(encodeURIComponent(`${localStorage.userHash}`)));    
+    return this.httpClient.post('http://localhost:3737/api/rides/cancelRideRequest', cancelRideRequest, {'headers': headers});
   }  
 
   addComment(comment: Comment){

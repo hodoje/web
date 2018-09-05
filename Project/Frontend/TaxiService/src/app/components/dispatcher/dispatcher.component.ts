@@ -13,8 +13,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
 import { ApiMessage } from '../../models/apiMessage.model';
 import { RideFormValidators } from '../../common/validators/ride-form.validators';
+import { MapInfo } from '../../models/map-information.model';
 
 declare var jQuery: any;
+declare var google;
 
 @Component({
   selector: 'dispatcher',
@@ -27,9 +29,12 @@ export class DispatcherComponent implements OnInit {
   allDrivers: User[];
   allRides: Ride[];
   allUsers: User[];
+  closesDrivers: User[];
   dispatcherRides: Ride[];
   pendingRides: Ride[];
   ratingList = [false, false, false, false, false];
+  mapInfo: MapInfo;
+  rideInProcess: Ride;
 
   personalDataForm = new FormGroup({
     username: new FormControl(
@@ -71,7 +76,7 @@ export class DispatcherComponent implements OnInit {
       address: new FormGroup({
         streetName: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         streetNumber: new FormControl(
           null,
@@ -79,7 +84,7 @@ export class DispatcherComponent implements OnInit {
         ),
         city: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         postalCode: new FormControl(
           null,
@@ -172,12 +177,15 @@ export class DispatcherComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.mapInfo = new MapInfo(45.246102512788326, 19.851694107055664);
     this.personalData = new User();
     this.allDrivers = [];
     this.allRides = [];
     this.allUsers = [];
+    this.closesDrivers = [];
     this.pendingRides = [];
     this.dispatcherRides = [];
+    this.rideInProcess = new Ride();
     this.getMyData();
     this.getAllRides();
     this.getAllUsers();
@@ -208,6 +216,48 @@ export class DispatcherComponent implements OnInit {
 
   get vanDrivers(){
     return this.allDrivers.filter(d => d.car.carType === 'VAN');
+  }
+
+  rideFormPlaceMarker(event, rideForm: FormGroup){
+    this.mapInfo.lat = event.coords.lat;
+    this.mapInfo.long = event.coords.lng;
+
+    let resultLocationData: any;
+    let geocoder = new google.maps.Geocoder();
+    let mylatLng = new google.maps.LatLng(this.mapInfo.lat, this.mapInfo.long);
+    let geocoderRequest = {latLng: mylatLng};
+    geocoder.geocode(geocoderRequest, function(result, status){
+      let rideLocation = new Location();
+      resultLocationData = result[0] as Array<string>;
+
+      rideLocation.latitude = event.coords.lat;
+      rideLocation.longitude = event.coords.lng;
+
+      resultLocationData.address_components.forEach(prop => {
+        if(prop.types.find(t => t === 'street_number') !== undefined){
+          rideLocation.address.streetNumber = prop.long_name as string;
+        }
+        if(prop.types.find(t => t === 'route') !== undefined){
+          rideLocation.address.streetName = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'locality') !== undefined){
+          rideLocation.address.city = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'postal_code') !== undefined){
+          rideLocation.address.postalCode = prop.long_name as string;
+        }
+      });
+
+      rideForm.patchValue({
+        location: rideLocation
+      });
+    });
+  }
+
+  getClosestDrivers(){
+    let longitude = this.processARideForm.value;
   }
 
   getMyData(){

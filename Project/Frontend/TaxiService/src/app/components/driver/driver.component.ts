@@ -17,8 +17,10 @@ import { RideStatus } from '../../models/rideStatus';
 import { DispatcherProcessRideRequest } from '../../models/dispatcherProcessRideRequest';
 import { DriverFormValidators } from '../../common/validators/driver-form.validators';
 import { RideFormValidators } from '../../common/validators/ride-form.validators';
+import { MapInfo } from '../../models/map-information.model';
 
 declare var jQuery: any;
+declare var google;
 
 @Component({
   selector: 'driver',
@@ -37,6 +39,7 @@ export class DriverComponent implements OnInit {
   isRideChanging = false;
   isRideCancelled = false;
   ratingList = [false, false, false, false, false];
+  mapInfo: MapInfo;
   
   personalDataForm = new FormGroup({
     username: new FormControl(
@@ -93,11 +96,10 @@ export class DriverComponent implements OnInit {
   });
 
   locationDataForm = new FormGroup({
-    location: new FormGroup({
       address: new FormGroup({
         streetName: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         streetNumber: new FormControl(
           null,
@@ -105,7 +107,7 @@ export class DriverComponent implements OnInit {
         ),
         city: new FormControl(
           null,
-          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-zA-Z]*')]
+          [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('[a-z A-Z]*')]
         ),
         postalCode: new FormControl(
           null,
@@ -120,7 +122,6 @@ export class DriverComponent implements OnInit {
         null,
         [Validators.required, RideFormValidators.checklatitudeInterval]
       )
-    })
   });
 
   refineForm = new FormGroup({
@@ -175,10 +176,11 @@ export class DriverComponent implements OnInit {
   constructor(private usersService: UsersService, 
               private ridesService: RidesService, 
               private carsService: CarsService, 
-              private locationsService: LocationsService
+              private locationsService: LocationsService,
               private accessService: AccessService) { }
 
   ngOnInit() {
+    this.mapInfo = new MapInfo(45.246102512788326, 19.851694107055664);
     this.personalData = new User();
     this.driverRides = [];
     this.rideStatuses = [];
@@ -206,6 +208,85 @@ export class DriverComponent implements OnInit {
 
   get flForm(){
     return this.failedRideForm.controls;
+  }
+
+  ssRidePlaceMarker(event, ssRideForm: FormGroup){
+    this.mapInfo.lat = event.coords.lat;
+    this.mapInfo.long = event.coords.lng;
+
+    let resultLocationData: any;
+    let geocoder = new google.maps.Geocoder();
+    let mylatLng = new google.maps.LatLng(this.mapInfo.lat, this.mapInfo.long);
+    let geocoderRequest = {latLng: mylatLng};
+    geocoder.geocode(geocoderRequest, function(result, status){
+      let rideLocation = new Location();
+      resultLocationData = result[0] as Array<string>;
+
+      rideLocation.latitude = event.coords.lat;
+      rideLocation.longitude = event.coords.lng;
+
+      resultLocationData.address_components.forEach(prop => {
+        if(prop.types.find(t => t === 'street_number') !== undefined){
+          rideLocation.address.streetNumber = prop.long_name as string;
+        }
+        if(prop.types.find(t => t === 'route') !== undefined){
+          rideLocation.address.streetName = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'locality') !== undefined){
+          rideLocation.address.city = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'postal_code') !== undefined){
+          rideLocation.address.postalCode = prop.long_name as string;
+        }
+      });
+
+      ssRideForm.patchValue({
+        destinationLocation: rideLocation
+      });
+    });
+  }
+
+  ldFormPlaceMarker(event, ldForm: FormGroup){
+    this.mapInfo.lat = event.coords.lat;
+    this.mapInfo.long = event.coords.lng;
+
+    let resultLocationData: any;
+    let geocoder = new google.maps.Geocoder();
+    let mylatLng = new google.maps.LatLng(this.mapInfo.lat, this.mapInfo.long);
+    let geocoderRequest = {latLng: mylatLng};
+    geocoder.geocode(geocoderRequest, function(result, status){
+      let rideLocation = new Location();
+      resultLocationData = result[0] as Array<string>;
+
+      rideLocation.latitude = event.coords.lat;
+      rideLocation.longitude = event.coords.lng;
+
+      resultLocationData.address_components.forEach(prop => {
+        if(prop.types.find(t => t === 'street_number') !== undefined){
+          rideLocation.address.streetNumber = prop.long_name as string;
+        }
+        if(prop.types.find(t => t === 'route') !== undefined){
+          rideLocation.address.streetName = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'locality') !== undefined){
+          rideLocation.address.city = prop.long_name as string;
+          
+        }
+        if(prop.types.find(t => t === 'postal_code') !== undefined){
+          rideLocation.address.postalCode = prop.long_name as string;
+        }
+      });
+
+      ldForm.patchValue({
+        address: rideLocation.address,
+        longitude: rideLocation.longitude,
+        latitude: rideLocation.latitude
+      });
+      ldForm.markAsDirty();
+    });
   }
 
   getMyData(){
@@ -309,14 +390,13 @@ export class DriverComponent implements OnInit {
   changeLocationData(){
     let updatedLocation = new Location();
     updatedLocation = this.locationDataForm.value;
-    if(this.personalData.driverLocationId === null || this.personalData.driverLocationId === undefined){
-      updatedLocation.id = -1;
-    }
-    else{
-      updatedLocation.id = this.personalData.driverLocationId;
-    }
+    // if(this.personalData.driverLocationId !== null || this.personalData.driverLocationId !== undefined){
+    //   updatedLocation.id = this.personalData.driverLocationId;
+    // }
+    console.log(this.locationDataForm.value);
+    console.log(updatedLocation);
     this.locationsService.addOrupdateDriverLocation(updatedLocation).subscribe(
-      () => {
+      (data: Location) => {
         this.locationDataForm.patchValue({
           address: updatedLocation.address,
           longitude: updatedLocation.longitude,

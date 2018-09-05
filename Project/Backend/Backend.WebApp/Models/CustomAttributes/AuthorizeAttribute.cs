@@ -37,7 +37,7 @@ namespace Backend.Models.CustomAttributes
                 string hash = _accessService.ExtractHash(encodedHash);
                 if (_accessService.IsLoggedIn(hash))
                 {
-                    if(_accessService.IsAuthorized(hash, Roles))
+                    if (_accessService.IsAuthorized(hash, Roles))
                     {
                         Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity(hash), null);
                         return;

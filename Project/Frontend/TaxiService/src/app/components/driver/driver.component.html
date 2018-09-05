@@ -219,6 +219,14 @@
                                 </div>
                                 <div class="form-group required" formGroupName="destinationLocation">
                                   <h3>Destination location</h3>
+                                  <div>
+                                    <p>
+                                      <agm-map [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long" [zoom]="15" (mapClick)="ssRidePlaceMarker($event, successfulRideForm)">
+                                        <agm-marker [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long">                  
+                                        </agm-marker>
+                                      </agm-map>
+                                    </p>
+                                  </div>
                                   <div formGroupName="address">
                                     <legend>Address</legend>
                                     <label for="streetName">Street Name</label>
@@ -385,9 +393,17 @@
     <div class="col col-md-4">
       <div>
         <h2 class="loc-btn">My location</h2>
-        <button class="loc-btn btn btn-sm btn-primary">Get my location</button>
+        <!-- <button class="loc-btn btn btn-sm btn-primary">Get my location</button> -->
       </div>
       <form [formGroup]="locationDataForm">
+        <div>
+          <p>
+            <agm-map [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long" [zoom]="15" (mapClick)="ldFormPlaceMarker($event, locationDataForm)">
+              <agm-marker [latitude]="mapInfo?.lat" [longitude]="mapInfo?.long">                  
+              </agm-marker>
+            </agm-map>
+          </p>
+        </div>
         <table class="table table-sm table-hover">
           <tbody formGroupName="address">
             <tr>
@@ -395,11 +411,11 @@
               <td>
                 <div class="form-group">
                   <input formControlName="streetName" class="form-control form-control-sm">
-                  <div class="alert alert-danger" *ngIf="ldForm.location.get('address').get('streetName').touched && !ldForm.location.get('address').get('streetName').valid">
-                    <div *ngIf="ldForm.location.get('address').get('streetName').errors.required">Street name is required.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetName').errors.minlength">Street name needs to be at least {{ldForm.location.get('address').get('streetName').errors.minlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetName').errors.maxlength">Street name needs to be maximum of {{ldForm.location.get('address').get('streetName').errors.maxlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetName').errors.pattern">Street name needs to contain only ASCII characters.</div>
+                  <div class="alert alert-danger" *ngIf="ldForm.address.get('streetName').touched && !ldForm.address.get('streetName').valid">
+                    <div *ngIf="ldForm.address.get('streetName').errors.required">Street name is required.</div>
+                    <div *ngIf="ldForm.address.get('streetName').errors.minlength">Street name needs to be at least {{ldForm.address.get('streetName').errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('streetName').errors.maxlength">Street name needs to be maximum of {{ldForm.address.get('streetName').errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('streetName').errors.pattern">Street name needs to contain only ASCII characters.</div>
                   </div>
                 </div>
               </td>
@@ -409,11 +425,11 @@
               <td>
                 <div class="form-group">
                   <input formControlName="streetNumber" class="form-control form-control-sm">
-                  <div class="alert alert-danger" *ngIf="ldForm.location.get('address').get('streetNumber').touched && !ldForm.location.get('address').get('streetNumber').valid">
-                    <div *ngIf="ldForm.location.get('address').get('streetNumber').errors.required">Street number is required.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetNumber').errors.minlength">Street number needs to be at least {{ldForm.location.get('address').get('streetNumber').errors.minlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetNumber').errors.maxlength">Street number needs to be maximum of {{ldForm.location.get('address').get('streetNumber').errors.maxlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('streetNumber').errors.pattern">Street number needs to contain only digits.</div>
+                  <div class="alert alert-danger" *ngIf="ldForm.address.get('streetNumber').touched && !ldForm.address.get('streetNumber').valid">
+                    <div *ngIf="ldForm.address.get('streetNumber').errors.required">Street number is required.</div>
+                    <div *ngIf="ldForm.address.get('streetNumber').errors.minlength">Street number needs to be at least {{ldForm.address.get('streetNumber').errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('streetNumber').errors.maxlength">Street number needs to be maximum of {{ldForm.address.get('streetNumber').errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('streetNumber').errors.pattern">Street number needs to contain only digits.</div>
                   </div>
                 </div>
               </td>
@@ -423,11 +439,11 @@
               <td>
                 <div class="form-group">
                   <input formControlName="city" class="form-control form-control-sm">
-                  <div class="alert alert-danger" *ngIf="ldForm.location.get('address').get('city').touched && !ldForm.location.get('address').get('city').valid">
-                    <div *ngIf="ldForm.location.get('address').get('city').errors.required">City is required.</div>
-                    <div *ngIf="ldForm.location.get('address').get('city').errors.minlength">City needs to be at least {{ldForm.location.get('address').get('city').errors.minlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('city').errors.maxlength">City needs to be maximum of {{ldForm.location.get('address').get('city').errors.maxlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('city').errors.pattern">City needs to contain only ASCII characters.</div>
+                  <div class="alert alert-danger" *ngIf="ldForm.address.get('city').touched && !ldForm.address.get('city').valid">
+                    <div *ngIf="ldForm.address.get('city').errors.required">City is required.</div>
+                    <div *ngIf="ldForm.address.get('city').errors.minlength">City needs to be at least {{ldForm.address.get('city').errors.minlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('city').errors.maxlength">City needs to be maximum of {{ldForm.address.get('city').errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('city').errors.pattern">City needs to contain only ASCII characters.</div>
                   </div>
                 </div>
               </td>
@@ -437,11 +453,11 @@
               <td>
                 <div class="form-group">
                   <input formControlName="postalCode" class="form-control form-control-sm">
-                  <div class="alert alert-danger" *ngIf="ldForm.location.get('address').get('postalCode').touched && !ldForm.location.get('address').get('postalCode').valid">
-                    <div *ngIf="ldForm.location.get('address').get('postalCode').errors.required">Postal code is required.</div>
-                    <div *ngIf="ldForm.location.get('address').get('postalCode').errors.minlength">Postal code needs to be at least {{ldForm.location.get('address').get('postalCode').errors.minlength.requiredLength}} character long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('postalCode').errors.maxlength">Postal code needs to be maximum of {{ldForm.location.get('address').get('postalCode').errors.maxlength.requiredLength}} characters long.</div>
-                    <div *ngIf="ldForm.location.get('address').get('postalCode').errors.pattern">Postal code needs to contain only ASCII characters and digits.</div>
+                  <div class="alert alert-danger" *ngIf="ldForm.address.get('postalCode').touched && !ldForm.address.get('postalCode').valid">
+                    <div *ngIf="ldForm.address.get('postalCode').errors.required">Postal code is required.</div>
+                    <div *ngIf="ldForm.address.get('postalCode').errors.minlength">Postal code needs to be at least {{ldForm.address.get('postalCode').errors.minlength.requiredLength}} character long.</div>
+                    <div *ngIf="ldForm.address.get('postalCode').errors.maxlength">Postal code needs to be maximum of {{ldForm.address.get('postalCode').errors.maxlength.requiredLength}} characters long.</div>
+                    <div *ngIf="ldForm.address.get('postalCode').errors.pattern">Postal code needs to contain only ASCII characters and digits.</div>
                   </div>
                 </div>
               </td>
@@ -452,10 +468,10 @@
             <td>
               <div class="form-group">
                 <input formControlName="longitude" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="ldForm.location.get('longitude').touched && !ldForm.location.get('longitude').valid">
-                  <div *ngIf="ldForm.location.get('longitude').errors.required">Longitude is required.</div>
-                  <div *ngIf="ldForm.location.get('longitude').errors.isNotInLongitudeInterval">
-                    Longitude needs to be in [{{ldForm.location.get('longitude').errors.isNotInLongitudeInterval.minLongitude}}, {{ldForm.location.get('longitude').errors.isNotInLongitudeInterval.maxLongitude}}] interval.
+                <div class="alert alert-danger" *ngIf="ldForm.longitude.touched && !ldForm.longitude.valid">
+                  <div *ngIf="ldForm.longitude.errors.required">Longitude is required.</div>
+                  <div *ngIf="ldForm.longitude.errors.isNotInLongitudeInterval">
+                    Longitude needs to be in [{{ldForm.longitude.errors.isNotInLongitudeInterval.minLongitude}}, {{ldForm.longitude.errors.isNotInLongitudeInterval.maxLongitude}}] interval.
                   </div>
                 </div>
               </div>
@@ -466,10 +482,10 @@
             <td>
               <div class="form-group">
                 <input formControlName="latitude" class="form-control form-control-sm">
-                <div class="alert alert-danger" *ngIf="ldForm.location.get('latitude').touched && !ldForm.location.get('latitude').valid">
-                  <div *ngIf="ldForm.location.get('latitude').errors.required">Latitude is required.</div>
-                  <div *ngIf="ldForm.location.get('latitude').errors.isNotInLatitudeInterval">
-                      Latitude needs to be in [{{ldForm.location.get('latitude').errors.isNotInLatitudeInterval.minLatitude}}, {{ldForm.location.get('latitude').errors.isNotInLatitudeInterval.maxLatitude}}] interval.
+                <div class="alert alert-danger" *ngIf="ldForm.latitude.touched && !ldForm.latitude.valid">
+                  <div *ngIf="ldForm.latitude.errors.required">Latitude is required.</div>
+                  <div *ngIf="ldForm.latitude.errors.isNotInLatitudeInterval">
+                      Latitude needs to be in [{{ldForm.latitude.errors.isNotInLatitudeInterval.minLatitude}}, {{ldForm.latitude.errors.isNotInLatitudeInterval.maxLatitude}}] interval.
                     </div>
                 </div>
               </div>
