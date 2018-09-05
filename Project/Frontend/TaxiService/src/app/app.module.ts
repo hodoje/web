@@ -1,6 +1,5 @@
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { UsersComponent } from './components/users/users.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
@@ -29,7 +28,6 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgmCoreModule } from '@agm/core';
-import { MapComponent } from './components/map/map.component';
 
 const Routes = [
   {
@@ -61,7 +59,6 @@ const Routes = [
   declarations: [
     AppComponent,
     NavbarComponent,
-    SidebarComponent,
     UsersComponent,
     HomeComponent,
     RegistrationComponent,
@@ -69,8 +66,7 @@ const Routes = [
     ContentComponent,
     CustomerComponent,
     DriverComponent,
-    DispatcherComponent,
-    MapComponent
+    DispatcherComponent
   ],
   imports: [
     BrowserModule,

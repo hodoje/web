@@ -1,5 +1,4 @@
 import { AccessService } from './../../services/access.service';
-import { MapComponent } from './../map/map.component';
 import { RefineRidesModel } from './../../models/refine.model';
 import { Comment } from './../../models/comment.model';
 import { ChangeRideRequest } from './../../models/changeRideRequest';
@@ -15,7 +14,6 @@ import { RideStatus } from './../../models/rideStatus';
 import { RideRequest } from './../../models/rideRequest';
 import { FormGroup, FormControl, Validators } from '../../../../node_modules/@angular/forms';
 import { RideFormValidators } from '../../common/validators/ride-form.validators';
-import { Router } from '@angular/router';
 import { MapInfo } from '../../models/map-information.model';
 import { Location } from '../../models/location.model';
 
