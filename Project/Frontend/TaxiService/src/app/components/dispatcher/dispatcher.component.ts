@@ -29,7 +29,7 @@ export class DispatcherComponent implements OnInit {
   allDrivers: User[];
   allRides: Ride[];
   allUsers: User[];
-  closesDrivers: User[];
+  closestDrivers: User[];
   dispatcherRides: Ride[];
   pendingRides: Ride[];
   ratingList = [false, false, false, false, false];
@@ -182,7 +182,7 @@ export class DispatcherComponent implements OnInit {
     this.allDrivers = [];
     this.allRides = [];
     this.allUsers = [];
-    this.closesDrivers = [];
+    this.closestDrivers = [];
     this.pendingRides = [];
     this.dispatcherRides = [];
     this.rideInProcess = new Ride();
@@ -257,12 +257,18 @@ export class DispatcherComponent implements OnInit {
   }
 
   getClosestDrivers(){
-    let longitude = this.rideInProcess.location.longitude;
-    let latitude = this.rideInProcess.location.latitude;
+    let longitude = this.rideInProcess.startLocation.longitude;
+    let latitude = this.rideInProcess.startLocation.latitude;
 
-    this.allDrivers.sort((a, b) => {
-      (Math.abs(a.location.longitude - longitude) - Math.abs(a.location.latitude - latitude)) + (Math.abs(b.location.longitude - longitude) - Math.abs(b.location.latitude - latitude))
-    });
+    this.allDrivers.sort((a, b) => 
+      (Math.abs(a.driverLocation.longitude - longitude) - Math.abs(a.driverLocation.latitude - latitude)) + (Math.abs(b.driverLocation.longitude - longitude) - Math.abs(b.driverLocation.latitude - latitude))
+    );
+
+    let closestDrivers = [];
+    for(var i = 0; i < 5; i++){
+      closestDrivers.push(this.allDrivers[i]);
+    }
+    return closestDrivers;
   }
 
   getMyData(){
