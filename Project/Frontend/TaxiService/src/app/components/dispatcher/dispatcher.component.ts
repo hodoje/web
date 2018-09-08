@@ -261,7 +261,7 @@ export class DispatcherComponent implements OnInit {
     let latitude = this.rideInProcess.startLocation.latitude;
 
     this.allDrivers.sort((a, b) => 
-      (Math.abs(a.driverLocation.longitude - longitude) - Math.abs(a.driverLocation.latitude - latitude)) + (Math.abs(b.driverLocation.longitude - longitude) - Math.abs(b.driverLocation.latitude - latitude))
+      (Math.abs(a.driverLocation.longitude - longitude) + Math.abs(a.driverLocation.latitude - latitude)) - (Math.abs(b.driverLocation.longitude - longitude) + Math.abs(b.driverLocation.latitude - latitude))
     );
 
     let closestDrivers = [];

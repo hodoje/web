@@ -130,61 +130,57 @@ namespace Backend.Controllers
         {
             string hash = Thread.CurrentPrincipal.Identity.Name;
 
-            if (_accessService.IsLoggedIn(hash))
-            {
-                LoginModel loginModel = null;
+			LoginModel loginModel = null;
 
-                if (_accessService.GetLoginData(hash, _unitOfWork) != null)
-                {
-                    loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
-                }
+			if (_accessService.GetLoginData(hash, _unitOfWork) != null)
+			{
+				loginModel = _accessService.GetLoginData(hash, _unitOfWork).Data;
+			}
 
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-                Location newOrUpdatedLocation = _iMapper.Map<LocationDto, Location>(newOrUpdatedLocationDto);
+			Location newOrUpdatedLocation = _iMapper.Map<LocationDto, Location>(newOrUpdatedLocationDto);
 
-                if (!LocationExists(newOrUpdatedLocation.Id))
-                {
-                    _unitOfWork.LocationRepository.Add(newOrUpdatedLocation);
-                    _unitOfWork.Complete();
+			if (!LocationExists(newOrUpdatedLocation.Id))
+			{
+				_unitOfWork.LocationRepository.Add(newOrUpdatedLocation);
+				_unitOfWork.Complete();
 
-                    User driver = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
-                    driver.DriverLocationId = newOrUpdatedLocation.Id;
+				User driver = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
+				driver.DriverLocationId = newOrUpdatedLocation.Id;
 
-                    _unitOfWork.UserRepository.Update(driver);
-                    _unitOfWork.Complete();
+				_unitOfWork.UserRepository.Update(driver);
+				_unitOfWork.Complete();
 
-                    LocationDto newLocationDto = _iMapper.Map<Location, LocationDto>(newOrUpdatedLocation);
-                    return Ok(newLocationDto);
-                }
-                else
-                {
-                    Location oldLocation = _unitOfWork.LocationRepository.Find(l => l.Id == newOrUpdatedLocation.Id).FirstOrDefault();
-                    foreach (PropertyInfo property in typeof(Location).GetProperties())
-                    {
-                        if (property.CanWrite)
-                        {
-                            property.SetValue(oldLocation, property.GetValue(newOrUpdatedLocation, null), null);
-                        }
-                    }
-                    _unitOfWork.LocationRepository.Update(oldLocation);
-                    _unitOfWork.Complete();
+				LocationDto newLocationDto = _iMapper.Map<Location, LocationDto>(newOrUpdatedLocation);
+				return Ok(newLocationDto);
+			}
+			else
+			{
+				Location oldLocation = _unitOfWork.LocationRepository.Find(l => l.Id == newOrUpdatedLocation.Id).FirstOrDefault();
+				foreach (PropertyInfo property in typeof(Location).GetProperties())
+				{
+					if (property.CanWrite)
+					{
+						property.SetValue(oldLocation, property.GetValue(newOrUpdatedLocation, null), null);
+					}
+				}
+				_unitOfWork.LocationRepository.Update(oldLocation);
+				_unitOfWork.Complete();
 
 
-                    User driver = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
-                    driver.DriverLocationId = newOrUpdatedLocation.Id;
+				User driver = _unitOfWork.UserRepository.GetUserByUsernameIncludeAll(loginModel.Username, loginModel.Role);
+				driver.DriverLocationId = newOrUpdatedLocation.Id;
 
-                    _unitOfWork.UserRepository.Update(driver);
-                    _unitOfWork.Complete();
+				_unitOfWork.UserRepository.Update(driver);
+				_unitOfWork.Complete();
 
-                    LocationDto updatedLocationDto = _iMapper.Map<Location, LocationDto>(oldLocation);
-                    return Ok(updatedLocationDto);
-                }
-            }
-            return Unauthorized();
+				LocationDto updatedLocationDto = _iMapper.Map<Location, LocationDto>(oldLocation);
+				return Ok(updatedLocationDto);
+			}
         }
 
         //// DELETE: api/Locations/5
