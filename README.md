@@ -1,5 +1,5 @@
 # web
-Web development - college subject
+College subject - Web development
 
 **Project assignment**
 By using technologies and techniques used on lectures and exercises, design a software support for information system of **TAXI SERVICE** according to the following specification.
